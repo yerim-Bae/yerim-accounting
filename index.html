@@ -733,7 +733,6 @@ function heroHtml(){
       <h1><span class="hl">Accounting</span><br class="hbr"> Study Archive</h1>
       <div class="meta">
         <span class="chip"><b>${POSTS.length}</b> 아카이브</span>
-        <span class="chip"><b>${new Set(POSTS.map(p=>p.author).filter(Boolean)).size}</b> 작성자</span>
         <span class="chip"><b>${new Set(POSTS.map(p=>deriveWeek(p.date).start)).size}</b> 주 아카이브</span>
       </div>
       ${banner}
