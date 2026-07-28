@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Yerim Bae · 회계 공부 아카이브" />
+<title>Yerim Bae · 회계 공부 아카이브</title>
+<!-- 카톡·SNS 링크 미리보기 (Open Graph) -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://yerim-accounting.vercel.app/" />
+<meta property="og:title" content="Yerim Bae · 회계 공부 아카이브" />
+<meta property="og:description" content="배예림이 정리한 회계 공부 기록과 인사이트 아카이브" />
+<meta property="og:image" content="https://yerim-accounting.vercel.app/assets/og-image.png?v=1" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Yerim Bae · 회계 공부 아카이브" />
+<meta name="twitter:description" content="배예림이 정리한 회계 공부 기록과 인사이트 아카이브" />
+<meta name="twitter:image" content="https://yerim-accounting.vercel.app/assets/og-image.png?v=1" />
+<link rel="icon" href="favicon.ico?v=3" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=3" />
+<link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-512.png?v=3" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png?v=3" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+<!-- 마크다운(.md) 문법을 화면에서 해석해주는 도구 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<style>
+  :root{
+    --bg:#ffffff;--bg-soft:#f4f6fb;--card:#ffffff;--card-hover:#fbfcff;--border:#e7eaf1;--border-strong:#d7dce8;
+    --text:#0d1220;--muted:#5a6478;--faint:#8a93a6;
+    --accent:#0b5cff;--accent-2:#2ea6ff;--accent-deep:#0a3ecc;--accent-soft:rgba(11,92,255,.08);--accent-soft2:rgba(11,92,255,.14);
+    --green:#0f9d63;--green-soft:rgba(15,157,99,.12);--amber:#d1810f;--amber-soft:rgba(209,129,15,.12);
+    --like:#e5484d;--like-soft:rgba(229,72,77,.09);
+    --radius:16px;--maxw:1120px;--shadow:0 1px 2px rgba(13,18,32,.04),0 8px 24px rgba(13,18,32,.05);--shadow-hover:0 4px 10px rgba(11,92,255,.08),0 18px 40px rgba(13,18,32,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Noto Sans KR","Inter",system-ui,sans-serif;
+    background:
+      radial-gradient(900px 480px at 88% -160px,rgba(46,166,255,.10) 0%,rgba(46,166,255,0) 60%),
+      radial-gradient(1000px 520px at 8% -220px,rgba(11,92,255,.09) 0%,rgba(11,92,255,0) 62%),
+      var(--bg);
+    color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+  .nav{display:flex;align-items:center;gap:24px;height:66px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em}
+  .brand .mark{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center}
+  .brand .mark svg{width:100%;height:100%;display:block}
+  .brand .mark img{width:100%;height:100%;object-fit:contain;display:block}
+  .brand .bt{display:block;line-height:1.15}
+  .brand .bt b{font-size:15.5px;font-weight:800;color:var(--text)}
+  .brand small{display:block;font-size:11px;font-weight:600;color:var(--faint);letter-spacing:.01em;margin-top:1px}
+  .nav .links{display:flex;gap:4px;margin-left:auto}
+  .nav .links a{padding:8px 14px;border-radius:10px;font-size:14px;font-weight:700;color:var(--muted);transition:.15s;white-space:nowrap}
+  .nav .links a:hover{color:var(--text);background:var(--bg-soft)}
+  .nav .links a.active{color:var(--accent);background:var(--accent-soft)}
+  /* 모바일: 헤더를 컴팩트하게 — 메뉴가 가로 한 줄 유지 (PC는 영향 없음) */
+  @media(max-width:600px){
+    .nav{gap:10px;height:58px}
+    .brand{gap:8px}
+    .brand .mark{width:28px;height:28px;flex:0 0 28px}
+    .brand .bt b{font-size:14px;white-space:nowrap}
+    .brand small{display:none}
+    .nav .links{gap:2px}
+    .nav .links a{padding:7px 9px;font-size:13px}
+    .hero h1 .hbr{display:inline}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:56px 0 26px}
+  .hero .hcopy{position:relative;z-index:2;max-width:600px}
+  .hero .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.02em;
+    color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:16px}
+  .hero .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(11,92,255,.5);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(11,92,255,.45)}70%{box-shadow:0 0 0 8px rgba(11,92,255,0)}100%{box-shadow:0 0 0 0 rgba(11,92,255,0)}}
+  .hero h1{font-size:35px;font-weight:900;letter-spacing:-.035em;line-height:1.22}
+  .hero h1 .hl{background:linear-gradient(100deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero h1 .hbr{display:none}
+  .hero p{color:var(--muted);margin-top:14px;font-size:16px;max-width:560px}
+  .hero .meta{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+  .hero .meta .chip{display:inline-flex;align-items:baseline;gap:6px;background:#fff;border:1px solid var(--border);
+    border-radius:12px;padding:9px 14px;font-size:13px;color:var(--muted);box-shadow:var(--shadow)}
+  .hero .meta .chip b{font-size:18px;font-weight:900;color:var(--text);letter-spacing:-.02em;font-family:"Inter"}
+
+  /* ---------- hero crystal animation ---------- */
+  .hero-art{position:absolute;top:0;right:8px;width:340px;height:100%;z-index:1;pointer-events:none;display:grid;place-items:center}
+  .hero-art .glow{position:absolute;width:240px;height:240px;border-radius:50%;
+    background:radial-gradient(circle,rgba(46,166,255,.28) 0%,rgba(11,92,255,.10) 45%,rgba(11,92,255,0) 70%);
+    filter:blur(6px);animation:breathe 5s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(.92);opacity:.75}50%{transform:scale(1.08);opacity:1}}
+  .crystals{position:relative;width:220px;height:220px}
+  .cube{position:absolute;width:74px;height:74px;border-radius:12px;
+    background:linear-gradient(150deg,#5fbcff 0%,#1f74ff 45%,#0a3ecc 100%);
+    box-shadow:inset 0 2px 8px rgba(255,255,255,.55),inset 0 -10px 18px rgba(6,32,120,.55),0 14px 30px rgba(11,92,255,.35);
+    border:1px solid rgba(255,255,255,.35)}
+  .cube::before{content:"";position:absolute;inset:8px 8px auto 8px;height:26px;border-radius:8px;
+    background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0))}
+  .cube.c1{top:22px;left:26px;animation:float1 6s ease-in-out infinite}
+  .cube.c2{top:78px;left:104px;width:64px;height:64px;animation:float2 6.6s ease-in-out infinite}
+  .cube.c3{top:132px;left:34px;width:58px;height:58px;animation:float3 7.2s ease-in-out infinite}
+  @keyframes float1{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(2deg)}}
+  @keyframes float2{0%,100%{transform:translateY(-6px) rotate(3deg)}50%{transform:translateY(10px) rotate(-2deg)}}
+  @keyframes float3{0%,100%{transform:translateY(4px) rotate(-2deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+  /* 실제 크리스탈 이미지를 넣으면 아래로 자동 대체됩니다 */
+  .hero-art img.crystal-img{position:relative;width:auto;max-width:300px;max-height:210px;filter:drop-shadow(0 22px 38px rgba(11,92,255,.34));animation:floatImg 6.5s ease-in-out infinite}
+  @keyframes floatImg{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-16px) rotate(1.5deg)}}
+  @media(max-width:760px){.hero-art{display:none}.hero .hcopy{max-width:none}}
+  @media(prefers-reduced-motion:reduce){.cube,.crystals .cube,.glow,.crystal-img,.hero .eyebrow .dot{animation:none!important}}
+
+  /* ---------- sections ---------- */
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:40px 0 18px}
+  .sec-head h2{font-size:20px;font-weight:900;letter-spacing:-.025em}
+  .sec-head span{color:var(--faint);font-size:13px;font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  @media(max-width:1040px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+
+  /* ---------- cards ---------- */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;
+    transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .2s,border-color .2s;display:flex;flex-direction:column;gap:10px;
+    box-shadow:var(--shadow);opacity:0;transform:translateY(10px);animation:cardIn .5s cubic-bezier(.2,.7,.3,1) forwards}
+  @keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+  .card:hover{border-color:var(--border-strong);transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+  .card .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;background:var(--accent-soft2);color:var(--accent);letter-spacing:.01em}
+  .tag.g{background:var(--green-soft);color:var(--green)}
+  .tag.a{background:var(--amber-soft);color:var(--amber)}
+  /* 주제(Topic) 배지 색 — 노션 Topic 열의 색과 맞췄습니다 */
+  .tag.tp-blue{background:rgba(11,92,255,.12);color:#0b5cff}
+  .tag.tp-orange{background:rgba(214,116,16,.13);color:#b5620a}
+  .tag.tp-gray{background:rgba(90,100,120,.12);color:#5a6478}
+  .tag.tp-yellow{background:rgba(190,150,10,.16);color:#8a6a05}
+  .tag.tp-pink{background:rgba(214,51,132,.12);color:#c02a76}
+  .tag.tp-purple{background:rgba(124,58,237,.12);color:#6d28d9}
+  .tag.tp-red{background:rgba(229,72,77,.12);color:#d13438}
+  .tag.tp-green{background:rgba(15,157,99,.13);color:#0f9d63}
+  .tag.tp-brown{background:rgba(140,94,60,.14);color:#8b5e3c}
+  .card h3{font-size:16px;font-weight:800;letter-spacing:-.018em;line-height:1.45;transition:color .15s;
+           display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .card:hover h3{color:var(--accent)}
+  .card .excerpt{color:var(--muted);font-size:13.5px;line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  /* 작성자 이름·날짜는 한 덩어리로 묶여 절대 쪼개지지 않고,
+     주제 배지는 자리가 모자라면 통째로 아랫줄로 내려갑니다(글자 잘림 없음) */
+  .card .foot{display:flex;align-items:center;flex-wrap:wrap;gap:7px 6px;margin-top:auto;padding-top:6px;
+    font-size:13px;color:var(--faint);min-width:0}
+  .avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;position:relative;overflow:hidden;flex:0 0 auto}
+  .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .card .foot .byline,.feat-body .foot .byline{display:inline-flex;align-items:center;gap:6px;
+    white-space:nowrap;flex:0 0 auto;min-width:0}
+  .card .foot .who,.feat-body .foot .who{color:var(--muted);font-weight:700;white-space:nowrap}
+
+  .week-block{margin-bottom:34px}
+  .week-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:6px 13px;border-radius:9px;margin-bottom:14px}
+  /* minmax(0,1fr) 이 있어야 긴 제목이 칸을 밀어내지 않습니다 */
+  /* 최신·주차별과 같이 한 행에 두 개씩 */
+  .topics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+  @media(max-width:1040px){.topics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:640px){.topics{grid-template-columns:minmax(0,1fr)}}
+  /* 최신 기사 카드(.card)와 동일한 톤 — 테두리·그림자·모서리·전환 효과를 맞춥니다 */
+  .topic-card{min-width:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;
+    display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);
+    transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .2s,border-color .2s;
+    opacity:0;transform:translateY(10px);animation:cardIn .5s cubic-bezier(.2,.7,.3,1) forwards}
+  .topic-card:hover{transform:translateY(-4px);border-color:var(--border-strong);box-shadow:var(--shadow-hover)}
+  .topic-card .thead{display:flex;align-items:center;gap:8px;min-width:0}
+  .topic-card .tag{font-size:12px;padding:4px 11px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .topic-card .ct{margin-left:auto;color:var(--faint);font-size:13px;font-weight:700;white-space:nowrap}
+  .topic-card .peek{display:flex;flex-direction:column;gap:7px;min-width:0;margin-top:auto;padding-top:11px;border-top:1px solid var(--border)}
+  /* 기사 제목 앞 글머리 점. 점은 그대로 두고 제목만 말줄임 처리합니다 */
+  .topic-card .peek span{display:flex;gap:8px;min-width:0;color:var(--text);font-size:13.5px;font-weight:600;line-height:1.5;letter-spacing:-.01em}
+  .topic-card .peek span::before{content:"•";color:var(--accent);opacity:.55;flex:none;font-weight:900}
+  .topic-card:hover .peek span{color:var(--muted)}
+  .topic-card .peek span i{font-style:normal;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* 미분류는 주제가 아니라 "할 일"에 가까우므로 한 줄 전체를 쓰고 점선으로 구분합니다 */
+  .topic-card.muted{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap;
+    background:var(--bg-soft);border-style:dashed;border-color:var(--border-strong);box-shadow:none}
+  .topic-card.muted:hover{transform:translateY(0);box-shadow:none}
+  .topic-card.muted .ct{margin-left:0}
+  .topic-card.muted .tag{background:var(--card);color:var(--faint)}
+  .topic-card.muted .peek{display:none}
+  .topic-card.muted .mhint{color:var(--faint);font-size:12.5px;margin-left:auto;font-weight:600}
+  .tag.tlink{cursor:pointer;transition:.15s}
+  .tag.tlink:hover{filter:brightness(.92)}
+  .authors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  @media(max-width:1040px){.authors{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media(max-width:640px){.authors{grid-template-columns:repeat(2,1fr)}}
+  .author-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;cursor:pointer;
+    transition:transform .2s,box-shadow .2s,border-color .2s;box-shadow:var(--shadow)}
+  .author-card:hover{transform:translateY(-4px);border-color:var(--border-strong);box-shadow:var(--shadow-hover)}
+  .author-card .avatar{width:48px;height:48px;font-size:18px;margin:0 auto 11px}
+  .author-card .nm{font-weight:800;font-size:15px}
+  .author-card .ct{color:var(--faint);font-size:12.5px;margin-top:3px;font-weight:600}
+  .author-card .abio{color:var(--muted);font-size:12.5px;margin-top:9px;padding-top:9px;border-top:1px solid var(--border);line-height:1.55}
+  .hero .abio-lg{margin-top:8px;color:var(--accent);font-size:14.5px;font-weight:700}
+  .hero .about-lg{margin-top:10px;color:var(--muted);font-size:15px;line-height:1.75;max-width:640px;white-space:pre-wrap}
+  .count-pill{font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:5px 12px;border-radius:999px;letter-spacing:-.01em;line-height:1;white-space:nowrap}
+  .hero h1 .a-count{font-size:12px;font-weight:600;color:var(--faint);letter-spacing:0;line-height:1;white-space:nowrap}
+
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;font-weight:700;margin:28px 0 8px;cursor:pointer;transition:.15s}
+  .back:hover{color:var(--accent);gap:9px}
+  .article{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:34px;margin-top:6px;box-shadow:var(--shadow)}
+  .article h1{font-size:27px;font-weight:900;letter-spacing:-.025em;line-height:1.35;margin-bottom:14px}
+  .article .abyline{display:flex;align-items:center;gap:8px 10px;color:var(--faint);font-size:13.5px;margin-bottom:22px;flex-wrap:wrap}
+  .article .abyline .byline{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;min-width:0}
+  .article .abyline .who{color:var(--text);font-weight:700;white-space:nowrap}
+  .article h4{font-size:12px;font-weight:900;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin:26px 0 8px}
+  .article p{color:var(--text);font-size:15.5px;line-height:1.85;white-space:pre-wrap}
+  .article .insight{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-top:6px}
+  .article .insight>*:first-child{margin-top:0}
+  .article .insight>*:last-child{margin-bottom:0}
+  .article .insight p{color:var(--text);font-size:15px;line-height:1.8;margin:10px 0;white-space:normal}
+  .article p.psum{white-space:normal}
+  .article .insight a,.article p.psum a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
+  .article .insight code{background:var(--bg-soft);border:1px solid var(--border);border-radius:5px;padding:1px 5px;font-size:.92em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  /* 소제목 3단계 — 크기·굵기·구분선으로 층위를 확실히 나눕니다
+     마크다운 #/##/### 과 노션 제목1/2/3 이 같은 층위로 보이게 맞춰둔 규칙입니다 */
+  .article .insight h1,.article .insight h2,.article .insight h3.ih1{font-size:19px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin:28px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .article .insight h3,.article .insight h4.ih2{font-size:16.5px;font-weight:800;color:var(--text);letter-spacing:-.015em;margin:24px 0 8px}
+  .article .insight h4,.article .insight h5,.article .insight h6,.article .insight h5.ih3{font-size:14.5px;font-weight:800;color:var(--muted);letter-spacing:-.01em;margin:18px 0 6px}
+  .article .insight ul,.article .insight ol{margin:10px 0 10px 22px;color:var(--text)}
+  .article .insight li{margin:5px 0;line-height:1.8;font-size:15px}
+  .article .insight li::marker{color:var(--accent);font-weight:700}
+  .article .insight blockquote{border-left:3px solid var(--border-strong);padding:2px 0 2px 14px;margin:12px 0;color:var(--muted)}
+  .article .insight pre{background:var(--bg-soft);border:1px solid var(--border);padding:12px 14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;white-space:pre-wrap;margin:12px 0}
+  .article .insight pre code{background:none;border:none;padding:0}
+  .article .insight hr{border:none;border-top:1px solid var(--border);margin:18px 0}
+  .article .insight .itbl-wrap{overflow-x:auto;margin:12px 0;-webkit-overflow-scrolling:touch}
+  .article .insight table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff;border-radius:10px;overflow:hidden;margin:12px 0;display:block;overflow-x:auto}
+  .article .insight table th,.article .insight table td{border:1px solid var(--border);padding:9px 12px;text-align:left;vertical-align:top;color:var(--text);white-space:normal}
+  .article .insight table th{background:var(--bg-soft);font-weight:800;color:var(--text)}
+  .article .insight table tr:nth-child(even) td{background:#fafbfe}
+  /* ---- 좋아요 ---- */
+  .likebar{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:22px;border-top:1px solid var(--border);flex-wrap:wrap}
+  .likebtn{display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border:1px solid var(--border-strong);border-radius:999px;
+    background:var(--card);font-family:inherit;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;line-height:1}
+  .likebtn:hover:not(:disabled){border-color:var(--like);color:var(--like);background:var(--like-soft);transform:translateY(-1px)}
+  .likebtn:active:not(:disabled){transform:scale(.96)}
+  .likebtn:disabled{opacity:.5;cursor:default}
+  .likebtn svg{width:18px;height:18px;flex:none;transition:transform .18s cubic-bezier(.3,1.5,.5,1)}
+  .likebtn.on{border-color:var(--like);color:var(--like);background:var(--like-soft)}
+  .likebtn.on svg{fill:var(--like);stroke:var(--like)}
+  .likebtn.pop svg{transform:scale(1.35)}
+  .likebar .lhint{font-size:13px;color:var(--faint)}
+  .likebar .lhint.err{color:var(--like);font-weight:700;max-width:520px;line-height:1.5;word-break:break-word}
+  /* 주제 배지는 카드 오른쪽 아래(작성자·날짜 줄 끝)에 붙습니다 */
+  /* 주제 배지: 글자를 자르지 않고, 안 들어가면 줄바꿈해서 전부 보여줍니다 */
+  .card .foot .ctopics,.feat-body .foot .ctopics{display:flex;align-items:center;flex-wrap:wrap;gap:5px;
+    min-width:0;margin-left:auto;padding-left:6px;justify-content:flex-end;flex:0 1 auto}
+  .card .foot .ctopics .tag,.feat-body .foot .ctopics .tag{font-size:10.5px;padding:2px 8px;white-space:nowrap;flex:0 0 auto}
+  /* 좋아요는 같은 줄 맨 오른쪽(주제 배지 뒤) */
+  /* 조회수 — 제목 옆이 아니라 작성자 줄 맨 오른쪽에 맞춰 놓습니다 */
+  .article h1.ptitle{margin-top:12px}
+  .article .abyline .aview{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
+                           color:var(--faint);font-size:13px;font-weight:600;white-space:nowrap}
+  .article .abyline .aview svg{width:14px;height:14px;flex:none;opacity:.8}
+  .article .abyline .aview b{font-weight:700;color:var(--muted)}
+  /* 카드의 좋아요 표시는 제거했습니다 — 좋아요는 기사 안에서 보고 누릅니다 */
+  .src{display:inline-flex;align-items:center;gap:7px;margin-top:26px;padding:11px 17px;border:1px solid var(--border-strong);border-radius:11px;font-size:14px;font-weight:700;color:var(--muted);transition:.15s}
+  .src:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+
+  footer{border-top:1px solid var(--border);margin-top:64px;padding:32px 0;color:var(--faint);font-size:13px;text-align:center;font-weight:600}
+  .empty{color:var(--faint);padding:40px 0;text-align:center;font-size:14px}
+  .loading{padding:80px 0;text-align:center;color:var(--muted)}
+  .spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .banner{background:var(--amber-soft);border:1px solid rgba(209,129,15,.3);color:var(--amber);font-size:13px;font-weight:600;padding:11px 16px;border-radius:11px;margin-top:18px}
+
+  /* ---------- 상세 페이지 2/3 + 1/3 레이아웃 ---------- */
+  /* 헤더(Yerim Bae)와 좌우 폭을 정확히 맞춤 — 별도 확장 없음 */
+  #app.wide{max-width:var(--maxw)}
+  .post-layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:18px;align-items:start}
+  .post-main{min-width:0}
+  /* 본문은 박스 없이 배경 위에 그대로 (참고: 뉴닉 스타일) */
+  .post-layout .article{margin-top:0;padding:4px 2px 0;background:none;border:none;box-shadow:none}
+  .post-layout .article .abyline{padding-bottom:20px;margin-bottom:6px;border-bottom:1px solid var(--border)}
+  .post-layout .article .insight{background:none;border:none;padding:0;margin-top:2px}
+  .post-layout .article .insight pre,.post-layout .article .insight table{background:var(--bg-soft)}
+  /* "요약" · "인사이트" 섹션 제목만 키움 (본문 글자 크기는 그대로) */
+  .post-layout .article > h4{font-size:16px;letter-spacing:.02em;margin:30px 0 10px}
+
+  /* 기사 상단 대표 이미지 (제목 박스 위) — 2:1 프레임 */
+  .pcover{position:relative;display:block;width:100%;aspect-ratio:2/1;overflow:hidden;border-radius:var(--radius);
+          border:1px solid var(--border);background:#fff;box-shadow:var(--shadow)}
+  .pcwrap{margin:0 0 16px}
+  /* 이미지 출처 (노션 캡션) */
+  .pccap{margin-top:8px;padding:0 2px;font-size:13px;font-weight:600;line-height:1.6;color:var(--faint);text-align:right}
+  .pccap a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
+  .pcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
+  /* 카드 썸네일 — 16:9 프레임 */
+  .card .thumb{position:relative;display:block;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:11px;
+               background:#fff;border:1px solid var(--border);margin-bottom:12px}
+  .card .thumb img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+  .card:hover .thumb img{transform:scale(1.04)}
+
+  /* 프레임보다 세로로 긴 이미지(로고·인포그래픽 등)는 자르지 않고 전부 보여주고,
+     남는 좌우 여백은 같은 이미지를 흐리게 깔아 자연스럽게 채웁니다 */
+  .pcover.fit img,.thumb.fit img,.feat-cover.fit img{object-fit:contain}
+  .pcover.fit img,.feat-cover.fit img{padding:16px}
+  .thumb.fit img{padding:10px}
+  .card:hover .thumb.fit img{transform:none}
+  .feat-main:hover .feat-cover.fit img{transform:none}
+  .pcover.fit::before,.thumb.fit::before,.feat-cover.fit::before{content:"";position:absolute;inset:0;z-index:0;
+    background-image:var(--bgimg);background-size:cover;background-position:center;
+    filter:blur(30px) saturate(1.1);transform:scale(1.25)}
+  .pcover.fit::after,.thumb.fit::after,.feat-cover.fit::after{content:"";position:absolute;inset:0;z-index:0;background:rgba(255,255,255,.30)}
+  /* 본문 안 이미지 (두 번째 이후) */
+  .article .insight figure.ifig{margin:16px 0}
+  .article .insight figure.ifig img{width:100%;max-height:420px;object-fit:contain;display:block;
+                                    border:1px solid var(--border);border-radius:11px;background:var(--bg-soft)}
+  /* 본문 안 이미지 출처도 상단 배너와 동일한 모양 (오른쪽 아래, 읽음과 같은 크기·색) */
+  .article .insight figure.ifig figcaption{margin-top:8px;padding:0 2px;font-size:13px;font-weight:600;
+                                           color:var(--faint);text-align:right;line-height:1.6}
+  .article .insight figure.ifig figcaption a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
+  .post-layout .article h1{font-size:28px;line-height:1.38;margin-bottom:16px}
+  .post-side{position:sticky;top:82px;display:grid;grid-template-rows:1fr 1fr;gap:16px;min-width:0}
+  .spanel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 16px 14px;box-shadow:var(--shadow);
+          display:flex;flex-direction:column;min-height:0}
+  .spanel .sh{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+  .spanel .sh h3{font-size:12.5px;font-weight:900;color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+  .spanel .sh h3{font-size:12px;letter-spacing:.04em}
+  .spanel .sh span{font-size:11px;color:var(--faint);font-weight:600;margin-left:auto;white-space:nowrap;
+                   overflow:hidden;text-overflow:ellipsis;max-width:44%}
+  .spanel .slist{display:flex;flex-direction:column;gap:4px}
+  .scard{display:block;padding:8px 9px;border-radius:10px;cursor:pointer;transition:.15s;border:1px solid transparent;min-width:0}
+  .scard:hover{background:var(--bg-soft);border-color:var(--border)}
+  .scard.cur{background:var(--accent-soft);border-color:rgba(11,92,255,.18)}
+  .scard .st{font-size:13.5px;font-weight:700;line-height:1.45;letter-spacing:-.015em;color:var(--text);
+             display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .scard:hover .st{color:var(--accent)}
+  .scard .sm{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:11.5px;color:var(--faint);font-weight:600;min-width:0}
+  .scard .sm .who{color:var(--muted)}
+  .scard .sm .tag{font-size:10px;padding:1px 7px;max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .spanel .sempty{color:var(--faint);font-size:12.5px;padding:14px 4px;text-align:center;line-height:1.6}
+  .spanel .smore{margin-top:auto;padding-top:10px;font-size:12px;font-weight:800;color:var(--accent)}
+  .spanel .smore:hover{text-decoration:underline}
+  @media(max-width:1000px){
+    #app.wide{max-width:var(--maxw)}
+    .post-layout{grid-template-columns:1fr}
+    .post-side{position:static;grid-template-rows:auto auto;margin-top:8px}
+  }
+
+  /* ---------- 홈(대시보드) ---------- */
+  /* 왼쪽 큰 기사(2:1 이미지) + 오른쪽 최신 4건 */
+  .feat{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:20px;align-items:stretch}
+  @media(max-width:900px){.feat{grid-template-columns:minmax(0,1fr)}}
+  .feat-main{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+    cursor:pointer;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0;
+    transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .2s,border-color .2s}
+  .feat-main:hover{transform:translateY(-4px);border-color:var(--border-strong);box-shadow:var(--shadow-hover)}
+  .feat-cover{position:relative;display:block;width:100%;aspect-ratio:2/1;overflow:hidden;background:#fff;flex:none}
+  .feat-cover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+  .feat-main:hover .feat-cover img{transform:scale(1.03)}
+  .feat-body{padding:18px 22px 20px;display:flex;flex-direction:column;gap:9px;min-width:0}
+  .feat-body .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .feat-body h2{font-size:23px;font-weight:900;letter-spacing:-.03em;line-height:1.35;transition:color .15s;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .feat-main:hover .feat-body h2{color:var(--accent)}
+  .feat-body .fex{color:var(--muted);font-size:14px;line-height:1.7;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .feat-body .foot{display:flex;align-items:center;flex-wrap:wrap;gap:7px 6px;margin-top:auto;padding-top:4px;font-size:13px;color:var(--faint)}
+  /* 오른쪽 최신 목록 */
+  .feat-side{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:16px 20px 14px;display:flex;flex-direction:column;min-width:0}
+  .feat-side .fsh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    padding-bottom:11px;border-bottom:2px solid var(--text)}
+  .feat-side .fsh h3{font-size:17px;font-weight:900;letter-spacing:-.025em}
+  .feat-side .fsh a{font-size:11px;font-weight:800;color:var(--faint);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+  .feat-side .fsh a:hover{color:var(--accent)}
+  .flist{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+  .fitem{display:block;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;flex:1 1 auto;min-height:0}
+  .fitem:last-child{border-bottom:none}
+  .fitem .ftop{font-size:10.5px;font-weight:800;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+  .fitem .ftt{font-size:15px;font-weight:800;letter-spacing:-.02em;line-height:1.45;color:var(--text);transition:color .15s;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .fitem:hover .ftt{color:var(--accent)}
+  .fitem .fmeta{margin-top:6px;font-size:11px;color:var(--faint);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+  /* 주제별 탭 */
+  .ttabs{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--border);margin-bottom:18px}
+  .ttab{font-family:inherit;font-size:13px;font-weight:700;padding:7px 15px;border-radius:999px;cursor:pointer;
+    background:var(--bg-soft);border:1px solid transparent;color:var(--muted);transition:.15s;letter-spacing:-.01em}
+  .ttab:hover{color:var(--text);border-color:var(--border)}
+  .ttab.on{background:var(--accent-soft);border-color:rgba(11,92,255,.25);color:var(--accent)}
+  .ttab .tn{font-weight:600;opacity:.65;margin-left:5px}
+
+  /* =========================================================================
+     커서 · 호버 인터랙션 (디자인 요소)
+     - 마우스가 있는 기기(PC)에서만 적용됩니다. 터치 기기는 자동으로 무시됩니다.
+     ========================================================================= */
+  @media (hover:hover) and (pointer:fine){
+
+    /* --- 1) 크리스탈 로고 커서 --- */
+    /* 페이지 전체: 작은 크리스탈 */
+    body, body *{
+      cursor:image-set(url("assets/cursor-crystal-sm.png") 1x, url("assets/cursor-crystal-sm@2x.png") 2x) 12 11, auto;
+    }
+    /* 글자 입력·선택 영역은 기본 커서 유지 (가독성) */
+    input, textarea, [contenteditable]{cursor:text}
+    /* 클릭 가능한 요소 위: 큰 크리스탈 */
+    a, button, .card, .card *, .topic-card, .topic-card *, .author-card, .author-card *,
+    .scard, .scard *, .fitem, .fitem *, .tag.tlink, .ttab, .back, .likebtn, .nav .links a{
+      cursor:image-set(url("assets/cursor-crystal.png") 1x, url("assets/cursor-crystal@2x.png") 2x) 18 17, pointer;
+    }
+    .likebtn:disabled{
+      cursor:image-set(url("assets/cursor-crystal-sm.png") 1x, url("assets/cursor-crystal-sm@2x.png") 2x) 12 11, default;
+    }
+
+    /* --- 2) 호버 효과 강화 (순수 CSS) --- */
+    /* 카드가 조금 더 살아나도록 */
+    .card:hover, .topic-card:hover{transform:translateY(-6px) scale(1.012)}
+    .author-card:hover{transform:translateY(-6px) scale(1.015)}
+
+    /* 카드 안 태그가 하이라이트 */
+    .card .tag{transition:background .2s,color .2s}
+    .card:hover .tag{background:var(--accent);color:#fff}
+
+    /* 상단 메뉴 밑줄이 왼쪽에서 오른쪽으로 그려짐 */
+    .nav .links a{position:relative}
+    .nav .links a::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:2px;border-radius:2px;
+      background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform .3s cubic-bezier(.2,.7,.3,1)}
+    .nav .links a:hover::after{transform:scaleX(1);transform-origin:left}
+    .nav .links a.active::after{transform:scaleX(0)}
+
+    /* 주제 탭 살짝 떠오름 */
+    .ttab:hover{transform:translateY(-1px)}
+  }
+
+  /* 애니메이션 최소화 설정을 켠 사용자는 움직임 없이 */
+  @media (prefers-reduced-motion:reduce){
+    .card:hover,.topic-card:hover,.author-card:hover{transform:none!important}
+    .nav .links a::after,.card .foot::after{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a href="#/" class="brand">
+      <span class="mark" id="brandMark">
+        <!-- 워드마크에서 잘라낸 마크(assets/logo-mark.png)가 있으면 사용, 없으면 아래 SVG 폴백 -->
+        <img src="assets/logo-mark.png" alt="Yerim Bae" onerror="this.remove();var f=document.getElementById('brandFallback');if(f)f.style.display='block'" />
+        <svg id="brandFallback" style="display:none" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Yerim Bae">
+          <rect x="4" y="6" width="15" height="10" rx="2.5" fill="#0d1220"/>
+          <rect x="4" y="19" width="10" height="15" rx="2.5" fill="#0d1220"/>
+          <rect x="22" y="6" width="14" height="14" rx="3" fill="#0d1220"/>
+        </svg>
+      </span>
+      <span class="bt"><b>Yerim Bae</b><small>Accounting Study Archive · 회계 공부 아카이브</small></span>
+    </a>
+    <nav class="links">
+      <a href="#/" data-route="dash">홈</a>
+      <a href="#/latest" data-route="home">최신</a>
+      <a href="#/weeks" data-route="weeks">주차별</a>
+      <a href="#/topics" data-route="topics">주제별</a>
+      <a href="#/authors" data-route="authors">작성자</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app" class="wrap"></main>
+
+<footer><div class="wrap">Yerim Bae · 회계 공부 아카이브 · Accounting Study Archive</div></footer>
+
+<script>
+/* =========================================================================
+   이 사이트는 노션 데이터베이스에서 데이터를 읽어옵니다.
+   데이터는 /api/posts (중계 함수)가 노션에서 가져와 돌려줍니다.
+   ▶ 노션 연결 설정은 코드가 아니라 Vercel 환경변수에서 합니다 (README 참고).
+   ▶ 로컬에서 이 파일만 열면 함수가 없어 아래 샘플 데이터로 보입니다.
+   ========================================================================= */
+
+/* 배포 전(로컬 미리보기)에 쓰이는 샘플 데이터 */
+const SAMPLE = [
+  {id:1,topics:["재무회계"],pick:true,title:"K-IFRS 제1116호 리스 — 사용권자산과 리스부채 인식 정리",author:"배예림",week:2,tags:["K-IFRS","재무회계"],date:"2026-07-18",
+   cover:"assets/og-image.png",
+   summary:"운용리스와 금융리스의 구분이 사라지고 리스이용자는 원칙적으로 모든 리스를 재무상태표에 인식한다. 사용권자산과 리스부채를 최초 인식하는 방법과 후속 측정 논리를 정리했다.",
+   insight:"핵심은 부채 인식 범위가 넓어지면서 부채비율·EBITDA 같은 재무비율이 구조적으로 달라진다는 점. 회계처리 자체보다 재무제표 이용자가 받는 인상이 바뀌는 게 실무적으로 더 중요하다.",source:"https://example.com/kifrs-1116"},
+  {id:2,topics:["원가관리회계"],title:"표준원가 차이분석 — 가격차이와 능률차이 분해",author:"배예림",week:2,tags:["원가관리회계"],date:"2026-07-17",
+   summary:"직접재료비·직접노무비 차이를 가격(임률)차이와 수량(능률)차이로 분해하는 공식과, 변동제조간접비 차이분석까지 단계별로 풀이했다.",
+   insight:"차이분석은 계산보다 책임 귀속이 본질. 가격차이는 구매부서, 능률차이는 생산부서로 연결된다는 점을 잡고 보면 문제 유형이 정리된다.",source:"https://example.com/standard-costing"},
+  {id:3,topics:["세무회계"],pick:true,title:"법인세 세무조정 — 익금산입·손금불산입 소득처분 흐름",author:"배예림",week:2,tags:["세무회계"],date:"2026-07-16",
+   summary:"결산서상 당기순이익에서 각 사업연도 소득금액으로 가는 세무조정 흐름과, 조정 항목별 소득처분(유보·상여·기타사외유출)의 판단 기준을 표로 정리했다.",
+   insight:"소득처분은 결국 그 돈이 회사 안에 남았는지, 밖으로 나갔다면 누구에게 갔는지를 묻는 것. 이 질문 하나로 유보/사외유출 판단이 거의 갈린다.",source:"https://example.com/corporate-tax"},
+  {id:4,topics:["회계감사"],title:"감사위험모형과 중요성 — 왜 표본을 뽑는가",author:"배예림",week:1,tags:["회계감사"],date:"2026-07-11",
+   cover:"assets/crystal.png",
+   summary:"감사위험 = 고유위험 × 통제위험 × 적발위험 구조와, 중요성 금액을 설정해 감사 절차의 범위를 정하는 논리를 정리했다.",
+   insight:"감사는 전수조사가 아니라 위험 기반 배분이라는 점이 출발점. 적발위험만 감사인이 통제할 수 있다는 사실이 실무 절차 설계의 이유를 설명해준다.",source:"https://example.com/audit-risk"},
+  {id:5,topics:["재무회계"],title:"수익인식 5단계 모형 — 기업회계기준서 제1115호",author:"배예림",week:1,tags:["K-IFRS","재무회계"],date:"2026-07-10",
+   summary:"계약 식별 → 수행의무 식별 → 거래가격 산정 → 거래가격 배분 → 수행의무 이행 시 수익인식. 각 단계에서 자주 나오는 판단 이슈를 사례와 함께 정리했다.",
+   insight:"5단계 중 실제로 다툼이 생기는 건 2단계(수행의무 식별)와 5단계(기간에 걸쳐 vs 한 시점). 나머지는 기계적으로 따라가는 편이다.",source:"https://example.com/kifrs-1115"},
+  {id:6,topics:["재무제표분석"],pick:true,title:"ROE 듀폰분해 — 수익성·활동성·재무레버리지",author:"배예림",week:1,tags:["재무제표분석"],date:"2026-07-09",
+   summary:"ROE를 매출액순이익률 × 총자산회전율 × 재무레버리지로 분해해, 같은 ROE라도 질이 다른 이유를 사례 기업으로 비교했다.",
+   insight:"레버리지로 만든 ROE와 마진으로 만든 ROE는 지속가능성이 다르다. 분해 없이 ROE 숫자만 보면 위험한 기업을 좋게 볼 수 있다.",source:"https://example.com/dupont"},
+  {id:7,topics:["세무회계"],title:"부가가치세 매입세액 불공제 항목 정리",author:"배예림",week:1,tags:["세무회계"],date:"2026-07-08",
+   summary:"세금계산서 미수취·부실기재, 사업과 직접 관련 없는 지출, 비영업용 승용차, 접대비 관련 매입세액 등 불공제 사유를 유형별로 묶었다.",
+   insight:"불공제 항목은 암기 대상처럼 보이지만 대부분 '사업과의 관련성'과 '증빙'이라는 두 축으로 설명된다. 축을 잡고 보면 새 사례도 판단이 된다.",source:"https://example.com/vat-input"},
+  {id:8,topics:["원가관리회계"],title:"CVP 분석 — 손익분기점과 안전한계율",author:"배예림",week:2,tags:["원가관리회계"],date:"2026-07-15",
+   summary:"공헌이익 개념에서 출발해 손익분기점 판매량·매출액, 목표이익 달성 판매량, 안전한계율까지 계산 흐름을 정리했다.",
+   insight:"CVP의 전제(선형성·고정비 일정·판매량과 생산량 일치)가 깨지는 순간을 아는 게 실제 의사결정에서는 계산보다 중요하다.",source:"https://example.com/cvp"}
+];
+
+/* ---- 상태 ---- */
+let POSTS = [];
+let USING_SAMPLE = false;
+let AUTHORS_META = {}; // 이름 -> {bio} (노션 작성자 소개 DB에서 로드)
+// 로컬 미리보기(샘플)에서만 쓰는 예시 한줄소개
+const SAMPLE_AUTHORS = {
+  "배예림":"회계 공부 기록 · 재무회계·세무회계·원가관리회계"
+};
+
+/* ---- 유틸 ---- */
+const $app = document.getElementById("app");
+const initial = (name) => (name||"").slice(-2);
+// 요약 줄별 앞 공백 제거 -> 글머리 기호가 계단식으로 밀리지 않고 왼쪽 정렬
+const fmtSummary = (s) => (s||"").split("\n").map(l=>l.replace(/^[\s 　]+/,"")).join("<br>");
+// 작성자 아바타: authors/ 또는 assets/authors/ 폴더의 <이름>.png/.jpg를 순서대로 시도, 없으면 이니셜로 폴백
+function avatarHtml(name, style){
+  const n = encodeURIComponent(name||"");
+  const list = ["authors/"+n+".png","authors/"+n+".jpg","assets/authors/"+n+".png","assets/authors/"+n+".jpg"];
+  const st = style ? ` style="${style}"` : "";
+  return `<span class="avatar"${st}><img src="${list[0]}" alt="" loading="lazy" data-i="0" data-list="${list.join("|")}" onerror="var l=this.dataset.list.split('|'),i=+this.dataset.i+1;if(i&lt;l.length){this.dataset.i=i;this.src=l[i];}else{this.style.display='none';}">${initial(name)}</span>`;
+}
+/* 주제(Topic) 이름 → 배지 색. 노션 Topic 열에 값을 추가하면 여기에도 한 줄 넣어주세요(없으면 기본 파랑) */
+const TOPIC_TONE = {
+  "DeFi":"tp-orange","시장":"tp-blue","투자":"tp-orange","규제/법안":"tp-gray","기술":"tp-yellow",
+  "예측시장":"tp-gray","기관":"tp-pink","기타":"tp-purple","스테이블코인":"tp-red","보안":"tp-green","RWA":"tp-brown"
+};
+const tagClass = (t) => TOPIC_TONE[t] || (t.includes("규제") ? "g" : (["프로젝트","DeFi","L2","프로젝트분석"].includes(t) ? "a" : ""));
+const fmtDate = (d) => { if(!d||d.indexOf("-")<0) return d||""; const [,m,day]=d.split("-"); return `${m}.${day}`; };
+// 발행일(YYYY-MM-DD)로 그 주(일~토) 범위를 계산 -> {label:"2026.04.05~04.11", start:"2026-04-05"}
+function deriveWeek(dateStr){
+  if(!dateStr||dateStr.indexOf("-")<0) return {label:"미분류", start:"0000-00-00"};
+  const d=new Date(dateStr+"T00:00:00"); if(isNaN(d)) return {label:"미분류", start:"0000-00-00"};
+  const s=new Date(d); s.setDate(d.getDate()-d.getDay());
+  const e=new Date(s); e.setDate(s.getDate()+6);
+  const p2=n=>String(n).padStart(2,"0");
+  const f=x=>`${x.getFullYear()}.${p2(x.getMonth()+1)}.${p2(x.getDate())}`;
+  const fe=x=>`${p2(x.getMonth()+1)}.${p2(x.getDate())}`;
+  return {label:`${f(s)}~${fe(e)}`, start:`${s.getFullYear()}-${p2(s.getMonth()+1)}-${p2(s.getDate())}`};
+}
+const tagsHtml = (tags)=>`<div class="tags">${tags.map(t=>`<span class="tag ${tagClass(t)}">${t}</span>`).join("")}</div>`;
+
+/* ---- 좋아요 ----
+   숫자는 노션 DB의 Likes 열에 저장되고, "내가 눌렀는지"는 이 브라우저에만 기록됩니다.
+   (로그인이 없어서 브라우저 저장소를 지우면 다시 누를 수 있습니다) */
+const LIKE_KEY = "bay_liked_v1";
+function likedSet(){
+  try{ return new Set(JSON.parse(localStorage.getItem(LIKE_KEY)||"[]")); }catch(e){ return new Set(); }
+}
+function setLiked(pageId, on){
+  try{
+    const s=likedSet(); on?s.add(pageId):s.delete(pageId);
+    localStorage.setItem(LIKE_KEY, JSON.stringify([...s]));
+  }catch(e){}
+}
+function isLiked(pageId){ return !!pageId && likedSet().has(pageId); }
+
+/* ---- 조회수 ----
+   같은 브라우저에서 같은 글은 하루 1회만 집계합니다(새로고침으로 부풀지 않게).
+   노션 DB에 "Views" 숫자 열이 없으면 아무 일도 일어나지 않고 조용히 넘어갑니다. */
+const VIEW_KEY = "bay_viewed_v1";
+const fmtCount = (n)=> Number(n||0).toLocaleString("ko-KR");
+function countView(p){
+  if(!p || !p.pageId || USING_SAMPLE) return;
+  const today = new Date().toISOString().slice(0,10);
+  let seen = {};
+  try{ seen = JSON.parse(localStorage.getItem(VIEW_KEY)||"{}"); }catch(e){ seen = {}; }
+  if(seen[p.pageId] === today) return;                 // 오늘 이미 읽은 글
+  seen[p.pageId] = today;
+  // 오래된 기록 정리 (최근 300건만 유지)
+  const keys = Object.keys(seen);
+  if(keys.length > 300) keys.slice(0, keys.length-300).forEach(k=>delete seen[k]);
+  try{ localStorage.setItem(VIEW_KEY, JSON.stringify(seen)); }catch(e){}
+
+  fetch("/api/view",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({pageId:p.pageId})})
+    .then(r=>r.ok?r.json():null)
+    .then(d=>{
+      if(!d || typeof d.views !== "number") return;
+      p.views = d.views;
+      const el = document.getElementById("viewCount");
+      if(el) el.textContent = fmtCount(d.views);
+    })
+    .catch(()=>{});
+}
+const EYE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+const HEART=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>`;
+
+function likeBarHtml(p){
+  if(USING_SAMPLE || !p.pageId){
+    return `<div class="likebar"><button class="likebtn" disabled>${HEART}<span>${p.likes||0}</span></button>
+      <span class="lhint">노션 연결·배포 후에 좋아요를 누를 수 있어요</span></div>`;
+  }
+  const on=isLiked(p.pageId);
+  return `<div class="likebar">
+    <button class="likebtn${on?" on":""}" id="likeBtn" data-page="${p.pageId}"
+      aria-pressed="${on}" aria-label="이 글 좋아요" onclick="toggleLike(this)">
+      ${HEART}<span id="likeCount">${p.likes||0}</span></button>
+    <span class="lhint" id="likeHint">${on?"이 글에 좋아요를 눌렀어요":"읽고 도움이 됐다면 눌러주세요"}</span>
+  </div>`;
+}
+function toggleLike(btn){
+  if(btn.dataset.busy==="1") return;
+  const pageId=btn.dataset.page;
+  const turningOn=!btn.classList.contains("on");
+  const $c=btn.querySelector("#likeCount"), $h=document.getElementById("likeHint");
+  const before=Number($c.textContent)||0;
+
+  // 먼저 화면부터 바꿔서 즉각 반응하게 하고, 실패하면 되돌립니다
+  btn.dataset.busy="1";
+  btn.classList.toggle("on",turningOn);
+  btn.setAttribute("aria-pressed",String(turningOn));
+  $c.textContent=Math.max(0,before+(turningOn?1:-1));
+  if(turningOn){ btn.classList.add("pop"); setTimeout(()=>btn.classList.remove("pop"),200); }
+  if($h){ $h.className="lhint"; $h.textContent=turningOn?"이 글에 좋아요를 눌렀어요":"읽고 도움이 됐다면 눌러주세요"; }
+
+  fetch("/api/like",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({pageId,delta:turningOn?1:-1})})
+    .then(async r=>{
+      const raw=await r.text();
+      let d=null; try{ d=JSON.parse(raw); }catch(e){}
+      if(!r.ok||!d){
+        // 서버가 준 진짜 이유를 그대로 보여줍니다
+        if(r.status===404 && !d) throw new Error("api/like.js 파일이 아직 배포되지 않았어요 (404)");
+        throw new Error((d&&(d.error+(d.detail?" / "+d.detail:"")))||`서버 응답 ${r.status}: ${raw.slice(0,150)}`);
+      }
+      return d;
+    })
+    .then(d=>{
+      $c.textContent=d.likes;
+      setLiked(pageId,turningOn);
+      const post=POSTS.find(x=>x.pageId===pageId); if(post) post.likes=d.likes;
+    })
+    .catch(err=>{
+      btn.classList.toggle("on",!turningOn);
+      btn.setAttribute("aria-pressed",String(!turningOn));
+      $c.textContent=before;
+      if($h){ $h.className="lhint err"; $h.textContent="저장 실패 — "+(err&&err.message||err); }
+      console.warn("좋아요 저장 실패:",err);
+    })
+    .finally(()=>{ btn.dataset.busy=""; });
+}
+
+/* 카드 하단에 붙는 주제 배지 — 최대 3개.
+   공간이 모자라면 뒤쪽 배지부터 자동으로 숨겨져(CSS) 잘린 글자가 생기지 않습니다.
+   배지를 누르면 그 주제 목록으로 이동합니다(카드 클릭과 겹치지 않도록 전파를 막습니다) */
+function cardTopicsHtml(p){
+  const ts=(p.topics||[]).filter(Boolean).slice(0,3);
+  if(!ts.length) return "";
+  return `<span class="ctopics">${ts.map(t=>
+    `<a class="tag ${tagClass(t)} tlink" href="#/topic/${encodeURIComponent(t)}" onclick="event.stopPropagation()">${t}</a>`
+  ).join("")}</span>`;
+}
+/* 이미지 비율을 보고 채우기 방식을 자동으로 정합니다.
+   프레임보다 충분히 가로로 긴 사진 → 꽉 채워 크롭(cover)
+   정사각형·세로 이미지(로고 등) → 자르지 않고 전부 표시 + 흐린 배경으로 여백 채움 */
+function fitCover(img){
+  const box = img.parentElement;
+  if(!box) return;
+  const fr = Number(box.dataset.fr) || 2;                 // 프레임 가로/세로 비율
+  const ir = img.naturalWidth / img.naturalHeight;        // 이미지 가로/세로 비율
+  if(!ir || !isFinite(ir)) return;
+  if(ir < fr*0.62){                                       // 너무 많이 잘려나갈 이미지
+    box.classList.add("fit");
+    box.style.setProperty("--bgimg", `url("${img.currentSrc||img.src}")`);
+  }
+}
+window.fitCover = fitCover;
+
+/* 대표 이미지 — 카드 썸네일 / 기사 상단 배너. 이미지가 없거나 깨지면 자동으로 사라집니다 */
+function thumbHtml(p){
+  if(!p.cover) return "";
+  return `<div class="thumb" data-fr="1.778"><img src="${p.cover}" alt="" loading="lazy"
+    onload="fitCover(this)" onerror="this.closest('.thumb').remove()"></div>`;
+}
+function coverHtml(p){
+  if(!p.cover) return "";
+  // 이미지 출처 = 노션에서 그 이미지 밑에 적어둔 캡션 (없으면 표시 안 함)
+  const cap = (p.coverCaption||"").trim();
+  return `<figure class="pcwrap">
+    <div class="pcover" data-fr="2"><img src="${p.cover}" alt="${(p.title||"").replace(/"/g,"&quot;")}"
+      onload="fitCover(this)" onerror="this.closest('.pcwrap').remove()"></div>
+    ${cap?`<figcaption class="pccap">${cap}</figcaption>`:""}
+  </figure>`;
+}
+function cardHtml(p, i){
+  const delay = Math.min((i||0)*60, 480);
+  /* 좋아요 수는 카드에서 빼고(기사 안에서 확인), 그 자리에 주제 배지를 더 보여줍니다 */
+  return `<article class="card" style="animation-delay:${delay}ms" onclick="location.hash='#/post/${p.id}'">
+    ${thumbHtml(p)}
+${tagsHtml(p.tags)}
+    <h3>${p.title}</h3>
+    <div class="foot"><span class="byline">${avatarHtml(p.author)}<span class="who">${p.author}</span> · <span>${fmtDate(p.date)}</span></span>${cardTopicsHtml(p)}</div>
+  </article>`;
+}
+
+/* ---- 화면들 ---- */
+function heroHtml(){
+  const banner = USING_SAMPLE ? `<div class="banner">⚙️ 지금은 샘플 데이터로 보이는 중이에요. 노션 연결·배포가 끝나면 실제 데이터가 표시됩니다.</div>`:"";
+  return `<section class="hero">
+    <div class="hero-art" aria-hidden="true">
+      <div class="glow"></div>
+      <img class="crystal-img" src="assets/crystal.png" alt="" onerror="this.remove();var c=document.getElementById('cssCrystals');if(c)c.style.display='block'" />
+      <div class="crystals" id="cssCrystals" style="display:none"><span class="cube c1"></span><span class="cube c2"></span><span class="cube c3"></span></div>
+    </div>
+    <div class="hcopy">
+      <h1><span class="hl">Blockchain</span><br class="hbr"> Weekly Brief</h1>
+      <div class="meta">
+        <span class="chip"><b>${POSTS.length}</b> 트래킹</span>
+        <span class="chip"><b>${new Set(POSTS.map(p=>p.author).filter(Boolean)).size}</b> 작성자</span>
+        <span class="chip"><b>${new Set(POSTS.map(p=>deriveWeek(p.date).start)).size}</b> 주 아카이브</span>
+      </div>
+      ${banner}
+    </div>
+  </section>`;
+}
+function viewHome(){
+  const sorted = [...POSTS].sort((a,b)=> String(b.date).localeCompare(String(a.date)));
+  return `<div class="sec-head" style="margin-top:34px"><h2>최신 아카이브</h2><span>최근 업데이트 순 · ${POSTS.length}건</span></div>
+  <div class="grid">${sorted.map((p,i)=>cardHtml(p,i)).join("")}</div>`;
+}
+
+/* ---- 홈(대시보드) ----
+   1) 큰 기사 1건 + 오른쪽 최신 4건  2) Editor's Picks 3건  3) 주제별 탭 */
+const DASH_SIDE_N = 4;   // 오른쪽 최신 목록 개수
+const DASH_PICK_N = 3;   // Editor's Picks 개수
+const DASH_TOPIC_N = 3;  // 주제 탭마다 보여줄 기사 수
+
+function featMainHtml(p){
+  const cover = p.cover
+    ? `<div class="feat-cover" data-fr="2"><img src="${p.cover}" alt="" onload="fitCover(this)" onerror="this.closest('.feat-cover').remove()"></div>` : "";
+  const ex = (p.summary||"").replace(/\n/g," ");
+  return `<article class="feat-main" onclick="location.hash='#/post/${p.id}'">
+    ${cover}
+    <div class="feat-body">
+      ${tagsHtml(p.tags)}
+      <h2>${p.title}</h2>
+      ${ex?`<p class="fex">${ex}</p>`:""}
+      <div class="foot"><span class="byline">${avatarHtml(p.author)}<span class="who">${p.author||""}</span> · <span>${fmtDate(p.date)}</span></span>${cardTopicsHtml(p)}</div>
+    </div>
+  </article>`;
+}
+function featItemHtml(p){
+  const t=(p.topics||[]).filter(Boolean)[0]||"";
+  return `<a class="fitem" href="#/post/${p.id}">
+    ${t?`<div class="ftop">${t}</div>`:""}
+    <div class="ftt">${p.title}</div>
+    <div class="fmeta">${p.author||""}${p.date?` · ${fmtDate(p.date)}`:""}</div>
+  </a>`;
+}
+/* 주제 탭을 누르면 아래 기사 3개만 바꿔 그립니다 */
+function dashTopic(name){
+  const grid=document.getElementById("dashTopicGrid");
+  if(!grid) return;
+  const items=POSTS.filter(p=>topicsOf(p).includes(name))
+    .sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,DASH_TOPIC_N);
+  grid.innerHTML=items.map((p,i)=>cardHtml(p,i)).join("")||`<p class="empty">이 주제의 글이 아직 없습니다.</p>`;
+  document.querySelectorAll(".ttab").forEach(b=>b.classList.toggle("on", b.dataset.topic===name));
+  const more=document.getElementById("dashTopicMore");
+  if(more) more.setAttribute("href", `#/topic/${encodeURIComponent(name)}`);
+}
+window.dashTopic = dashTopic;
+
+function viewDash(){
+  if(!POSTS.length) return `${heroHtml()}<p class="empty">아직 글이 없습니다.</p>`;
+  const sorted=[...POSTS].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  // 큰 기사 = 이미지가 있는 가장 최근 글(없으면 그냥 최신 글)
+  const lead=sorted.find(p=>p.cover)||sorted[0];
+  const side=sorted.filter(p=>String(p.id)!==String(lead.id)).slice(0,DASH_SIDE_N);
+
+  // Editor's Picks — 노션 Pick 체크박스가 켜진 글. 없으면 조회수·좋아요 순으로 대신 채웁니다
+  const picked=sorted.filter(p=>p.pick);
+  const usePick=picked.length>0;
+  const picks=(usePick?picked:[...POSTS].sort((a,b)=>
+    ((b.views||0)+(b.likes||0)*3)-((a.views||0)+(a.likes||0)*3) || String(b.date).localeCompare(String(a.date))
+  )).slice(0,DASH_PICK_N);
+
+  // 주제 탭 — 미분류 제외, 글 많은 순
+  const map=topicMap();
+  const tnames=Object.keys(map).filter(n=>n!==NO_TOPIC)
+    .sort((a,b)=>map[b].length-map[a].length || a.localeCompare(b,"ko"));
+  const first=tnames[0]||"";
+  const firstItems=first?map[first].slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,DASH_TOPIC_N):[];
+
+  return `${heroHtml()}
+  <div class="sec-head"><h2>최신 아카이브</h2><span>가장 먼저 볼 기록</span></div>
+  <div class="feat">
+    ${featMainHtml(lead)}
+    <div class="feat-side">
+      <div class="fsh"><h3>The Latest</h3><a href="#/latest">전체 보기 →</a></div>
+      <div class="flist">${side.length?side.map(featItemHtml).join(""):`<p class="empty">아직 다른 글이 없습니다.</p>`}</div>
+    </div>
+  </div>
+
+  <div class="sec-head"><h2>Editor's Picks</h2><span>${usePick?"이번 주 꼭 볼 이슈":"많이 읽은 순"}</span></div>
+  ${(!usePick&&!USING_SAMPLE)?`<div class="banner" style="margin:-6px 0 16px">노션 DB에 <b>Pick</b> 체크박스 열을 만들고 체크하면 여기에 직접 고른 글이 표시됩니다.</div>`:""}
+  <div class="grid">${picks.map((p,i)=>cardHtml(p,i)).join("")}</div>
+
+  <div class="sec-head"><h2>주제별</h2><span>관심 주제로 모아보기</span></div>
+  ${tnames.length?`<div class="ttabs">${tnames.map(n=>
+      `<button type="button" class="ttab${n===first?" on":""}" data-topic="${n.replace(/"/g,"&quot;")}"
+        onclick="dashTopic(this.dataset.topic)">${n}<span class="tn">${map[n].length}</span></button>`).join("")}
+    <a class="ttab" id="dashTopicMore" href="#/topic/${encodeURIComponent(first)}" style="margin-left:auto;background:none">더보기 →</a></div>
+  <div class="grid" id="dashTopicGrid">${firstItems.map((p,i)=>cardHtml(p,i)).join("")}</div>`
+  :`<div class="banner">노션 DB에 <b>Topic</b> 열을 만들고 글마다 주제를 골라주시면 여기에 주제별로 나뉘어 표시됩니다.</div>`}`;
+}
+function viewWeeks(){
+  const starts=[...new Set(POSTS.map(p=>deriveWeek(p.date).start))].sort((a,b)=>b.localeCompare(a));
+  return `<div class="sec-head" style="margin-top:34px"><h2>주차별 아카이브</h2><span>주 단위(일~토)로 모아보기</span></div>
+  ${starts.map(st=>{const items=POSTS.filter(p=>deriveWeek(p.date).start===st).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+    const label=items.length?deriveWeek(items[0].date).label:st;
+    return `<div class="week-block"><span class="week-tag">${label} · ${items.length}건</span><div class="grid">${items.map((p,i)=>cardHtml(p,i)).join("")}</div></div>`;}).join("")}`;
+}
+/* ---- 주제별 ----
+   노션 Topic 열을 읽습니다. 선택/다중선택/텍스트 어느 타입이든 동작하고,
+   아직 분류 안 한 글은 "미분류"로 모아 맨 뒤에 둡니다. */
+const NO_TOPIC="미분류";
+function topicsOf(p){
+  const t=(p.topics||[]).filter(Boolean);
+  return t.length?t:[NO_TOPIC];
+}
+function topicMap(){
+  const map={};
+  POSTS.forEach(p=>topicsOf(p).forEach(t=>{(map[t]=map[t]||[]).push(p);}));
+  return map;
+}
+function viewTopics(){
+  const map=topicMap();
+  const names=Object.keys(map).sort((a,b)=>{
+    if(a===NO_TOPIC) return 1; if(b===NO_TOPIC) return -1;      // 미분류는 주제가 아니므로 맨 뒤
+    return map[b].length-map[a].length || a.localeCompare(b,"ko");  // 건수 많은 순 → 같으면 가나다순
+  });
+  if(!names.length) return `<div class="sec-head" style="margin-top:34px"><h2>주제별</h2></div><p class="empty">아직 글이 없습니다.</p>`;
+  const only=names.length===1&&names[0]===NO_TOPIC;
+  return `<div class="sec-head" style="margin-top:34px"><h2>주제별</h2><span>관심 주제로 모아보기</span></div>
+  ${only?`<div class="banner">노션 DB에 <b>Topic</b> 열을 만들고 글마다 주제를 골라주시면 여기에 나뉘어 표시됩니다.</div>`:""}
+  <div class="topics">${names.map((n,i)=>{
+    const c=map[n].length, no=n===NO_TOPIC;
+    return `<div class="topic-card${no?" muted":""}" style="animation-delay:${Math.min(i*60,480)}ms" onclick="location.hash='#/topic/${encodeURIComponent(n)}'">
+      <div class="thead"><span class="tag ${tagClass(n)}">${n}</span><span class="ct">${c}건</span></div>
+      ${no?`<span class="mhint">아직 주제를 정하지 않은 글 — 노션에서 분류하면 위로 올라갑니다</span>`
+          :`<div class="peek">${map[n].slice(0,3).map(p=>`<span><i>${p.title}</i></span>`).join("")}</div>`}
+    </div>`;}).join("")}</div>`;
+}
+function viewTopic(name){
+  const items=POSTS.filter(p=>topicsOf(p).includes(name)).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  return `<div class="back" onclick="location.hash='#/topics'">← 주제 목록</div>
+  <div class="sec-head" style="margin-top:10px"><h2>${name}</h2><span>${items.length}건</span></div>
+  <div class="grid">${items.length?items.map((p,i)=>cardHtml(p,i)).join(""):'<p class="empty">이 주제의 글이 아직 없습니다.</p>'}</div>`;
+}
+function viewAuthors(){
+  const map={};POSTS.forEach(p=>{(map[p.author]=map[p.author]||[]).push(p);});
+  const names=Object.keys(map).sort((a,b)=>map[b].length-map[a].length);
+  return `<div class="sec-head" style="margin-top:34px"><h2>작성자</h2><span>팀원별 아카이빙</span></div>
+  <div class="authors">${names.map(n=>{const bio=(AUTHORS_META[n]&&AUTHORS_META[n].bio)||"";
+    return `<div class="author-card" onclick="location.hash='#/author/${encodeURIComponent(n)}'">
+    ${avatarHtml(n)}<div class="nm">${n}</div><div class="ct">아카이브 ${map[n].length}건</div>${bio?`<div class="abio">${bio}</div>`:""}</div>`;}).join("")}</div>`;
+}
+function viewAuthor(name){
+  const items=POSTS.filter(p=>p.author===name).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  return `<div class="back" onclick="location.hash='#/authors'">← 작성자 목록</div>
+  <section class="hero" style="padding:14px 0 6px"><div class="hcopy"><h1 style="display:flex;align-items:center;gap:14px;font-size:28px">${avatarHtml(name,'width:46px;height:46px;font-size:18px')}<span style="display:inline-flex;align-items:center;gap:8px">${name}<span class="a-count">· ${items.length}건</span></span></h1>
+  ${(AUTHORS_META[name]&&AUTHORS_META[name].bio)?`<p class="abio-lg">${AUTHORS_META[name].bio}</p>`:""}
+  ${(AUTHORS_META[name]&&AUTHORS_META[name].about)?`<p class="about-lg">${AUTHORS_META[name].about}</p>`:""}</div></section>
+  <div class="grid" style="margin-top:16px">${items.length?items.map((p,i)=>cardHtml(p,i)).join(""):'<p class="empty">아직 작성한 트래킹이 없습니다.</p>'}</div>`;
+}
+/* ---- 인사이트 렌더링 ----
+   1) insightMd(노션 Insight 속성에 쓴 마크다운 원문)이 있으면 마크다운으로 해석
+   2) 없으면 insight(노션 본문 블록을 서버에서 HTML로 만든 것)를 그대로 사용
+   3) 둘 다 아닌 옛 데이터/샘플은 마크다운 문법이 보이면 마크다운으로 해석 */
+function looksLikeMd(s){
+  return /^\s{0,3}#{1,6}\s|\n\s{0,3}#{1,6}\s|\*\*[^*\n]+\*\*|^\s*[-*+]\s+|\n\s*[-*+]\s+|^\s*\d+\.\s|\n\s*\d+\.\s|\[[^\]\n]+\]\([^)\s]+\)|^\s*>\s|\n\s*\|.*\|/.test(s);
+}
+function mdToHtml(src){
+  const s=String(src||"");
+  if(!s.trim()) return "";
+  if(window.marked&&marked.parse){
+    // 링크는 새 탭에서 열리도록
+    return marked.parse(s,{breaks:true,gfm:true})
+      .replace(/<a href="(https?:[^"]+)"/g,'<a href="$1" target="_blank" rel="noopener"');
+  }
+  // marked를 못 불러왔을 때를 대비한 최소 폴백 (제목·굵게·링크·문단만)
+  const esc=x=>x.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  return esc(s).split(/\n{2,}/).map(blk=>{
+    const h=blk.match(/^(#{1,6})\s+(.*)$/);
+    let t=blk.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>")
+             .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+    if(h) return `<h${h[1].length}>${t.replace(/^#{1,6}\s+/,"")}</h${h[1].length}>`;
+    return `<p>${t.replace(/\n/g,"<br>")}</p>`;
+  }).join("");
+}
+function insightHtml(p){
+  if(p.insightMd&&String(p.insightMd).trim()) return mdToHtml(p.insightMd);
+  const s=String(p.insight||"");
+  if(!s.trim()) return "";
+  if(/<[a-z]/i.test(s)) return s;
+  return looksLikeMd(s)?mdToHtml(s):`<p>${s}</p>`;
+}
+/* 사이드바용 컴팩트 카드 */
+function sideCardHtml(p,cur){
+  const t=(p.topics||[]).filter(Boolean)[0];
+  return `<a class="scard${cur?" cur":""}" href="#/post/${p.id}">
+    <div class="st">${p.title}</div>
+    <div class="sm"><span class="who">${p.author||""}</span><span>·</span><span>${fmtDate(p.date)}</span>
+      ${t?`<span class="tag ${tagClass(t)}" style="margin-left:auto">${t}</span>`:""}</div></a>`;
+}
+/* 상세 페이지 우측 1/3 — 위: 최신 아카이브 3, 아래: 같은 토픽 3 */
+function postSideHtml(p){
+  const N=3;
+  const latest=[...POSTS].sort((a,b)=>String(b.date).localeCompare(String(a.date)))
+    .filter(x=>String(x.id)!==String(p.id)).slice(0,N);
+  const topics=(p.topics||[]).filter(Boolean);
+  const topic=topics[0]||"";
+  const related=POSTS.filter(x=>String(x.id)!==String(p.id)
+      && (x.topics||[]).filter(Boolean).some(t=>topics.includes(t)))
+    .sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,N);
+  return `<aside class="post-side">
+    <section class="spanel">
+      <div class="sh"><h3>최신 아카이브</h3><span>최근 업데이트 순</span></div>
+      <div class="slist">${latest.length?latest.map(x=>sideCardHtml(x)).join(""):`<div class="sempty">아직 다른 글이 없습니다.</div>`}</div>
+      <a class="smore" href="#/latest">전체 보기 →</a>
+    </section>
+    <section class="spanel">
+      <div class="sh"><h3>관련 이슈 더보기</h3>${topic?`<span>${topic}</span>`:""}</div>
+      <div class="slist">${related.length?related.map(x=>sideCardHtml(x)).join("")
+        :`<div class="sempty">${topics.length?"같은 주제의 다른 글이 아직 없습니다.":"이 글에는 주제가 지정되어 있지 않습니다."}</div>`}</div>
+      <a class="smore" href="${topic?`#/topic/${encodeURIComponent(topic)}`:"#/topics"}">주제별 보기 →</a>
+    </section>
+  </aside>`;
+}
+function viewPost(id){
+  const p=POSTS.find(x=>String(x.id)===String(id));
+  if(!p) return `<p class="empty">글을 찾을 수 없습니다.</p>`;
+  const src=p.source?`<a class="src" href="${p.source}" target="_blank" rel="noopener">🔗 원문 보기</a>`:"";
+  return `<div class="back" onclick="history.length>1?history.back():location.hash='#/'">← 목록으로</div>
+  <div class="post-layout">
+    <div class="post-main">
+      ${coverHtml(p)}
+      <article class="article">${tagsHtml(p.tags)}
+        <h1 class="ptitle">${p.title}</h1>
+        <div class="abyline"><span class="byline">${avatarHtml(p.author)}<span class="who">${p.author}</span> · <span>${deriveWeek(p.date).label}</span> · <span>${p.date}</span></span>
+${(p.topics||[]).filter(Boolean).map(t=>`<a class="tag ${tagClass(t)} tlink" href="#/topic/${encodeURIComponent(t)}">${t}</a>`).join("")}
+          <span class="aview">${EYE}읽음 <b id="viewCount">${fmtCount(p.views)}</b></span></div>
+        <h4>요약</h4><p class="psum">${fmtSummary(p.summary)}</p>
+        <h4>인사이트</h4><div class="insight">${insightHtml(p)}</div>
+        ${src}
+        ${likeBarHtml(p)}</article>
+    </div>
+    ${postSideHtml(p)}
+  </div>`;
+}
+
+/* ---- 라우터 ---- */
+function router(){
+  const hash=location.hash||"#/";
+  const [route,arg]=hash.replace(/^#\//,"").split("/");
+  let html,active="home";
+  if(!route){html=viewDash();active="dash";}
+  else if(route==="latest"){html=viewHome();active="home";}
+  else if(route==="weeks"){html=viewWeeks();active="weeks";}
+  else if(route==="topics"){html=viewTopics();active="topics";}
+  else if(route==="topic"){html=viewTopic(decodeURIComponent(arg||""));active="topics";}
+  else if(route==="authors"){html=viewAuthors();active="authors";}
+  else if(route==="author"){html=viewAuthor(decodeURIComponent(arg||""));active="authors";}
+  else if(route==="post"){html=viewPost(arg);active="";}
+  else{html=viewDash();active="dash";}
+  $app.innerHTML=html;
+  $app.classList.toggle("wide", route==="post");
+  if(route==="post"){ const cur=POSTS.find(x=>String(x.id)===String(arg)); if(cur) countView(cur); }
+  document.querySelectorAll(".links a").forEach(a=>a.classList.toggle("active",a.dataset.route===active));
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", router);
+
+/* ---- 데이터 로드 (노션 or 샘플) ----
+   /api/posts = 노션에서 데이터를 가져오는 중계 함수 (배포 후 작동).
+   로컬에서 파일만 열면 함수가 없어 위 SAMPLE 로 보입니다. */
+function applyAuthorMeta(authorsData){
+  AUTHORS_META = {};
+  (authorsData||[]).forEach(a=>{ if(a && a.name) AUTHORS_META[a.name] = { bio: a.bio || "", about: a.about || "" }; });
+  // 노션 작성자 소개 DB가 없거나 비어있고 샘플 모드면 예시 소개 사용
+  if(USING_SAMPLE && Object.keys(AUTHORS_META).length===0){
+    for(const k in SAMPLE_AUTHORS) AUTHORS_META[k] = { bio: SAMPLE_AUTHORS[k] };
+  }
+}
+function loadData(){
+  $app.innerHTML=`<div class="loading"><div class="spinner"></div>데이터를 불러오는 중…</div>`;
+  Promise.all([
+    fetch("/api/posts").then(r=>{ if(!r.ok) throw new Error("no api"); return r.json(); }).catch(()=>null),
+    fetch("/api/authors").then(r=> r.ok ? r.json() : []).catch(()=>[])
+  ]).then(([data, authorsData])=>{
+    if(Array.isArray(data) && data.length){ POSTS=data; USING_SAMPLE=false; }
+    else { POSTS=SAMPLE; USING_SAMPLE=true; }
+    applyAuthorMeta(authorsData);
+    router();
+  });
+}
+loadData();
+</script>
+</body>
+</html>
