@@ -710,9 +710,9 @@ function heroHtml(){
       <div class="crystals" id="cssCrystals" style="display:none"><span class="cube c1"></span><span class="cube c2"></span><span class="cube c3"></span></div>
     </div>
     <div class="hcopy">
-      <h1><span class="hl">Blockchain</span><br class="hbr"> Weekly Brief</h1>
+      <h1><span class="hl">Accounting</span><br class="hbr"> Study Archive</h1>
       <div class="meta">
-        <span class="chip"><b>${POSTS.length}</b> 트래킹</span>
+        <span class="chip"><b>${POSTS.length}</b> 아카이브</span>
         <span class="chip"><b>${new Set(POSTS.map(p=>p.author).filter(Boolean)).size}</b> 작성자</span>
         <span class="chip"><b>${new Set(POSTS.map(p=>deriveWeek(p.date).start)).size}</b> 주 아카이브</span>
       </div>
@@ -857,7 +857,7 @@ function viewTopic(name){
 function viewAuthors(){
   const map={};POSTS.forEach(p=>{(map[p.author]=map[p.author]||[]).push(p);});
   const names=Object.keys(map).sort((a,b)=>map[b].length-map[a].length);
-  return `<div class="sec-head" style="margin-top:34px"><h2>작성자</h2><span>팀원별 아카이빙</span></div>
+  return `<div class="sec-head" style="margin-top:34px"><h2>작성자</h2><span>작성자별 아카이빙</span></div>
   <div class="authors">${names.map(n=>{const bio=(AUTHORS_META[n]&&AUTHORS_META[n].bio)||"";
     return `<div class="author-card" onclick="location.hash='#/author/${encodeURIComponent(n)}'">
     ${avatarHtml(n)}<div class="nm">${n}</div><div class="ct">아카이브 ${map[n].length}건</div>${bio?`<div class="abio">${bio}</div>`:""}</div>`;}).join("")}</div>`;
@@ -868,7 +868,7 @@ function viewAuthor(name){
   <section class="hero" style="padding:14px 0 6px"><div class="hcopy"><h1 style="display:flex;align-items:center;gap:14px;font-size:28px">${avatarHtml(name,'width:46px;height:46px;font-size:18px')}<span style="display:inline-flex;align-items:center;gap:8px">${name}<span class="a-count">· ${items.length}건</span></span></h1>
   ${(AUTHORS_META[name]&&AUTHORS_META[name].bio)?`<p class="abio-lg">${AUTHORS_META[name].bio}</p>`:""}
   ${(AUTHORS_META[name]&&AUTHORS_META[name].about)?`<p class="about-lg">${AUTHORS_META[name].about}</p>`:""}</div></section>
-  <div class="grid" style="margin-top:16px">${items.length?items.map((p,i)=>cardHtml(p,i)).join(""):'<p class="empty">아직 작성한 트래킹이 없습니다.</p>'}</div>`;
+  <div class="grid" style="margin-top:16px">${items.length?items.map((p,i)=>cardHtml(p,i)).join(""):'<p class="empty">아직 작성한 글이 없습니다.</p>'}</div>`;
 }
 /* ---- 인사이트 렌더링 ----
    1) insightMd(노션 Insight 속성에 쓴 마크다운 원문)이 있으면 마크다운으로 해석
