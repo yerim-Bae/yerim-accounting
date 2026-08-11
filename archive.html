@@ -52,7 +52,8 @@
     --rule-strong:1px solid rgba(28,26,25,.55);     /* 강조 섹션 상·하단 */
     --rule-col:1px solid rgba(28,26,25,.20);        /* 칼럼 세로 구분선 */
     --rule-col-c:rgba(28,26,25,.20);                /* 위와 같은 색 — 막대로 그릴 때 씁니다 */
-    --rule-inset:0.7cm;                             /* 세로 구분선을 위아래로 띄우는 거리 */
+    --rule-inset:0.7cm;                             /* 칼럼 세로 구분선을 위아래로 띄우는 거리 */
+    --rule-inset-sm:0.2cm;                          /* 작은 상자(PICK) 안 세로선용 */
     --rule-item:1px solid rgba(28,26,25,.13);       /* 기사와 기사 사이 */
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -403,11 +404,13 @@
 
   /* 고른 글 2칸 — 보조기사 바로 아래에 붙습니다.
      두 칸을 바깥으로 -12px 밀어 좌우 안여백을 12px 로 똑같이 맞추고,
-     칸 사이 세로선이 위·아래 가로선에 정확히 닿게 합니다. */
+     칸 사이 세로선은 위아래를 0.2cm 씩 띄웁니다. */
   .viewbox{display:grid;grid-template-columns:1fr 1fr;margin:var(--s5) calc(-1 * var(--s3)) 0;
-    border-top:var(--rule-strong);border-bottom:var(--rule-item)}
-  .viewbox .vcell{display:flex;flex-direction:column;padding:var(--s4) var(--s3);min-width:0;cursor:pointer}
-  .viewbox .vcell + .vcell{border-left:var(--rule-col)}
+    border-top:var(--rule-strong)}
+  .viewbox .vcell{position:relative;display:flex;flex-direction:column;padding:var(--s4) var(--s3);min-width:0;cursor:pointer}
+  /* 칸 사이 세로선도 칼럼과 같은 방식으로, 위아래를 0.2cm 씩 띄웁니다 */
+  .viewbox .vcell + .vcell::before{content:"";position:absolute;left:0;top:var(--rule-inset-sm);bottom:var(--rule-inset-sm);
+    width:1px;background:var(--rule-col-c)}
   .viewbox .vk{font-size:10.5px;font-weight:800;letter-spacing:.08em;line-height:1.5;text-transform:uppercase;color:var(--accent)}
   .viewbox .vt{font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:-.025em;line-height:1.45;
     margin-top:var(--s2);transition:color .15s;
