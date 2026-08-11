@@ -54,7 +54,7 @@
     --peach:#F0D8CB;
     --serif:"Noto Serif KR",serif;
     --sans:"Pretendard Variable",Pretendard,system-ui,-apple-system,sans-serif;
-    --bar:52px;                 /* 상단 줄 */
+    --bar:0px;                  /* 상단 줄 없음 — 무대가 화면 전체를 씁니다 */
     --dur:720ms;                /* 장면 전환 시간 (650~850ms 권장 구간) */
     --ease:cubic-bezier(.72,0,.24,1);
   }
@@ -73,23 +73,13 @@
   .sp-inner{width:100%;max-width:1120px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
 
   /* =====================================================================
-     상단 줄 — 로고와 기존 페이지로 나가는 길
+     상단 줄은 없앴습니다. 브랜드와 나가는 길은 01 장면 오른쪽 위 작은 워드마크와
+     05 장면 바닥글이 대신합니다.
      ===================================================================== */
-  .sp-top{position:fixed;top:0;left:0;right:0;z-index:60;height:var(--bar);
-    background:var(--ivory);border-bottom:1px solid var(--ink-08);
-    display:flex;align-items:center}
-  .sp-top .sp-inner{display:flex;align-items:center;gap:18px}
-  .sp-logo{display:inline-flex;align-items:center;flex:none;
+  .sp-logo{display:inline-flex;align-items:center;
     transition:transform .18s var(--ease),opacity .18s ease}
-  .sp-logo img{display:block;height:21px;width:auto}
-  .sp-logo:hover,.sp-logo:focus-visible{transform:translateY(-1px);opacity:.85}
-  .sp-out{margin-left:auto;display:flex;gap:16px;font-size:12px;font-weight:600;
-    color:var(--ink-40);white-space:nowrap}
-  .sp-out a{transition:color .18s ease}
-  .sp-out a:hover,.sp-out a:focus-visible{color:var(--orange)}
-  .sp-flag{flex:none;padding:2px 7px;border:1px solid var(--ink-14);
-    font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
-  @media(max-width:560px){ .sp-out span.sp-sep{display:none} .sp-out{gap:12px;font-size:11.5px} }
+  .sp-logo img{display:block;height:20px;width:auto}
+  .sp-logo:hover,.sp-logo:focus-visible{transform:translateY(-1px);opacity:.78}
 
   /* =====================================================================
      장면 — 기본(자바스크립트 없을 때)은 위아래로 쌓인 평범한 문서
@@ -155,20 +145,37 @@
   .sp-go.sp-pending i{opacity:.45}
 
   /* =====================================================================
-     01 WELCOME
+     01 WELCOME — 위에는 큰 산세리프 제호, 아래에는 세리프 한 줄 목록.
+     그 사이는 비워둡니다. 여백이 이 화면의 내용입니다.
      ===================================================================== */
-  .sp-hello{max-width:24em}
-  .sp-mark{display:block;height:clamp(38px,5vw,58px);width:auto;margin-bottom:clamp(24px,3.4vw,38px)}
-  .sp-hello h1{font-family:var(--serif);font-weight:600;
-    font-size:clamp(28px,4.6vw,54px);line-height:1.26;letter-spacing:-.025em;text-wrap:balance}
-  .sp-hello .sp-sub{margin-top:22px;font-size:clamp(14px,1.5vw,16.5px);line-height:1.9;color:var(--ink-60)}
-  .sp-cue{margin-top:clamp(30px,4vw,48px);display:inline-flex;align-items:center;gap:10px;
-    font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-40)}
-  .sp-cue i{font-style:normal;color:var(--orange);font-size:1.15em;
+  .sp-scene--home{align-items:stretch}
+  .sp-js .sp-scene--home > .sp-inner{height:100%;display:flex;flex-direction:column;
+    justify-content:space-between;padding-top:clamp(26px,4vw,54px);padding-bottom:clamp(26px,4vw,54px)}
+  .sp-scene--home > .sp-inner{padding-top:clamp(26px,4vw,54px);padding-bottom:clamp(26px,4vw,54px)}
+
+  .sp-head{display:flex;align-items:flex-start;gap:24px}
+  .sp-title{flex:1;min-width:0;
+    font-family:var(--sans);font-weight:900;text-transform:uppercase;
+    font-size:clamp(34px,8.6vw,118px);line-height:.9;letter-spacing:-.035em}
+  .sp-title span{display:block}
+  .sp-title em{font-style:normal;color:var(--orange)}
+  .sp-head .sp-logo{flex:none;margin-top:6px}
+
+  .sp-foot-row{display:flex;align-items:flex-end;justify-content:space-between;gap:28px}
+  .sp-list{list-style:none;font-family:var(--serif);font-weight:400;
+    font-size:clamp(19px,2.9vw,38px);line-height:1.34;letter-spacing:-.02em}
+  .sp-list li{white-space:nowrap}
+  .sp-cue{flex:none;display:inline-flex;align-items:center;gap:9px;padding-bottom:6px;
+    font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-cue i{font-style:normal;color:var(--orange);font-size:1.3em;
     animation:sp-slide 2.2s ease-in-out infinite}
   @keyframes sp-slide{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
   .sp-vert .sp-cue i{animation-name:sp-drop}
   @keyframes sp-drop{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+  @media(max-width:640px){
+    .sp-foot-row{flex-direction:column;align-items:flex-start;gap:20px}
+    .sp-list li{white-space:normal}
+  }
 
   /* =====================================================================
      02 MORNING — 신문 1면 인덱스
@@ -358,42 +365,36 @@
 <body class="sp">
 
 <!-- =====================================================================
-     상단 줄
-     ===================================================================== -->
-<header class="sp-top">
-  <div class="sp-inner">
-    <a class="sp-logo" href="index.html" aria-label="배예림 포트폴리오 홈으로">
-      <img src="assets/wordmark-mark.png?v=1" alt="Yerim" width="167" height="96" />
-    </a>
-    <span class="sp-flag">Prototype</span>
-    <nav class="sp-out" aria-label="기존 페이지로">
-      <a href="index.html">기존 홈</a>
-      <span class="sp-sep" aria-hidden="true">·</span>
-      <a href="archive.html">Study Log</a>
-      <span class="sp-sep" aria-hidden="true">·</span>
-      <a data-link="github">GitHub</a>
-    </nav>
-  </div>
-</header>
-
-<!-- =====================================================================
-     다섯 장면
+     다섯 장면 (상단 줄 없음 — 화면 전체를 씁니다)
      ===================================================================== -->
 <div class="sp-deck" id="spDeck">
   <div class="sp-track" id="spTrack" style="--n:5; --i:0">
 
     <!-- 01 WELCOME ---------------------------------------------------- -->
-    <section class="sp-scene" id="home" aria-labelledby="spH1">
+    <section class="sp-scene sp-scene--home" id="home" aria-labelledby="spH1">
       <div class="sp-inner">
-        <div class="sp-hello">
-          <img class="sp-mark" src="assets/wordmark-mark.png?v=1" alt="Yerim" width="167" height="96" />
-          <h1 id="spH1">배예림의 홈에<br>오신 것을 환영합니다.</h1>
-          <p class="sp-sub">
-            관심이 결과물이 되기까지 —<br>
-            산업을 이해하고 회계의 언어로 설명합니다.
-          </p>
+
+        <div class="sp-head">
+          <h1 class="sp-title" id="spH1">
+            <span>Welcome to</span>
+            <span>Yerim's</span>
+            <span>Daily <em>Life</em></span>
+          </h1>
+          <a class="sp-logo" href="index.html" aria-label="배예림 포트폴리오 기존 홈으로">
+            <img src="assets/wordmark-mark.png?v=1" alt="Yerim" width="167" height="96" />
+          </a>
+        </div>
+
+        <div class="sp-foot-row">
+          <ul class="sp-list">
+            <li>회계와 감사</li>
+            <li>산업 리서치</li>
+            <li>블록체인·디지털자산</li>
+            <li>기록과 설명</li>
+          </ul>
           <p class="sp-cue">Scroll to explore <i aria-hidden="true">→</i></p>
         </div>
+
       </div>
     </section>
 
