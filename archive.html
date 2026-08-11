@@ -341,25 +341,14 @@
   .ttab .tn{font-weight:600;opacity:.65;margin-left:5px}
 
   /* =========================================================================
-     커서 · 호버 인터랙션 (디자인 요소)
+     호버 인터랙션 (디자인 요소)
      - 마우스가 있는 기기(PC)에서만 적용됩니다. 터치 기기는 자동으로 무시됩니다.
+     - 커스텀 마우스 포인터는 쓰지 않습니다. 기본 커서가 가장 읽기 편하고,
+       처음 온 사람이 무엇을 누를 수 있는지 헷갈리지 않습니다.
      ========================================================================= */
   @media (hover:hover) and (pointer:fine){
 
-    /* --- 1) 크리스탈 로고 커서 --- */
-    /* 페이지 전체: 작은 크리스탈 */
-    body, body *{
-      cursor:image-set(url("assets/cursor-crystal-sm.png") 1x, url("assets/cursor-crystal-sm@2x.png") 2x) 12 11, auto;
-    }
-    /* 글자 입력·선택 영역은 기본 커서 유지 (가독성) */
-    input, textarea, [contenteditable]{cursor:text}
-    /* 클릭 가능한 요소 위: 큰 크리스탈 */
-    a, button, .card, .card *, .author-card, .author-card *,
-    .scard, .scard *, .fitem, .fitem *, .tag.tlink, .ttab, .back, .nav .links a{
-      cursor:image-set(url("assets/cursor-crystal.png") 1x, url("assets/cursor-crystal@2x.png") 2x) 18 17, pointer;
-    }
-
-    /* --- 2) 호버 효과 강화 (순수 CSS) --- */
+    /* --- 호버 효과 강화 (순수 CSS) --- */
     /* 카드가 조금 더 살아나도록 */
     .card:hover{transform:translateY(-6px) scale(1.012)}
     .author-card:hover{transform:translateY(-6px) scale(1.015)}
@@ -409,7 +398,8 @@
 <body>
 <header>
   <div class="wrap nav">
-    <a href="#/" class="brand">
+    <!-- 로고를 누르면 포트폴리오 첫 화면으로 돌아갑니다. 아카이브 홈은 아래 "홈" 링크입니다 -->
+    <a href="index.html" class="brand">
       <span class="mark" id="brandMark">
         <!-- 워드마크에서 잘라낸 마크(assets/logo-mark.png)가 있으면 사용, 없으면 아래 SVG 폴백 -->
         <img src="assets/logo-mark.png" alt="Yerim Bae" onerror="this.remove();var f=document.getElementById('brandFallback');if(f)f.style.display='block'" />
