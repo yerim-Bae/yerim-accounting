@@ -394,9 +394,9 @@
   .lead:hover h2{color:var(--accent)}
   /* 부제도 제목·이미지와 같은 좌우 기준선을 씁니다 (max-width 로 좁히지 않음) */
   .lead .deck{margin-top:var(--s3);text-align:center;font-size:15px;line-height:1.72;color:var(--muted);
-    display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .lead figure{margin-top:var(--s4)}
-  .lead .lcover{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
+  .lead .lcover{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:var(--bg-soft)}
   .lead .lcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
   .lead:hover .lcover img{transform:scale(1.02)}
   /* 출처는 이미지의 오른쪽 끝선에 맞춥니다 */
@@ -414,11 +414,7 @@
   .aside .astory .adesc{margin-top:var(--s3);font-size:13.5px;line-height:1.68;color:var(--muted);
     display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
   /* 이미지 폭은 칼럼 글상자 폭과 정확히 같습니다 */
-  /* 칼럼에 남는 높이를 보조기사 이미지가 먹습니다. 그래야 PICK 은 이미지 바로 아래에
-     붙어 있으면서도 칼럼 아래에 빈 공간이 생기지 않습니다. */
-  .aside .astory{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
-  .aside .acover{position:relative;margin-top:var(--s4);width:100%;aspect-ratio:4/3;
-    flex:1 1 auto;min-height:190px;max-height:360px;overflow:hidden;background:var(--bg-soft)}
+  .aside .acover{position:relative;margin-top:var(--s4);width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
   .aside .acover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
 
   /* 고른 글 2칸 — 보조기사 바로 아래에 붙습니다.
@@ -681,19 +677,10 @@ function fitCover(img){
   const fr = Number(box.dataset.fr) || 2;                 // 프레임 가로/세로 비율
   const ir = img.naturalWidth / img.naturalHeight;        // 이미지 가로/세로 비율
   if(!ir || !isFinite(ir)) return;
-  const at = Number(box.dataset.fitAt) || 0;
-  let tooMuch;
-  if(at){
-    /* data-fit-at 이 있는 틀(1면)은 잘리는 양을 양쪽 방향 모두 봅니다.
-       차트처럼 가로로 긴 그림이 좌우로 잘려 축 이름이 날아가는 걸 막습니다.
-       at=0.8 이면 "20% 넘게 잘릴 그림은 자르지 않고 전부 보여준다"는 뜻입니다. */
-    const crop = ir > fr ? 1 - fr/ir : 1 - ir/fr;
-    tooMuch = crop > 1 - at;
-  } else {
-    // 기존 화면(카드·기사 배너)은 지금까지의 기준을 그대로 둡니다
-    tooMuch = ir < fr*0.62;
-  }
-  if(tooMuch){
+  // 잘림을 어디까지 참을지. 기본 .62 는 기존 화면 그대로 두고,
+  // 1면처럼 틀이 얕은 곳은 data-fit-at 으로 더 일찍(=덜 잘리게) 넘깁니다.
+  const at = Number(box.dataset.fitAt) || 0.62;
+  if(ir < fr*at){                                         // 너무 많이 잘려나갈 이미지
     box.classList.add("fit");
     box.style.setProperty("--bgimg", `url("${img.currentSrc||img.src}")`);
   }
@@ -812,7 +799,7 @@ function glanceHtml(items, updated){
 function leadHtml(p){
   const cap=(p.coverCaption||"").trim();
   const cover = p.cover
-    ? `<figure><div class="lcover" data-fr="1.333" data-fit-at="0.8"><img src="${p.cover}" alt="" onload="fitCover(this)" onerror="this.closest('figure').remove()"></div>
+    ? `<figure><div class="lcover" data-fr="1.6" data-fit-at="0.8"><img src="${p.cover}" alt="" onload="fitCover(this)" onerror="this.closest('figure').remove()"></div>
        ${cap?`<figcaption>${cap}</figcaption>`:""}</figure>` : "";
   const ex=(p.summary||"").replace(/\n/g," ");
   return `<article class="lead" onclick="location.hash='#/post/${p.id}'">
