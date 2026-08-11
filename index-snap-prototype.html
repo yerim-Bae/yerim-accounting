@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yerim's House · 풀페이지 전환 프로토타입</title>
+<meta name="description" content="배예림의 하루 — 한 번 스크롤할 때마다 다음 장면으로 넘어가는 풀페이지 전환 프로토타입." />
+<!-- 검토용 프로토타입입니다. 대표 주소는 그대로 index.html 입니다. -->
+<meta name="robots" content="noindex" />
+
+<link rel="icon" href="favicon.ico?v=8" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=8" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png?v=8" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+
+<style>
+  /* =====================================================================
+     Yerim's House — 풀페이지 전환 프로토타입
+
+     ■ 왜 스크롤이 아니라 화면을 직접 옮기는가
+       "한 번 입력 = 정확히 한 장면"을 어기지 않는 것이 이 작업의 핵심입니다.
+       브라우저 스크롤 위에 scroll-snap 을 얹는 방식은 관성 스크롤·트랙패드
+       가속 때문에 두 장면 사이에 걸치는 순간이 반드시 생깁니다.
+       그래서 문서를 아예 스크롤하지 않게 두고(.sp-deck 을 화면에 고정),
+       장면 띠를 transform 으로 한 칸씩 옮깁니다.
+       스크롤 위치라는 개념이 없으므로 "애매하게 걸친 상태"가 존재할 수 없습니다.
+
+     ■ 자바스크립트가 없으면
+       아래 기본 CSS 는 다섯 장면이 위에서 아래로 쌓인 평범한 문서입니다.
+       자바스크립트가 살아 있을 때만 <html> 에 .sp-js 가 붙어 고정 무대로
+       바뀝니다. 스크립트가 막히면 모든 글과 링크를 그대로 읽을 수 있습니다.
+
+     ■ 다른 페이지와의 격리
+       이 파일 하나로 끝납니다. 새 클래스는 전부 sp- 로 시작하고 <body> 에
+       .sp 를 걸어 두었습니다. 기존 index.html · archive.html 은 손대지 않았습니다.
+     ===================================================================== */
+
+  /* ---- 기존 사이트와 같은 값 (이 파일에 다시 적어둔 것입니다) ---- */
+  :root{
+    --ivory:#F5F1EB;
+    --ivory-2:#EFEAE2;
+    --ink:#1C1A19;
+    --ink-60:rgba(28,26,25,.60);
+    --ink-40:rgba(28,26,25,.40);
+    --ink-14:rgba(28,26,25,.14);
+    --ink-08:rgba(28,26,25,.08);
+    --orange:#D8662F;
+    --rust:#9F3F2F;
+    --amber:#E4A23A;
+    --peach:#F0D8CB;
+    --serif:"Noto Serif KR",serif;
+    --sans:"Pretendard Variable",Pretendard,system-ui,-apple-system,sans-serif;
+    --bar:52px;                 /* 상단 줄 */
+    --dur:720ms;                /* 장면 전환 시간 (650~850ms 권장 구간) */
+    --ease:cubic-bezier(.72,0,.24,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body.sp{
+    background:var(--ivory);color:var(--ink);
+    font-family:var(--sans);font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;overflow-wrap:break-word;   /* 한글이 단어 중간에서 안 끊기게 */
+  }
+  .sp a{color:inherit;text-decoration:none}
+  .sp img{max-width:100%}
+  .sp-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .sp-inner{width:100%;max-width:1120px;margin:0 auto;padding:0 clamp(20px,4vw,48px)}
+
+  /* =====================================================================
+     상단 줄 — 로고와 기존 페이지로 나가는 길
+     ===================================================================== */
+  .sp-top{position:fixed;top:0;left:0;right:0;z-index:60;height:var(--bar);
+    background:var(--ivory);border-bottom:1px solid var(--ink-08);
+    display:flex;align-items:center}
+  .sp-top .sp-inner{display:flex;align-items:center;gap:18px}
+  .sp-logo{display:inline-flex;align-items:center;flex:none;
+    transition:transform .18s var(--ease),opacity .18s ease}
+  .sp-logo img{display:block;height:21px;width:auto}
+  .sp-logo:hover,.sp-logo:focus-visible{transform:translateY(-1px);opacity:.85}
+  .sp-out{margin-left:auto;display:flex;gap:16px;font-size:12px;font-weight:600;
+    color:var(--ink-40);white-space:nowrap}
+  .sp-out a{transition:color .18s ease}
+  .sp-out a:hover,.sp-out a:focus-visible{color:var(--orange)}
+  .sp-flag{flex:none;padding:2px 7px;border:1px solid var(--ink-14);
+    font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
+  @media(max-width:560px){ .sp-out span.sp-sep{display:none} .sp-out{gap:12px;font-size:11.5px} }
+
+  /* =====================================================================
+     장면 — 기본(자바스크립트 없을 때)은 위아래로 쌓인 평범한 문서
+     ===================================================================== */
+  .sp-deck{padding-top:var(--bar)}
+  .sp-scene{padding:clamp(48px,8vw,86px) 0;border-top:1px solid var(--ink-14)}
+  .sp-scene:first-child{border-top:0}
+
+  /* =====================================================================
+     ★ 자바스크립트가 살아 있을 때 — 화면에 고정된 무대
+     ===================================================================== */
+  .sp-js body.sp{overflow:hidden;height:100%}
+  .sp-js .sp-deck{position:fixed;top:var(--bar);left:0;right:0;bottom:0;
+    padding:0;overflow:hidden}
+  /* ★ 어느 장면을 보여줄지는 --i 하나로 정해집니다. 자바스크립트는 --i 만 바꾸고,
+       어느 축으로 옮길지는 아래 CSS 가 결정합니다. 그래서 창 크기가 바뀌어
+       가로↔세로가 뒤바뀌어도 자바스크립트가 개입할 필요 없이 같은 장면에
+       그대로 맞춰집니다. (resize 이벤트를 놓쳐도 어긋나지 않습니다) */
+  .sp-js .sp-track{display:flex;height:100%;
+    width:calc(var(--n) * 100%);
+    transform:translate3d(calc(var(--i,0) * -100% / var(--n)),0,0);
+    transition:transform var(--dur) var(--ease);
+    will-change:transform}
+  .sp-js .sp-scene{flex:0 0 calc(100% / var(--n));min-width:0;height:100%;
+    padding:0;border:0;display:flex;align-items:center;overflow:hidden}
+  /* 모바일·태블릿은 세로로 넘깁니다.
+     ★ 방향 전환은 자바스크립트 클래스가 아니라 이 미디어쿼리가 결정합니다.
+       (resize 이벤트를 놓쳐도 배치가 어긋나지 않게 하기 위해서입니다.
+        자바스크립트는 어느 축으로 옮길지만 고르고, 그 판단도 같은 900px 기준입니다) */
+  @media(max-width:900px){
+    .sp-js .sp-track{flex-direction:column;width:100%;height:calc(var(--n) * 100%);
+      transform:translate3d(0,calc(var(--i,0) * -100% / var(--n)),0)}
+    .sp-js .sp-scene{flex:0 0 calc(100% / var(--n));height:auto}
+  }
+
+  /* =====================================================================
+     장면 공통 활자
+     ===================================================================== */
+  .sp-kick{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .sp-num{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--orange);
+    font-variant-numeric:tabular-nums}
+  .sp-label{font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--ink-40);
+    text-transform:uppercase}
+  .sp-h{margin-top:16px;font-family:var(--serif);font-weight:600;
+    font-size:clamp(24px,3.5vw,42px);line-height:1.32;letter-spacing:-.022em;text-wrap:balance}
+  .sp-p{margin-top:16px;font-size:clamp(13.5px,1.35vw,15.5px);line-height:1.85;
+    color:var(--ink-60);max-width:40em}
+  .sp-p + .sp-p{margin-top:10px}
+  .sp-cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+    gap:clamp(26px,4vw,58px);align-items:center;width:100%}
+  @media(max-width:1000px){ .sp-cols{grid-template-columns:minmax(0,1fr);gap:26px;align-items:start} }
+  .sp-acts{margin-top:26px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center}
+
+  /* ---- 링크 ---- */
+  .sp-go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;
+    color:var(--ink);transition:color .2s ease}
+  .sp-go i{font-style:normal;display:inline-block;transition:transform .2s var(--ease)}
+  .sp-go:hover,.sp-go:focus-visible{color:var(--orange)}
+  .sp-go:hover i,.sp-go:focus-visible i{transform:translateX(4px)}
+  .sp-go.sp-ext:hover i,.sp-go.sp-ext:focus-visible i{transform:translate(4px,-4px)}
+  .sp-go.sp-primary{padding-bottom:5px;border-bottom:2px solid var(--orange)}
+  .sp-go.sp-pending{color:var(--ink-40);cursor:default}
+  .sp-go.sp-pending i{opacity:.45}
+
+  /* =====================================================================
+     01 WELCOME
+     ===================================================================== */
+  .sp-hello{max-width:24em}
+  .sp-mark{display:block;height:clamp(38px,5vw,58px);width:auto;margin-bottom:clamp(24px,3.4vw,38px)}
+  .sp-hello h1{font-family:var(--serif);font-weight:600;
+    font-size:clamp(28px,4.6vw,54px);line-height:1.26;letter-spacing:-.025em;text-wrap:balance}
+  .sp-hello .sp-sub{margin-top:22px;font-size:clamp(14px,1.5vw,16.5px);line-height:1.9;color:var(--ink-60)}
+  .sp-cue{margin-top:clamp(30px,4vw,48px);display:inline-flex;align-items:center;gap:10px;
+    font-size:11.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-cue i{font-style:normal;color:var(--orange);font-size:1.15em;
+    animation:sp-slide 2.2s ease-in-out infinite}
+  @keyframes sp-slide{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+  .sp-vert .sp-cue i{animation-name:sp-drop}
+  @keyframes sp-drop{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+  /* =====================================================================
+     02 MORNING — 신문 1면 인덱스
+     ===================================================================== */
+  .sp-paper{border-top:2px solid var(--ink);padding-top:14px}
+  .sp-paper .sp-plate{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    padding-bottom:12px;border-bottom:1px solid var(--ink-14);
+    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-paper .sp-plate b{font-family:var(--serif);font-size:15px;letter-spacing:.04em;color:var(--ink)}
+  .sp-paper .sp-plate .sp-when{margin-left:auto;font-variant-numeric:tabular-nums}
+  .sp-lines{list-style:none;margin-top:2px}
+  .sp-lines li{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:baseline;
+    padding:11px 0;border-bottom:1px solid var(--ink-08);font-size:13.5px}
+  .sp-lines .sp-ln{font-size:11px;font-weight:700;color:var(--orange);letter-spacing:.06em}
+  .sp-lines .sp-lt{font-weight:600;letter-spacing:-.01em}
+  .sp-lines .sp-lm{font-size:11.5px;color:var(--ink-40);white-space:nowrap}
+  .sp-count-big{display:flex;align-items:baseline;gap:12px;margin-top:22px}
+  .sp-count-big b{font-family:var(--serif);font-size:clamp(32px,4.6vw,50px);font-weight:600;
+    line-height:1;letter-spacing:-.03em}
+  .sp-count-big span{font-size:11.5px;font-weight:700;letter-spacing:.14em;color:var(--ink-40);
+    text-transform:uppercase}
+  .sp-chips{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+  .sp-chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;
+    background:var(--ink-08);color:var(--ink-60)}
+
+  /* =====================================================================
+     03 MOVE — 기록표와 참가 번호표
+     ===================================================================== */
+  .sp-rec{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  .sp-rec caption{text-align:left;padding-bottom:10px;
+    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-rec th,.sp-rec td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--ink-08)}
+  .sp-rec thead th{border-bottom:1px solid var(--ink);
+    font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-rec tbody th{font-family:var(--serif);font-size:16px;font-weight:600;letter-spacing:-.01em}
+  .sp-rec td{font-size:13px;color:var(--ink-60)}
+  .sp-rec td:last-child{padding-right:0;text-align:right;white-space:nowrap}
+  .sp-bib{margin-top:24px;display:inline-flex;flex-direction:column;align-items:center;
+    padding:12px 22px 14px;border:2px solid var(--ink);background:var(--ivory)}
+  .sp-bib .sp-bt{font-size:9.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-bib .sp-bn{font-family:var(--serif);font-size:clamp(30px,4vw,44px);font-weight:700;
+    line-height:1.05;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+  .sp-bib .sp-bs{margin-top:2px;font-size:10px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--orange)}
+  .sp-shots{margin-top:22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;max-width:460px}
+  .sp-shot{margin:0}
+  .sp-shot .sp-frame{position:relative;aspect-ratio:3/2;background:var(--ivory-2);
+    border:1px solid var(--ink-08);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .sp-shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .sp-shot .sp-empty{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-shot figcaption{margin-top:7px;font-size:11px;color:var(--ink-60)}
+  .sp-shot figcaption b{font-weight:600;color:var(--ink)}
+
+  /* =====================================================================
+     04 WORKROOM — 감사 조서 인덱스 (다섯 장면 중 가장 비중이 큼)
+     ===================================================================== */
+  .sp-file{border:1px solid var(--ink-14);background:var(--ivory-2)}
+  .sp-file .sp-fh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    padding:11px 16px;border-bottom:1px solid var(--ink-14);background:var(--ivory);
+    font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-file .sp-fh b{font-size:11.5px;letter-spacing:.1em;color:var(--ink)}
+  .sp-file .sp-fh .sp-ref{margin-left:auto;font-variant-numeric:tabular-nums}
+  .sp-file .sp-fb{padding:16px}
+  .sp-quote{padding-left:14px;border-left:2px solid var(--orange)}
+  .sp-quote p{font-family:var(--serif);font-size:clamp(14px,1.55vw,16.5px);line-height:1.74;
+    letter-spacing:-.01em}
+  .sp-quote cite{display:block;margin-top:10px;font-style:normal;font-size:10.5px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-chain{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
+    font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-40)}
+  .sp-chain span{padding:5px 10px;border:1px solid var(--ink-14);background:var(--ivory)}
+  .sp-chain span:last-of-type{border-color:rgba(216,102,47,.45);color:var(--rust)}
+  .sp-chain i{font-style:normal;color:var(--ink-14)}
+  .sp-idx{list-style:none;margin-top:18px}
+  .sp-idx li{display:grid;grid-template-columns:34px 1fr;gap:3px 12px;
+    padding:12px 0;border-top:1px solid var(--ink-14)}
+  .sp-idx li:first-child{border-top:0;padding-top:0}
+  .sp-idx .sp-in{font-size:10.5px;font-weight:700;color:var(--orange);letter-spacing:.08em;
+    font-variant-numeric:tabular-nums}
+  .sp-idx .sp-it{font-weight:600;font-size:14.5px;letter-spacing:-.01em}
+  .sp-idx .sp-id{grid-column:2;font-size:13px;line-height:1.7;color:var(--ink-60)}
+
+  /* =====================================================================
+     05 STUDY — 서재 인덱스
+     ===================================================================== */
+  .sp-shelf{display:flex;flex-direction:column;border-top:1px solid var(--ink)}
+  .sp-row{display:grid;grid-template-columns:30px 1fr auto;gap:14px;align-items:baseline;
+    padding:14px 0;border-bottom:1px solid var(--ink-08);
+    font-size:14.5px;transition:color .18s ease,padding-left .18s var(--ease)}
+  .sp-row .sp-rn{font-size:11px;font-weight:700;color:var(--ink-40);letter-spacing:.06em}
+  .sp-row .sp-rt{font-weight:600;letter-spacing:-.01em}
+  .sp-row .sp-rs{display:block;margin-top:3px;font-weight:400;font-size:12.5px;color:var(--ink-40)}
+  .sp-row .sp-ra{font-size:12px;color:var(--ink-40);transition:transform .18s var(--ease),color .18s ease}
+  a.sp-row:hover,a.sp-row:focus-visible{color:var(--orange);padding-left:6px}
+  a.sp-row:hover .sp-ra,a.sp-row:focus-visible .sp-ra{color:var(--orange);transform:translateX(3px)}
+  span.sp-row{color:var(--ink-40)}
+  .sp-tail{margin-top:26px;padding-top:16px;border-top:1px solid var(--ink-14);
+    display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;
+    font-size:12.5px;color:var(--ink-40)}
+  .sp-tail a{font-weight:600;color:var(--ink-60);transition:color .2s ease}
+  .sp-tail a:hover,.sp-tail a:focus-visible{color:var(--orange)}
+
+  /* =====================================================================
+     진행 상태 — 01 / 05 와 장면 이름. 눌러서 바로 이동합니다.
+     자바스크립트가 없으면 그냥 앵커 목록으로 남습니다.
+     ===================================================================== */
+  .sp-nav{position:fixed;right:clamp(14px,2.4vw,30px);top:50%;transform:translateY(-50%);
+    z-index:55;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+  .sp-nav .sp-tally{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink-40);
+    font-variant-numeric:tabular-nums}
+  .sp-nav .sp-tally b{color:var(--orange)}
+  .sp-nav ul{list-style:none;display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+  .sp-nav button{appearance:none;background:none;border:0;font:inherit;cursor:pointer;
+    display:flex;align-items:center;gap:9px;padding:5px 0 5px 10px;
+    font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-40);transition:color .2s ease}
+  .sp-nav button .sp-tick{display:block;width:16px;height:2px;background:var(--ink-14);
+    transition:width .26s var(--ease),background-color .2s ease}
+  .sp-nav button:hover{color:var(--ink-60)}
+  .sp-nav button:hover .sp-tick{background:var(--ink-40)}
+  .sp-nav button[aria-current="true"]{color:var(--orange)}
+  .sp-nav button[aria-current="true"] .sp-tick{width:30px;background:var(--orange)}
+  /* 자바스크립트 없을 때는 화면 흐름을 막지 않게 접어둡니다 */
+  .sp-nav{display:none}
+  .sp-js .sp-nav{display:flex}
+  @media(max-width:900px){
+    .sp-js .sp-nav{right:auto;left:0;top:auto;bottom:0;transform:none;
+      width:100%;flex-direction:row;align-items:center;gap:0;
+      background:var(--ivory);border-top:1px solid var(--ink-14);padding:0 12px}
+    .sp-js .sp-nav .sp-tally{display:none}
+    .sp-js .sp-nav ul{flex-direction:row;width:100%;gap:0}
+    .sp-js .sp-nav li{flex:1}
+    .sp-js .sp-nav button{width:100%;flex-direction:column;gap:5px;padding:9px 0 11px;
+      font-size:9.5px;letter-spacing:.1em}
+    .sp-js .sp-nav button .sp-tick{width:100%;height:2px}
+    .sp-js .sp-nav button[aria-current="true"] .sp-tick{width:100%}
+    /* 아래쪽 막대만큼 무대를 줄여 글자가 가려지지 않게 합니다 */
+    .sp-js .sp-deck{bottom:56px}
+  }
+  /* =====================================================================
+     작은 화면 — 한 장면이 화면 안에 들어가도록 활자와 간격을 조입니다.
+     (요구사항 7: 넘치면 폰트·간격을 반응형으로 조정하고, 그래도 안 되는
+      상세 내용은 Audit Prep 링크로 넘깁니다)
+     ===================================================================== */
+  @media(max-width:900px){
+    .sp-js .sp-scene{align-items:flex-start}
+    .sp-js .sp-scene > .sp-inner{padding-top:clamp(16px,4vw,28px)}
+    .sp-h{margin-top:12px;font-size:clamp(21px,5.6vw,30px);line-height:1.28}
+    .sp-p{margin-top:12px;font-size:13.5px;line-height:1.75}
+    .sp-acts{margin-top:18px}
+    .sp-cols{gap:18px}
+    .sp-quote p{font-size:13.5px;line-height:1.65}
+    .sp-quote cite{margin-top:8px}
+    .sp-chain{margin-top:12px}
+    .sp-file .sp-fb{padding:12px}
+    .sp-idx{margin-top:12px}
+    .sp-idx li{padding:9px 0}
+    .sp-idx .sp-it{font-size:13.5px}
+    /* 조서 항목의 설명 한 줄은 작은 화면에서 접습니다.
+       같은 내용은 Audit Prep 링크(↗)에서 그대로 볼 수 있습니다. */
+    .sp-idx .sp-id{display:none}
+    .sp-rec th,.sp-rec td{padding:8px 10px 8px 0}
+    .sp-bib{margin-top:16px;padding:9px 18px 11px}
+    /* 사진 자리는 작은 화면에서 접습니다 (아직 비어 있는 장식 영역입니다) */
+    .sp-shots{display:none}
+    .sp-shelf .sp-row{padding:11px 0;font-size:13.5px}
+    .sp-tail{margin-top:18px;padding-top:12px}
+    .sp-hello h1{font-size:clamp(26px,7vw,34px)}
+    .sp-mark{height:34px;margin-bottom:20px}
+    .sp-hello .sp-sub{margin-top:16px}
+    .sp-cue{margin-top:24px}
+  }
+
+  .sp :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+
+  /* =====================================================================
+     움직임을 줄여달라고 설정한 분에게는 전환을 즉시 처리합니다
+     ===================================================================== */
+  @media (prefers-reduced-motion:reduce){
+    .sp-js .sp-track{transition:none}
+    .sp *,.sp *::before,.sp *::after{animation:none!important}
+    .sp-go i,.sp-row,.sp-nav button .sp-tick{transition:none!important}
+  }
+</style>
+</head>
+<body class="sp">
+
+<!-- =====================================================================
+     상단 줄
+     ===================================================================== -->
+<header class="sp-top">
+  <div class="sp-inner">
+    <a class="sp-logo" href="index.html" aria-label="배예림 포트폴리오 홈으로">
+      <img src="assets/wordmark-mark.png?v=1" alt="Yerim" width="167" height="96" />
+    </a>
+    <span class="sp-flag">Prototype</span>
+    <nav class="sp-out" aria-label="기존 페이지로">
+      <a href="index.html">기존 홈</a>
+      <span class="sp-sep" aria-hidden="true">·</span>
+      <a href="archive.html">Study Log</a>
+      <span class="sp-sep" aria-hidden="true">·</span>
+      <a data-link="github">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<!-- =====================================================================
+     다섯 장면
+     ===================================================================== -->
+<div class="sp-deck" id="spDeck">
+  <div class="sp-track" id="spTrack" style="--n:5; --i:0">
+
+    <!-- 01 WELCOME ---------------------------------------------------- -->
+    <section class="sp-scene" id="home" aria-labelledby="spH1">
+      <div class="sp-inner">
+        <div class="sp-hello">
+          <img class="sp-mark" src="assets/wordmark-mark.png?v=1" alt="Yerim" width="167" height="96" />
+          <h1 id="spH1">배예림의 홈에<br>오신 것을 환영합니다.</h1>
+          <p class="sp-sub">
+            관심이 결과물이 되기까지 —<br>
+            산업을 이해하고 회계의 언어로 설명합니다.
+          </p>
+          <p class="sp-cue">Scroll to explore <i aria-hidden="true">→</i></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 MORNING ---------------------------------------------------- -->
+    <section class="sp-scene" id="morning" aria-labelledby="spH2">
+      <div class="sp-inner">
+        <div class="sp-cols">
+          <div>
+            <div class="sp-kick"><span class="sp-num">02</span><span class="sp-label">Morning · News Tracking</span></div>
+            <h2 class="sp-h" id="spH2">아침에는 세상이<br>어디로 가는지 확인합니다.</h2>
+            <p class="sp-p">
+              블록체인·디지털자산 업계에서 실제로 무슨 일이 일어나는지 매주 골라 읽고,
+              요약과 제 해석을 함께 남깁니다. 산업을 알아야 회계 판단이 선다고 생각해서 시작한 기록입니다.
+            </p>
+            <div class="sp-acts">
+              <a class="sp-go sp-primary" data-link="newsTracking">뉴스 트래킹 보기 <i aria-hidden="true">→</i></a>
+            </div>
+          </div>
+          <div class="sp-paper">
+            <p class="sp-plate">
+              <b>Study Log</b> <span>Weekly Index</span>
+              <span class="sp-when" id="spDate">—</span>
+            </p>
+            <ul class="sp-lines" id="spLines"></ul>
+            <div class="sp-count-big" id="spStat" hidden>
+              <b id="spCount"></b><span>Notes</span>
+            </div>
+            <div class="sp-chips" id="spChips"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 MOVE ------------------------------------------------------- -->
+    <section class="sp-scene" id="move" aria-labelledby="spH3">
+      <div class="sp-inner">
+        <div class="sp-cols">
+          <div>
+            <div class="sp-kick"><span class="sp-num">03</span><span class="sp-label">Move</span></div>
+            <h2 class="sp-h" id="spH3">생각하기 전에,<br>먼저 움직입니다.</h2>
+            <p class="sp-p">
+              5K와 10K 마라톤, 그리고 테니스 대회까지. 꾸준히 몸을 움직이며 다음 목표를 준비합니다.
+              기록을 남기는 방식도 공부와 같습니다. 목표를 정하고, 과정을 남기고, 다음 목표를 세웁니다.
+            </p>
+            <div class="sp-acts">
+              <a class="sp-go" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
+            </div>
+          </div>
+          <div>
+            <table class="sp-rec">
+              <caption>Record</caption>
+              <thead>
+                <tr><th scope="col">종목</th><th scope="col">구분</th><th scope="col">상태</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">5K</th>  <td>Road race</td><td>완주</td></tr>
+                <tr><th scope="row">10K</th> <td>Road race</td><td>준비 중</td></tr>
+                <tr><th scope="row">Tennis</th><td>Tournament</td><td>대회 준비</td></tr>
+              </tbody>
+            </table>
+            <div class="sp-bib" aria-hidden="true">
+              <span class="sp-bt">Yerim's House</span>
+              <span class="sp-bn">08:30</span>
+              <span class="sp-bs">Move</span>
+            </div>
+            <div class="sp-shots" id="spShots"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 WORKROOM --------------------------------------------------- -->
+    <section class="sp-scene" id="workroom" aria-labelledby="spH4">
+      <div class="sp-inner">
+        <div class="sp-cols">
+          <div>
+            <div class="sp-kick"><span class="sp-num">04</span><span class="sp-label">Workroom</span></div>
+            <h2 class="sp-h" id="spH4">감사에 들어가기 전,<br>회사와 산업을 먼저 읽습니다.</h2>
+            <p class="sp-p">
+              감사 업무를 시작하기 전, 오늘 만날 회사가 어떤 산업에서 어떻게 돈을 버는지 먼저 이해합니다.
+              그래서 감사 계획 단계에서 무엇을 물어야 할지 정하는 도구를 직접 만들었습니다.
+            </p>
+            <div class="sp-chain" aria-label="감사 준비 순서: 회사, 산업, 비즈니스 모델, 계정과 위험">
+              <span>Company</span><i aria-hidden="true">→</i>
+              <span>Industry</span><i aria-hidden="true">→</i>
+              <span>Business Model</span><i aria-hidden="true">→</i>
+              <span>Accounts &amp; Risks</span>
+            </div>
+            <div class="sp-acts">
+              <a class="sp-go sp-primary" data-link="auditPrep">Audit Prep 사용해보기 <i aria-hidden="true">↗</i></a>
+              <a class="sp-go" data-link="github">만든 과정 보기 <i aria-hidden="true">↗</i></a>
+            </div>
+          </div>
+          <div class="sp-file">
+            <p class="sp-fh"><b>Audit Prep</b> <span>Planning Index</span> <span class="sp-ref">A-100</span></p>
+            <div class="sp-fb">
+              <blockquote class="sp-quote">
+                <p>
+                  신입회계사는 충분한 회사와 산업 이해 없이 필드에 투입되기도 합니다.
+                  감사는 회사가 속한 산업, 비즈니스 모델과 거래구조를 이해하는 데서 시작해야 한다고 생각합니다.
+                </p>
+                <cite>문제의식</cite>
+              </blockquote>
+              <ol class="sp-idx">
+                <li>
+                  <span class="sp-in">A-110</span><span class="sp-it">산업 카드덱</span>
+                  <p class="sp-id">그 산업이 어떻게 돈을 버는지, 어디에서 이익이 나는지 먼저 훑습니다.</p>
+                </li>
+                <li>
+                  <span class="sp-in">A-120</span><span class="sp-it">DART 공시로 만든 회사 층</span>
+                  <p class="sp-id">실제 공시에서 그 회사만의 사실을 끌어와 산업 일반론 위에 얹습니다.</p>
+                </li>
+                <li>
+                  <span class="sp-in">A-130</span><span class="sp-it">갈라지는 지점 찾기</span>
+                  <p class="sp-id">일반론과 실제가 어긋나는 곳이 곧 질문이 될 자리입니다.</p>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 STUDY ------------------------------------------------------ -->
+    <section class="sp-scene" id="study" aria-labelledby="spH5">
+      <div class="sp-inner">
+        <div class="sp-cols">
+          <div>
+            <div class="sp-kick"><span class="sp-num">05</span><span class="sp-label">Study</span></div>
+            <h2 class="sp-h" id="spH5">하루가 끝나면<br>관심을 결과물로 만듭니다.</h2>
+            <p class="sp-p">
+              RWA 스터디, BAY 리서치팀 운영, 아티클, 블록체인 온보딩 자료는 따로 벌인 일이 아닙니다.
+              설명할 수 있게 되었을 때 비로소 이해한 것이라고 생각해서,
+              공부의 마지막 단계는 언제나 남이 읽을 수 있는 결과물입니다.
+            </p>
+            <footer class="sp-tail">
+              <span>© 2026 배예림 · Yerim Bae</span>
+              <a href="index.html">기존 홈</a>
+              <a href="archive.html">Study Log</a>
+              <a data-link="github">GitHub</a>
+            </footer>
+          </div>
+          <div class="sp-shelf" id="spShelf"></div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /track -->
+</div><!-- /deck -->
+
+<!-- =====================================================================
+     진행 상태
+     ===================================================================== -->
+<nav class="sp-nav" id="spNav" aria-label="장면 이동">
+  <p class="sp-tally"><b id="spNow">01</b> / 05</p>
+  <ul>
+    <li><button type="button" data-go="0" aria-current="true"><span>Home</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="1" aria-current="false"><span>Morning</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="2" aria-current="false"><span>Move</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="3" aria-current="false"><span>Workroom</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="4" aria-current="false"><span>Study</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+  </ul>
+</nav>
+
+<p class="sp-sr" id="spSay" aria-live="polite"></p>
+
+<script>
+/* =========================================================================
+   ▼▼▼ 여기만 고치면 됩니다 ▼▼▼
+
+   LINKS  — 화면에 걸리는 모든 주소. href 를 채우면 눌리는 링크가 되고,
+            "" 로 비워두면 자리는 지키되 조용히 눌리지 않는 상태가 됩니다.
+   PHOTOS — 03 MOVE 의 사진 세 장. src 에 경로를 넣으면 그 자리에 들어갑니다.
+   ========================================================================= */
+const LINKS = {
+  // 기존 사이트에 이미 있는 주소를 그대로 가져왔습니다
+  newsTracking: { href:"archive.html",                                  ext:false, label:"Study Log 뉴스 트래킹" },
+  auditPrep:    { href:"https://yerim-bae.github.io/audit-context-ai/", ext:true,  label:"Audit Prep 감사 사전준비 도구" },
+  github:       { href:"https://github.com/yerim-Bae",                  ext:true,  label:"GitHub 저장소" },
+  // 아직 주소가 없는 곳 — 생기면 href 만 채워주세요
+  workoutLog:   { href:"", ext:false, label:"운동 기록" },
+  rwaStudy:     { href:"", ext:false, label:"RWA 스터디" },
+  bayResearch:  { href:"", ext:false, label:"BAY 리서치" },
+  articles:     { href:"", ext:false, label:"아티클" },
+  onboarding:   { href:"", ext:false, label:"블록체인 온보딩 자료" }
+};
+
+const PHOTOS = [
+  { src:"", alt:"", caption:"5K",     note:"완주" },
+  { src:"", alt:"", caption:"10K",    note:"준비 중" },
+  { src:"", alt:"", caption:"Tennis", note:"대회" }
+];
+
+const SHELF = [
+  { key:"rwaStudy",    title:"RWA Study",    note:"실물자산 토큰화 스터디" },
+  { key:"bayResearch", title:"BAY Research", note:"리서치팀 운영" },
+  { key:"articles",    title:"Articles",     note:"산업 분석 아티클" },
+  { key:"onboarding",  title:"Onboarding",   note:"블록체인 교육자료" }
+];
+/* ▲▲▲ 여기까지 ▲▲▲ */
+
+const esc = (s)=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---- 주소를 [data-link] 자리에 연결 ------------------------------------ */
+document.querySelectorAll("[data-link]").forEach(el=>{
+  const cfg = LINKS[el.dataset.link], arrow = el.querySelector("i");
+  if(!cfg || !cfg.href){
+    el.removeAttribute("href");
+    el.classList.add("sp-pending");
+    el.setAttribute("aria-disabled","true");
+    el.setAttribute("title",(cfg&&cfg.label?cfg.label:"이 항목")+" — 준비 중");
+    return;
+  }
+  el.href = cfg.href;
+  el.setAttribute("aria-label", cfg.label);
+  if(cfg.ext){
+    el.target="_blank"; el.rel="noopener"; el.classList.add("sp-ext");
+    if(arrow) arrow.textContent="↗";
+  }else if(arrow){ arrow.textContent="→"; }
+});
+
+/* ---- 05 STUDY 서재 인덱스 ---------------------------------------------- */
+document.getElementById("spShelf").innerHTML = SHELF.map((it,i)=>{
+  const cfg = LINKS[it.key] || {};
+  const n = String(i+1).padStart(2,"0");
+  const body =
+    `<span class="sp-rn">${n}</span>` +
+    `<span class="sp-rt">${esc(it.title)}<span class="sp-rs">${esc(it.note)}</span></span>` +
+    `<span class="sp-ra" aria-hidden="true">${cfg.href ? (cfg.ext?"↗":"→") : "·"}</span>`;
+  return cfg.href
+    ? `<a class="sp-row" href="${esc(cfg.href)}"${cfg.ext?' target="_blank" rel="noopener"':""} aria-label="${esc(it.title)} — ${esc(it.note)}">${body}</a>`
+    : `<span class="sp-row" aria-disabled="true" title="${esc(it.title)} — 준비 중">${body}</span>`;
+}).join("");
+
+/* ---- 03 MOVE 사진 자리 ------------------------------------------------- */
+document.getElementById("spShots").innerHTML = PHOTOS.map(p=>{
+  const inner = p.src
+    ? `<img src="${esc(p.src)}" alt="${esc(p.alt||p.caption)}" width="600" height="400" loading="lazy" />`
+    : `<span class="sp-empty">사진</span>`;
+  return `<figure class="sp-shot"><div class="sp-frame">${inner}</div>
+    <figcaption><b>${esc(p.caption)}</b> ${esc(p.note)}</figcaption></figure>`;
+}).join("");
+
+/* ---- 02 MORNING 오늘 날짜 ---------------------------------------------- */
+(function(){
+  const el = document.getElementById("spDate");
+  if(!el) return;
+  try{
+    el.textContent = new Intl.DateTimeFormat("en-GB",
+      {timeZone:"Asia/Seoul",year:"numeric",month:"short",day:"2-digit"}).format(new Date());
+  }catch(e){ el.textContent = ""; }
+})();
+
+/* =========================================================================
+   풀페이지 전환 엔진
+
+   문서는 스크롤하지 않습니다. 무대(.sp-deck)를 화면에 고정해 두고 장면 띠를
+   transform 으로 한 칸씩 옮깁니다. 스크롤 위치가 없으니 두 장면 사이에
+   걸치는 상태가 애초에 만들어지지 않습니다.
+
+   한 번의 제스처 = 한 칸
+     · 휠 델타를 STEP 까지 모은 뒤 한 번만 움직입니다
+     · 움직인 뒤에는 "제스처가 끝났다"고 볼 때까지(QUIET) 다시 받지 않습니다
+       → 트랙패드가 작은 이벤트를 수십 번 흘려도 한 칸입니다
+       → 휠을 세게 돌려 큰 델타가 한꺼번에 와도 한 칸입니다
+     · 전환 애니메이션이 끝날 때까지도 잠가둡니다
+   ========================================================================= */
+(function(){
+  const html  = document.documentElement;
+  const deck  = document.getElementById("spDeck");
+  const track = document.getElementById("spTrack");
+  const scenes= [...track.querySelectorAll(".sp-scene")];
+  const btns  = [...document.querySelectorAll(".sp-nav button")];
+  const nowEl = document.getElementById("spNow");
+  const sayEl = document.getElementById("spSay");
+  const N = scenes.length;
+  const IDS = scenes.map(s=>s.id);
+  const NAMES = ["Home","Morning","Move","Workroom","Study"];
+
+  const STEP  = 42;    // 이만큼 델타가 모이면 한 칸
+  const QUIET = 240;   // 이만큼 조용하면 "제스처가 끝났다"고 봅니다
+  const vertQ = matchMedia("(max-width:900px)");
+  const softQ = matchMedia("(prefers-reduced-motion:reduce)");
+
+  let index = 0, animating = false, accum = 0, armed = true;
+  let quietTimer = 0, safety = 0;
+
+  // 자바스크립트가 살아 있으니 고정 무대로 바꿉니다 (없으면 위 CSS 그대로 세로 문서)
+  html.classList.add("sp-js");
+  setVert();
+
+  function setVert(){ html.classList.toggle("sp-vert", vertQ.matches); }
+
+  function place(animate){
+    setVert();                       // 화살표 방향 표시용 (배치는 CSS 가 알아서 합니다)
+    const soft = softQ.matches;
+    track.style.transition = (animate && !soft)
+      ? "transform var(--dur) var(--ease)" : "none";
+    // 위치는 이 한 줄이 전부입니다. 가로냐 세로냐는 CSS 가 판단합니다.
+    track.style.setProperty("--i", String(index));
+
+    // 화면 밖 장면은 키보드 탭 순서에서도 빼둡니다
+    scenes.forEach((s,i)=>{
+      const off = i !== index;
+      s.setAttribute("aria-hidden", off ? "true" : "false");
+      if("inert" in s) s.inert = off;
+    });
+    btns.forEach((b,i)=> b.setAttribute("aria-current", i===index ? "true" : "false"));
+    if(nowEl) nowEl.textContent = String(index+1).padStart(2,"0");
+    if(sayEl) sayEl.textContent = (index+1) + " / " + N + " " + NAMES[index];
+  }
+
+  function lock(){
+    animating = true;
+    clearTimeout(safety);
+    // transitionend 를 못 받는 경우(전환 없음·중간에 잘림)를 대비한 안전망
+    safety = setTimeout(()=>{ animating = false; }, softQ.matches ? 30 : 900);
+  }
+  track.addEventListener("transitionend", e=>{
+    if(e.propertyName === "transform"){ clearTimeout(safety); animating = false; }
+  });
+
+  /* i 번째 장면으로. push 가 true 면 뒤로가기 기록을 남깁니다. */
+  function go(i, opts){
+    opts = opts || {};
+    const next = Math.max(0, Math.min(N-1, i));
+    if(next === index && !opts.force) return false;
+    index = next;
+    place(opts.animate !== false);
+    lock();
+    const hash = "#" + IDS[index];
+    if(opts.history === "push"){
+      if(location.hash !== hash) history.pushState({i:index}, "", hash);
+    }else if(opts.history !== "none"){
+      history.replaceState({i:index}, "", hash);
+    }
+    return true;
+  }
+  function move(dir){ return go(index + dir, {history:"push"}); }
+
+  /* ---- 휠 · 트랙패드 -------------------------------------------------- */
+  deck.addEventListener("wheel", e=>{
+    e.preventDefault();                       // 문서가 밀리거나 튀지 않게
+    if(animating || !armed){ nudgeQuiet(); return; }
+    // 가로 무대에서도 위아래 휠을 씁니다. 가로 제스처(트랙패드 두 손가락 좌우)도 받습니다.
+    const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    accum += d;
+    if(Math.abs(accum) >= STEP){
+      const dir = accum > 0 ? 1 : -1;
+      accum = 0;
+      armed = false;                          // 이 제스처는 여기서 끝
+      move(dir);
+    }
+    nudgeQuiet();
+  }, {passive:false});
+
+  function nudgeQuiet(){
+    clearTimeout(quietTimer);
+    quietTimer = setTimeout(()=>{ accum = 0; armed = true; }, QUIET);
+  }
+
+  /* ---- 손가락 스와이프 ------------------------------------------------ */
+  let tx=0, ty=0, tActive=false;
+  deck.addEventListener("touchstart", e=>{
+    if(e.touches.length !== 1) return;
+    tActive = true; tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, {passive:true});
+  deck.addEventListener("touchmove", e=>{
+    if(tActive) e.preventDefault();           // 고무줄처럼 늘어나는 것 방지
+  }, {passive:false});
+  deck.addEventListener("touchend", e=>{
+    if(!tActive) return;
+    tActive = false;
+    if(animating) return;
+    const t = e.changedTouches[0];
+    const dx = tx - t.clientX, dy = ty - t.clientY;
+    const d = vertQ.matches ? dy : (Math.abs(dx) >= Math.abs(dy) ? dx : dy);
+    if(Math.abs(d) > 45) move(d > 0 ? 1 : -1);
+  }, {passive:true});
+
+  /* ---- 키보드 --------------------------------------------------------- */
+  addEventListener("keydown", e=>{
+    // e.target 이 window·document 일 수도 있어서 closest 유무를 먼저 봅니다
+    const t = e.target;
+    const near = (sel)=> !!(t && typeof t.closest === "function" && t.closest(sel));
+    if(near("input,textarea,select,[contenteditable]")) return;   // 글 쓰는 중이면 손대지 않습니다
+    // 스페이스는 버튼·링크를 누르는 데 먼저 쓰이게 둡니다
+    if((e.key === " " || e.code === "Space") && near("button,a[href]")) return;
+
+    let handled = true;
+    switch(e.key){
+      case "ArrowRight": case "ArrowDown": case "PageDown": move(1); break;
+      case "ArrowLeft":  case "ArrowUp":   case "PageUp":   move(-1); break;
+      case " ": move(e.shiftKey ? -1 : 1); break;
+      case "Home": go(0, {history:"push"}); break;
+      case "End":  go(N-1, {history:"push"}); break;
+      default: handled = false;
+    }
+    if(handled) e.preventDefault();
+  });
+
+  /* ---- 진행 표시 클릭 ------------------------------------------------- */
+  btns.forEach(b=> b.addEventListener("click", ()=> go(+b.dataset.go, {history:"push"})));
+
+  /* ---- 주소(#해시) ---------------------------------------------------- */
+  function fromHash(animate){
+    const i = IDS.indexOf((location.hash||"").replace("#",""));
+    go(i < 0 ? 0 : i, {animate:animate, history:"none", force:true});
+  }
+  addEventListener("popstate", ()=> fromHash(true));      // 뒤로·앞으로
+  // 페이지 안의 #링크(다른 장면으로 가는 앵커)도 장면 이동으로 처리합니다
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener("click", e=>{
+      const i = IDS.indexOf(a.getAttribute("href").slice(1));
+      if(i < 0) return;
+      e.preventDefault();
+      go(i, {history:"push"});
+    });
+  });
+
+  /* ---- 화면 크기가 바뀌면 방향만 다시 잡고 같은 장면에 그대로 둡니다 --- */
+  function onResize(){ place(false); }
+  addEventListener("resize", onResize);
+  addEventListener("orientationchange", onResize);
+  if(vertQ.addEventListener) vertQ.addEventListener("change", onResize);
+  // 무대 크기가 어떤 이유로든 바뀌면(주소창이 접히는 모바일 등) 같은 장면에 다시 맞춥니다.
+  // resize 이벤트를 놓치는 상황까지 덮기 위한 이중 안전장치입니다.
+  if("ResizeObserver" in window) new ResizeObserver(()=>place(false)).observe(deck);
+
+  /* ---- 시작 ----------------------------------------------------------- */
+  fromHash(false);          // 해시로 들어왔으면 그 장면에서 시작
+  animating = false;
+
+  // 손으로 확인할 때 쓰는 창구 (콘솔에서 spDeckState() )
+  window.spDeckState = ()=>({index, N, id:IDS[index], vertical:vertQ.matches, animating, armed});
+  window.spGo = (i)=>go(i,{history:"push"});
+})();
+
+/* ---- Study Log 목록·숫자를 기존 API 에서 그대로 가져옵니다 -------------
+   (배포 전이거나 노션 연결이 끊기면 자리만 조용히 비워둡니다) */
+(function(){
+  const lines = document.getElementById("spLines");
+  fetch("/api/posts")
+    .then(r=>r.ok?r.json():null)
+    .then(posts=>{
+      if(!Array.isArray(posts)||!posts.length) return;
+      document.getElementById("spCount").textContent = posts.length;
+      document.getElementById("spStat").hidden = false;
+      const cats=[...new Set(posts.flatMap(p=>(p.topics||[]).filter(Boolean)))].slice(0,4);
+      if(cats.length){
+        document.getElementById("spChips").innerHTML =
+          cats.map(c=>`<span class="sp-chip">${esc(c)}</span>`).join("");
+      }
+      if(lines){
+        lines.innerHTML = posts.slice(0,4).map((p,i)=>
+          `<li><span class="sp-ln">${String(i+1).padStart(2,"0")}</span>` +
+          `<span class="sp-lt">${esc(p.title||"")}</span>` +
+          `<span class="sp-lm">${esc((p.topics&&p.topics[0])||"")}</span></li>`
+        ).join("");
+      }
+    })
+    .catch(()=>{});
+})();
+</script>
+</body>
+</html>
