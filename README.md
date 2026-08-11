@@ -169,6 +169,7 @@ GitHub·Vercel은 **GitHub로 로그인** 한 번이면 되니 순서대로 만�
 | `assets/favicon-180.png` | 모바일 홈 화면 | 180×180 |
 | `assets/favicon-512.png` | 앱 아이콘 | 512×512 |
 | `assets/favicon.ico` · `favicon.ico` | 구형 브라우저용 (16·32·48 포함) | 32×32 |
+| `assets/wordmark.png` | Study Log 제호 왼쪽의 돌아가기 로고 (배경 투명) | 높이 96 |
 | `assets/og-image.png` | 카톡·SNS 미리보기 — 첫 화면(`index.html`)용 | 1200×630 |
 | `assets/og-archive.png` | 카톡·SNS 미리보기 — Study Log(`archive.html`)용 | 1200×630 |
 | `assets/authors/배예림.png` | 프로필 사진 | 정사각형 400×400 |
