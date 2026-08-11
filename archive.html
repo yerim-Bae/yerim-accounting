@@ -36,7 +36,8 @@
     --accent:#D8662F;--accent-2:#E4A23A;--accent-deep:#9F3F2F;--accent-soft:rgba(216,102,47,.10);--accent-soft2:rgba(216,102,47,.15);
     --green:#5E7B4F;--green-soft:rgba(94,123,79,.14);--amber:#B5762A;--amber-soft:rgba(181,118,42,.15);
     --serif:"Noto Serif KR",serif;
-    --radius:16px;--maxw:1120px;--shadow:0 1px 2px rgba(60,45,32,.04),0 8px 24px rgba(60,45,32,.06);--shadow-hover:0 4px 10px rgba(216,102,47,.09),0 18px 40px rgba(60,45,32,.12);
+    /* 1면과 같은 무드 — 각진 모서리, 그림자 없이 얇은 테두리로만 층위를 만듭니다 */
+    --radius:3px;--maxw:1120px;--shadow:none;--shadow-hover:none;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -57,7 +58,7 @@
   .brand .bt b{font-size:15.5px;font-weight:800;color:var(--text)}
   .brand small{display:block;font-size:11px;font-weight:600;color:var(--faint);letter-spacing:.01em;margin-top:1px}
   .nav .links{display:flex;gap:4px;margin-left:auto}
-  .nav .links a{padding:8px 14px;border-radius:10px;font-size:14px;font-weight:700;color:var(--muted);transition:.15s;white-space:nowrap}
+  .nav .links a{padding:8px 13px;border-radius:2px;font-size:14px;font-weight:700;color:var(--muted);transition:.15s;white-space:nowrap}
   .nav .links a:hover{color:var(--text);background:var(--bg-soft)}
   .nav .links a.active{color:var(--accent);background:var(--accent-soft)}
   /* 모바일: 헤더를 컴팩트하게 — 메뉴가 가로 한 줄 유지 (PC는 영향 없음) */
@@ -74,7 +75,7 @@
   .hero{position:relative;padding:56px 0 26px}
   .hero .hcopy{position:relative;z-index:2;max-width:720px}
   .hero .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.02em;
-    color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:16px}
+    color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:2px;margin-bottom:16px}
   .hero .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(216,102,47,.5);animation:pulse 2s infinite}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(216,102,47,.45)}70%{box-shadow:0 0 0 8px rgba(216,102,47,0)}100%{box-shadow:0 0 0 0 rgba(216,102,47,0)}}
   .hero h1{font-family:var(--serif);font-size:35px;font-weight:600;letter-spacing:-.03em;line-height:1.3}
@@ -83,7 +84,7 @@
   .hero p{color:var(--muted);margin-top:14px;font-size:16px;max-width:560px}
   .hero .meta{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
   .hero .meta .chip{display:inline-flex;align-items:baseline;gap:6px;background:var(--card);border:1px solid var(--border);
-    border-radius:12px;padding:9px 14px;font-size:13px;color:var(--muted);box-shadow:var(--shadow)}
+    border-radius:2px;padding:9px 14px;font-size:13px;color:var(--muted)}
   .hero .meta .chip b{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.02em;font-family:var(--serif)}
 
   @media(prefers-reduced-motion:reduce){.hero .eyebrow .dot{animation:none!important}}
@@ -97,13 +98,13 @@
   @media(max-width:640px){.grid{grid-template-columns:1fr}}
 
   /* ---------- cards ---------- */
-  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;
+  .card{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;
     transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .2s,border-color .2s;display:flex;flex-direction:column;gap:10px;
     box-shadow:var(--shadow);opacity:0;transform:translateY(10px);animation:cardIn .5s cubic-bezier(.2,.7,.3,1) forwards}
   @keyframes cardIn{to{opacity:1;transform:translateY(0)}}
-  .card:hover{border-color:var(--border-strong);transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+  .card:hover{border-color:var(--text);background:var(--card);transform:none}
   .card .tags{display:flex;gap:6px;flex-wrap:wrap}
-  .tag{font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;background:var(--accent-soft2);color:var(--accent);letter-spacing:.01em}
+  .tag{font-size:11px;font-weight:800;padding:3px 9px;border-radius:2px;background:var(--accent-soft2);color:var(--accent);letter-spacing:.01em}
   .tag.g{background:var(--green-soft);color:var(--green)}
   .tag.a{background:var(--amber-soft);color:var(--amber)}
   /* 주제(Topic) 배지 색 — 노션 Topic 열의 색과 맞췄습니다 */
@@ -132,13 +133,13 @@
   .card .foot .who,.feat-body .foot .who{color:var(--muted);font-weight:700;white-space:nowrap}
 
   .week-block{margin-bottom:34px}
-  .week-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:6px 13px;border-radius:9px;margin-bottom:14px}
+  .week-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:5px 12px;border-radius:2px;margin-bottom:14px}
   .tag.tlink{cursor:pointer;transition:.15s}
   .tag.tlink:hover{filter:brightness(.92)}
   .authors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
   @media(max-width:1040px){.authors{grid-template-columns:repeat(3,minmax(0,1fr))}}
   @media(max-width:640px){.authors{grid-template-columns:repeat(2,1fr)}}
-  .author-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;cursor:pointer;
+  .author-card{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;
     transition:transform .2s,box-shadow .2s,border-color .2s;box-shadow:var(--shadow)}
   .author-card:hover{transform:translateY(-4px);border-color:var(--border-strong);box-shadow:var(--shadow-hover)}
   .author-card .avatar{width:48px;height:48px;font-size:18px;margin:0 auto 11px}
@@ -147,7 +148,7 @@
   .author-card .abio{color:var(--muted);font-size:12.5px;margin-top:9px;padding-top:9px;border-top:1px solid var(--border);line-height:1.55}
   .hero .abio-lg{margin-top:8px;color:var(--accent);font-size:14.5px;font-weight:700}
   .hero .about-lg{margin-top:10px;color:var(--muted);font-size:15px;line-height:1.75;max-width:640px;white-space:pre-wrap}
-  .count-pill{font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:5px 12px;border-radius:999px;letter-spacing:-.01em;line-height:1;white-space:nowrap}
+  .count-pill{font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:5px 11px;border-radius:2px;letter-spacing:-.01em;line-height:1;white-space:nowrap}
   .hero h1 .a-count{font-size:12px;font-weight:600;color:var(--faint);letter-spacing:0;line-height:1;white-space:nowrap}
 
   .back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:14px;font-weight:700;margin:28px 0 8px;cursor:pointer;transition:.15s}
@@ -159,7 +160,7 @@
   .article .abyline .who{color:var(--text);font-weight:700;white-space:nowrap}
   .article h4{font-size:12px;font-weight:900;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin:26px 0 8px}
   .article p{color:var(--text);font-size:15.5px;line-height:1.85;white-space:pre-wrap}
-  .article .insight{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-top:6px}
+  .article .insight{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 26px;margin-top:6px}
   .article .insight>*:first-child{margin-top:0}
   .article .insight>*:last-child{margin-bottom:0}
   .article .insight p{color:var(--text);font-size:15px;line-height:1.8;margin:10px 0;white-space:normal}
@@ -175,11 +176,11 @@
   .article .insight li{margin:5px 0;line-height:1.8;font-size:15px}
   .article .insight li::marker{color:var(--accent);font-weight:700}
   .article .insight blockquote{border-left:3px solid var(--border-strong);padding:2px 0 2px 14px;margin:12px 0;color:var(--muted)}
-  .article .insight pre{background:var(--bg-soft);border:1px solid var(--border);padding:12px 14px;border-radius:10px;overflow-x:auto;font-size:13px;line-height:1.6;white-space:pre-wrap;margin:12px 0}
+  .article .insight pre{background:var(--bg-soft);border:1px solid var(--border);padding:12px 14px;border-radius:2px;overflow-x:auto;font-size:13px;line-height:1.6;white-space:pre-wrap;margin:12px 0}
   .article .insight pre code{background:none;border:none;padding:0}
   .article .insight hr{border:none;border-top:1px solid var(--border);margin:18px 0}
   .article .insight .itbl-wrap{overflow-x:auto;margin:12px 0;-webkit-overflow-scrolling:touch}
-  .article .insight table{border-collapse:collapse;width:100%;font-size:13.5px;background:var(--card);border-radius:10px;overflow:hidden;margin:12px 0;display:block;overflow-x:auto}
+  .article .insight table{border-collapse:collapse;width:100%;font-size:13.5px;background:var(--card);border-radius:2px;overflow:hidden;margin:12px 0;display:block;overflow-x:auto}
   .article .insight table th,.article .insight table td{border:1px solid var(--border);padding:9px 12px;text-align:left;vertical-align:top;color:var(--text);white-space:normal}
   .article .insight table th{background:var(--bg-soft);font-weight:800;color:var(--text)}
   .article .insight table tr:nth-child(even) td{background:#F7F2EA}
@@ -189,7 +190,7 @@
     min-width:0;margin-left:auto;padding-left:6px;justify-content:flex-end;flex:0 1 auto}
   .card .foot .ctopics .tag,.feat-body .foot .ctopics .tag{font-size:10.5px;padding:2px 8px;white-space:nowrap;flex:0 0 auto}
   .article h1.ptitle{margin-top:12px}
-  .src{display:inline-flex;align-items:center;gap:7px;margin-top:26px;padding:11px 17px;border:1px solid var(--border-strong);border-radius:11px;font-size:14px;font-weight:700;color:var(--muted);transition:.15s}
+  .src{display:inline-flex;align-items:center;gap:7px;margin-top:26px;padding:11px 17px;border:1px solid var(--border-strong);border-radius:2px;font-size:14px;font-weight:700;color:var(--muted);transition:.15s}
   .src:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
 
   footer{border-top:1px solid var(--border);margin-top:64px;padding:32px 0;color:var(--faint);font-size:13px;text-align:center;font-weight:600}
@@ -197,7 +198,7 @@
   .loading{padding:80px 0;text-align:center;color:var(--muted)}
   .spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .banner{background:var(--amber-soft);border:1px solid rgba(209,129,15,.3);color:var(--amber);font-size:13px;font-weight:600;padding:11px 16px;border-radius:11px;margin-top:18px}
+  .banner{background:var(--amber-soft);border:1px solid rgba(209,129,15,.3);color:var(--amber);font-size:13px;font-weight:600;padding:11px 16px;border-radius:2px;margin-top:18px}
 
   /* ---------- 상세 페이지 2/3 + 1/3 레이아웃 ---------- */
   /* 헤더(Yerim Bae)와 좌우 폭을 정확히 맞춤 — 별도 확장 없음 */
@@ -221,7 +222,7 @@
   .pccap a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
   .pcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
   /* 카드 썸네일 — 16:9 프레임 */
-  .card .thumb{position:relative;display:block;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:11px;
+  .card .thumb{position:relative;display:block;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:2px;
                background:var(--card);border:1px solid var(--border);margin-bottom:12px}
   .card .thumb img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
   .card:hover .thumb img{transform:scale(1.04)}
@@ -245,7 +246,7 @@
   /* 본문 안 이미지 (두 번째 이후) */
   .article .insight figure.ifig{margin:16px 0}
   .article .insight figure.ifig img{width:100%;max-height:420px;object-fit:contain;display:block;
-                                    border:1px solid var(--border);border-radius:11px;background:var(--bg-soft)}
+                                    border:1px solid var(--border);border-radius:2px;background:var(--bg-soft)}
   /* 본문 안 이미지 출처도 상단 배너와 동일한 모양 (오른쪽 아래, 작은 회색 글씨) */
   .article .insight figure.ifig figcaption{margin-top:8px;padding:0 2px;font-size:13px;font-weight:600;
                                            color:var(--faint);text-align:right;line-height:1.6}
@@ -260,7 +261,7 @@
   .spanel .sh span{font-size:11px;color:var(--faint);font-weight:600;margin-left:auto;white-space:nowrap;
                    overflow:hidden;text-overflow:ellipsis;max-width:44%}
   .spanel .slist{display:flex;flex-direction:column;gap:4px}
-  .scard{display:block;padding:8px 9px;border-radius:10px;cursor:pointer;transition:.15s;border:1px solid transparent;min-width:0}
+  .scard{display:block;padding:8px 9px;border-radius:2px;cursor:pointer;transition:.15s;border:1px solid transparent;min-width:0}
   .scard:hover{background:var(--bg-soft);border-color:var(--border)}
   .scard.cur{background:var(--accent-soft);border-color:rgba(216,102,47,.22)}
   .scard .st{font-size:13.5px;font-weight:700;line-height:1.45;letter-spacing:-.015em;color:var(--text);
@@ -305,7 +306,9 @@
      이렇게 해야 바깥쪽 단만 넓어지지 않고 네 단의 글상자 폭이 똑같아집니다. */
   .front{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,2fr) minmax(0,1.06fr);
     margin:0 -20px;border-bottom:1px solid var(--text)}
-  .front > *{padding:24px 20px 28px;min-width:0}
+  /* 세 단을 세로 flex 로 두고 맨 아래 목록에 margin-top:auto 를 줍니다.
+     그래야 글 길이가 달라도 단 아래가 비어 보이지 않고 바닥선이 맞습니다. */
+  .front > *{padding:24px 20px 28px;min-width:0;display:flex;flex-direction:column}
   .front > * + *{border-left:1px dashed var(--border-strong)}
   @media(max-width:980px){
     .front{grid-template-columns:minmax(0,1fr);margin:0}
@@ -347,6 +350,32 @@
   .lead figcaption{margin-top:7px;font-size:11px;font-weight:600;color:var(--faint);text-align:right}
   .lead .lfoot{margin-top:15px;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;
     font-size:12.5px;color:var(--faint)}
+  /* 가운데 단 아래 짧은 기사 두 건 */
+  .leadmore{margin-top:auto;padding-top:20px;display:grid;grid-template-columns:1fr 1fr;
+    border-top:1px solid var(--border-strong)}
+  .leadmore a{display:block;padding:0 16px;min-width:0}
+  .leadmore a:first-child{padding-left:0}
+  .leadmore a:last-child{padding-right:0}
+  .leadmore a + a{border-left:1px dashed var(--border-strong)}
+  .leadmore .lm-t{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+    font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:-.028em;line-height:1.4;transition:color .15s}
+  .leadmore a:hover .lm-t{color:var(--accent)}
+  .leadmore .lm-m{display:block;margin-top:7px;font-size:11px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--faint)}
+  @media(max-width:520px){
+    .leadmore{grid-template-columns:1fr}
+    .leadmore a{padding:0}
+    .leadmore a + a{border-left:none;border-top:1px dashed var(--border-strong);margin-top:14px;padding-top:14px}
+  }
+  /* 오른쪽 단 아래 제목 목록 */
+  .asidemore{margin-top:auto;padding-top:18px;border-top:1px solid var(--border-strong)}
+  .asidemore .amh{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:4px}
+  .asidemore a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    padding:10px 0;border-top:1px solid var(--border);font-size:13.5px;font-weight:700;line-height:1.55;
+    color:var(--text);transition:color .15s}
+  .asidemore a:first-of-type{border-top:none}
+  .asidemore a:hover{color:var(--accent)}
 
   /* 오른쪽 — 보조기사 + 고른 글 2칸 */
   .aside .astory{display:block;cursor:pointer}
@@ -432,7 +461,7 @@
   .fitem .fmeta{margin-top:6px;font-size:11px;color:var(--faint);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
   /* 주제별 탭 */
   .ttabs{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--border);margin-bottom:18px}
-  .ttab{display:inline-flex;align-items:center;font-family:inherit;font-size:13px;font-weight:700;padding:7px 15px;border-radius:999px;cursor:pointer;
+  .ttab{display:inline-flex;align-items:center;font-family:inherit;font-size:13px;font-weight:700;padding:7px 14px;border-radius:2px;cursor:pointer;
     background:var(--bg-soft);border:1px solid transparent;color:var(--muted);transition:.15s;letter-spacing:-.01em}
   .ttab:hover{color:var(--text);border-color:var(--border)}
   .ttab.on{background:var(--accent-soft);border-color:rgba(216,102,47,.28);color:var(--accent)}
@@ -697,7 +726,7 @@ function dashTopic(name){
 window.dashTopic = dashTopic;
 
 /* ---- 1면 조각들 ---- */
-const GLANCE_N = 6;   // 왼쪽 "한눈에 보기" 줄 수
+const GLANCE_N = 8;   // 왼쪽 "한눈에 보기" 줄 수 — 가운데·오른쪽 단 길이에 맞춰 잡았습니다
 const ROW_N    = 4;   // 1면 아래 가로줄 기사 수
 
 // 왼쪽 단 — 번호가 붙은 한 줄 목록
@@ -725,8 +754,18 @@ function leadHtml(p){
     <div class="lfoot">${avatarHtml(p.author)}<span>${p.author||""}</span><span>·</span><span>${fmtDate(p.date)}</span>${cardTopicsHtml(p)}</div>
   </article>`;
 }
+/* 가운데 단 아래를 채우는 짧은 기사 두 건.
+   단 바닥에 붙여서(margin-top:auto) 아래가 비어 보이지 않게 합니다. */
+function leadMoreHtml(items){
+  if(!items.length) return "";
+  return `<div class="leadmore">${items.map(p=>
+    `<a href="#/post/${p.id}">
+      <span class="lm-t">${p.title}</span>
+      <span class="lm-m">${(p.topics||[]).filter(Boolean)[0]||""}${p.date?` · ${fmtDate(p.date)}`:""}</span>
+    </a>`).join("")}</div>`;
+}
 // 오른쪽 단 — 보조기사 + 직접 고른 글 2칸
-function asideHtml(second, picks){
+function asideHtml(second, picks, more){
   const s = second ? `<a class="astory" href="#/post/${second.id}">
       <h3>${second.title}</h3>
       ${second.summary?`<p class="adesc">${(second.summary||"").replace(/\n/g," ")}</p>`:""}
@@ -738,7 +777,15 @@ function asideHtml(second, picks){
         <div class="vt">${p.title}</div>
         <div class="vby">${avatarHtml(p.author)}<span>${p.author||""}</span></div>
       </div>`).join("")}</div>` : "";
-  return `<div class="aside">${s}${box}</div>`;
+  return `<div class="aside">${s}${box}${asideMoreHtml(more||[])}</div>`;
+}
+/* 오른쪽 단 아래를 채우는 제목 목록. 역시 단 바닥에 붙입니다. */
+function asideMoreHtml(items){
+  if(!items.length) return "";
+  return `<div class="asidemore">
+    <div class="amh">더 읽기</div>
+    ${items.map(p=>`<a href="#/post/${p.id}">${p.title}</a>`).join("")}
+  </div>`;
 }
 // 1면 아래 가로줄
 function frontRowHtml(items){
@@ -755,20 +802,33 @@ function frontRowHtml(items){
 function viewDash(){
   if(!POSTS.length) return `${mastheadHtml()}<p class="empty">아직 글이 없습니다.</p>`;
   const sorted=[...POSTS].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  /* 자리마다 글을 하나씩 배정합니다. 한 번 쓴 글은 used 에 넣어
+     다음 자리에서 제외하므로, 같은 글이 두 군데 나오지 않습니다.
+     순서: 머리기사 -> 직접 고른 글 -> 보조기사 -> 한눈에보기 -> 가운데 아래 -> 오른쪽 아래 -> 가로줄 */
+  const used=new Set();
+  const take=(n,filter)=>{
+    const out=[];
+    for(const p of sorted){
+      if(out.length>=n) break;
+      if(used.has(String(p.id))) continue;
+      if(filter && !filter(p)) continue;
+      used.add(String(p.id)); out.push(p);
+    }
+    return out;
+  };
   // 머리기사 = 이미지가 있는 가장 최근 글(없으면 그냥 최신 글)
-  const lead=sorted.find(p=>p.cover)||sorted[0];
-  const rest=sorted.filter(p=>String(p.id)!==String(lead.id));
+  const lead=take(1,p=>p.cover)[0] || take(1)[0];
+  // 직접 고른 글 — 노션 Pick 체크박스. 머리기사로 이미 쓴 글은 빠집니다
+  const picks=take(2,p=>p.pick);
   // 오른쪽 보조기사 = 남은 글 중 이미지가 있는 첫 글
-  const second=rest.find(p=>p.cover)||rest[0]||null;
-  const used=new Set([lead,second].filter(Boolean).map(p=>String(p.id)));
-  // 왼쪽 한눈에보기 = 머리기사·보조기사를 뺀 최신순
-  const glance=rest.filter(p=>!used.has(String(p.id))).slice(0,GLANCE_N);
-  // 아래 가로줄 = 그다음 글들
-  const usedAll=new Set([...used,...glance.map(p=>String(p.id))]);
-  const row=sorted.filter(p=>!usedAll.has(String(p.id))).slice(0,ROW_N);
-
-  // 직접 고른 글 — 노션 Pick 체크박스. 없으면 오른쪽 칸을 비웁니다
-  const picks=sorted.filter(p=>p.pick).slice(0,2);
+  const second=take(1,p=>p.cover)[0] || take(1)[0] || null;
+  // 왼쪽 한눈에보기
+  const glance=take(GLANCE_N);
+  // 가운데·오른쪽 단 아래를 채우는 짧은 목록
+  const leadMore=take(2);
+  const asideMore=take(3);
+  // 1면 아래 가로줄
+  const row=take(ROW_N);
 
   // 주제 탭 — 미분류 제외, 글 많은 순
   const map=topicMap();
@@ -780,8 +840,8 @@ function viewDash(){
   return `${mastheadHtml()}
   <div class="front">
     ${glanceHtml(glance, sorted[0] && sorted[0].date)}
-    ${leadHtml(lead)}
-    ${asideHtml(second, picks)}
+    <div class="leadcol">${leadHtml(lead)}${leadMoreHtml(leadMore)}</div>
+    ${asideHtml(second, picks, asideMore)}
   </div>
   ${frontRowHtml(row)}
 
