@@ -170,7 +170,7 @@
     .work .wd,.work .wtags{grid-column:2}
   }
 
-  /* ---- 02 News Tracking ---- */
+  /* ---- 02 Study Log ---- */
   .track{display:block;margin-top:26px;padding:34px 30px;border-radius:16px;
     background:var(--ivory-2);border:1px solid var(--ink-08);
     transition:background-color .24s ease,border-color .24s ease,transform .24s cubic-bezier(.22,.7,.3,1)}
@@ -236,7 +236,7 @@
 
     <nav class="menu rise d4" id="menu">
       <a class="mlink" data-k="work"   href="#work"   data-hint="공부를 결과물로 만든 기록">Selected Work<span class="arw">→</span></a>
-      <a class="mlink" data-k="news"   href="#news"   data-hint="산업의 변화를 꾸준히 추적한 기록">News Tracking<span class="arw">→</span></a>
+      <a class="mlink" data-k="news"   href="#log"    data-hint="산업의 변화를 꾸준히 따라 읽은 기록">Study Log<span class="arw">→</span></a>
       <a class="mlink" data-k="about"  href="#about"  data-hint="어떤 경험이 지금의 관심으로 이어졌는지">About Yerim<span class="arw">→</span></a>
       <a class="mlink" data-k="github" href="https://github.com/yerim-Bae" target="_blank" rel="noopener"
          data-hint="생각을 실제 도구로 구현한 과정">GitHub<span class="arw">↗</span></a>
@@ -266,26 +266,26 @@
 </section>
 
 <!-- =====================================================================
-     02 News Tracking
+     02 Study Log
      ===================================================================== -->
-<section id="news">
+<section id="log">
   <div class="wrap">
     <div class="shead reveal">
       <span class="snum">02</span>
-      <h2>News Tracking</h2>
-      <span class="snote">매주 쌓는 산업 기록</span>
+      <h2>Study Log</h2>
+      <span class="snote">매주 쌓는 공부 기록</span>
     </div>
     <a class="track reveal" href="archive.html">
       <div id="trackStat" hidden>
         <div class="tnum" id="trackCount"></div>
-        <div class="tlabel">issues tracked</div>
+        <div class="tlabel">notes</div>
       </div>
       <p class="tdesc">
         블록체인·디지털자산 업계에서 실제로 무슨 일이 일어나는지 매주 따라 읽고,
         요약과 제 해석을 함께 남깁니다. 산업을 알아야 회계 판단이 선다고 생각해서 시작한 기록입니다.
       </p>
       <div class="tcats" id="trackCats"></div>
-      <span class="tgo">아카이브 열기 <span aria-hidden="true">→</span></span>
+      <span class="tgo">Study Log 열기 <span aria-hidden="true">→</span></span>
     </a>
   </div>
 </section>
@@ -340,7 +340,7 @@
   <div class="wrap" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
     <span>© 2026 배예림 · Yerim Bae</span>
     <span>
-      <a href="archive.html">News Tracking</a> &nbsp;·&nbsp;
+      <a href="archive.html">Study Log</a> &nbsp;·&nbsp;
       <a href="https://github.com/yerim-Bae" target="_blank" rel="noopener">GitHub ↗</a>
     </span>
   </div>
@@ -364,8 +364,8 @@ const WORKS = [
     href:"https://yerim-bae.github.io/audit-context-ai/", ext:true
   },
   {
-    title:"뉴스 트래킹 아카이브 — 블록체인·디지털자산 주간 기록",
-    desc:"업계 뉴스를 매주 골라 읽고 요약과 인사이트를 남기는 아카이브입니다. 노션에 쌓은 기록이 사이트로 자동 반영되도록 만들었습니다.",
+    title:"Study Log — 블록체인·디지털자산 주간 공부 기록",
+    desc:"업계 뉴스를 매주 골라 읽고 요약과 인사이트를 남기는 공부 기록입니다. 노션에 쌓은 기록이 사이트로 자동 반영되도록 만들었습니다.",
     tags:["블록체인","디지털자산","직접 개발"],
     href:"archive.html"
   },
@@ -448,7 +448,7 @@ document.getElementById("works").innerHTML = WORKS.map((w,i)=>{
    (정상 동작했다면 이미 다 나타난 뒤라 눈에 보이는 변화가 없습니다) */
 setTimeout(()=>document.documentElement.classList.add("anim-off"), 1500);
 
-/* News Tracking 숫자·분야는 아카이브 데이터에서 자동으로 채웁니다.
+/* Study Log 숫자·분야는 아카이브 데이터에서 자동으로 채웁니다.
    (배포 전이거나 노션 연결이 끊기면 조용히 기본값으로 남습니다) */
 (function(){
   fetch("/api/posts")

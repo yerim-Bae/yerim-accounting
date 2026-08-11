@@ -1,4 +1,4 @@
-# Yerim Bae · 회계 공부 아카이브 — 노션 연결 & 배포 안내
+# Yerim Bae · Study Log — 노션 연결 & 배포 안내
 
 노션 표에 공부한 내용을 한 줄씩 쌓으면 이 홈페이지에 자동으로 표시됩니다.
 코드는 건드릴 필요 없고, 아래 순서대로 클릭·복붙만 하면 됩니다.
@@ -169,7 +169,8 @@ GitHub·Vercel은 **GitHub로 로그인** 한 번이면 되니 순서대로 만�
 | `assets/favicon-180.png` | 모바일 홈 화면 | 180×180 |
 | `assets/favicon-512.png` | 앱 아이콘 | 512×512 |
 | `assets/favicon.ico` · `favicon.ico` | 구형 브라우저용 | 32×32 |
-| `assets/og-image.png` | 카톡·SNS 링크 미리보기 | 1200×630 |
+| `assets/og-image.png` | 카톡·SNS 미리보기 — 첫 화면(`index.html`)용 | 1200×630 |
+| `assets/og-archive.png` | 카톡·SNS 미리보기 — Study Log(`archive.html`)용 | 1200×630 |
 | `assets/authors/배예림.png` | 프로필 사진 | 정사각형 400×400 |
 
 교체 후 GitHub에 다시 올리면 Vercel이 자동 재배포합니다.

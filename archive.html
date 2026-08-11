@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="Yerim Bae · 회계 공부 아카이브" />
-<title>Yerim Bae · 회계 공부 아카이브</title>
+<meta name="description" content="블록체인·디지털자산을 회계의 눈으로 읽습니다 — 배예림의 공부 기록" />
+<title>Yerim Bae · Study Log</title>
 <!-- 카톡·SNS 링크 미리보기 (Open Graph) -->
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://yerim-accounting.vercel.app/" />
-<meta property="og:title" content="Yerim Bae · 회계 공부 아카이브" />
-<meta property="og:description" content="배예림이 정리한 회계 공부 기록과 인사이트 아카이브" />
-<meta property="og:image" content="https://yerim-accounting.vercel.app/assets/og-image.png?v=1" />
+<meta property="og:url" content="https://yerim-accounting.vercel.app/archive.html" />
+<meta property="og:title" content="Yerim Bae · Study Log" />
+<meta property="og:description" content="블록체인·디지털자산을 회계의 눈으로 읽습니다." />
+<meta property="og:image" content="https://yerim-accounting.vercel.app/assets/og-archive.png?v=6" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Yerim Bae · 회계 공부 아카이브" />
-<meta name="twitter:description" content="배예림이 정리한 회계 공부 기록과 인사이트 아카이브" />
-<meta name="twitter:image" content="https://yerim-accounting.vercel.app/assets/og-image.png?v=1" />
+<meta name="twitter:title" content="Yerim Bae · Study Log" />
+<meta name="twitter:description" content="블록체인·디지털자산을 회계의 눈으로 읽습니다." />
+<meta name="twitter:image" content="https://yerim-accounting.vercel.app/assets/og-archive.png?v=6" />
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=6" />
 <link rel="icon" href="favicon.ico?v=6" sizes="any" />
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=6" />
@@ -357,7 +357,7 @@
   <div class="wrap nav">
     <!-- 로고를 누르면 포트폴리오 첫 화면으로 돌아갑니다. 아카이브 홈은 아래 "홈" 링크입니다 -->
     <a href="index.html" class="brand">
-      <span class="bt"><b>Yerim Bae</b><small>Accounting Study Archive · 회계 공부 아카이브</small></span>
+      <span class="bt"><b>Yerim Bae</b><small>Study Log · 공부 기록</small></span>
     </a>
     <nav class="links">
       <a href="#/" data-route="dash">홈</a>
@@ -371,7 +371,7 @@
 
 <main id="app" class="wrap"></main>
 
-<footer><div class="wrap">Yerim Bae · 회계 공부 아카이브 · Accounting Study Archive</div></footer>
+<footer><div class="wrap">Yerim Bae · Study Log · 공부 기록</div></footer>
 
 <script>
 /* =========================================================================
@@ -509,10 +509,11 @@ function heroHtml(){
   const banner = USING_SAMPLE ? `<div class="banner">⚙️ 지금은 샘플 데이터로 보이는 중이에요. 노션 연결·배포가 끝나면 실제 데이터가 표시됩니다.</div>`:"";
   return `<section class="hero">
     <div class="hcopy">
-      <h1><span class="hl">Accounting</span><br class="hbr"> Study Archive</h1>
+      <h1><span class="hl">Study</span> Log</h1>
+      <p>블록체인·디지털자산을 회계의 눈으로 읽습니다.</p>
       <div class="meta">
-        <span class="chip"><b>${POSTS.length}</b> 아카이브</span>
-        <span class="chip"><b>${new Set(POSTS.map(p=>deriveWeek(p.date).start)).size}</b> 주 아카이브</span>
+        <span class="chip"><b>${POSTS.length}</b> notes</span>
+        <span class="chip"><b>${new Set(POSTS.map(p=>deriveWeek(p.date).start)).size}</b> weeks</span>
       </div>
       ${banner}
     </div>
@@ -520,7 +521,7 @@ function heroHtml(){
 }
 function viewHome(){
   const sorted = [...POSTS].sort((a,b)=> String(b.date).localeCompare(String(a.date)));
-  return `<div class="sec-head" style="margin-top:34px"><h2>최신 아카이브</h2><span>최근 업데이트 순 · ${POSTS.length}건</span></div>
+  return `<div class="sec-head" style="margin-top:34px"><h2>최신 기록</h2><span>최근 업데이트 순 · ${POSTS.length}건</span></div>
   <div class="grid">${sorted.map((p,i)=>cardHtml(p,i)).join("")}</div>`;
 }
 
@@ -585,7 +586,7 @@ function viewDash(){
   const firstItems=first?map[first].slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,DASH_TOPIC_N):[];
 
   return `${heroHtml()}
-  <div class="sec-head"><h2>최신 아카이브</h2><span>가장 먼저 볼 기록</span></div>
+  <div class="sec-head"><h2>최신 기록</h2><span>가장 먼저 볼 기록</span></div>
   <div class="feat">
     ${featMainHtml(lead)}
     <div class="feat-side">
@@ -608,7 +609,7 @@ function viewDash(){
 }
 function viewWeeks(){
   const starts=[...new Set(POSTS.map(p=>deriveWeek(p.date).start))].sort((a,b)=>b.localeCompare(a));
-  return `<div class="sec-head" style="margin-top:34px"><h2>주차별 아카이브</h2><span>주 단위(일~토)로 모아보기</span></div>
+  return `<div class="sec-head" style="margin-top:34px"><h2>주차별 기록</h2><span>주 단위(일~토)로 모아보기</span></div>
   ${starts.map(st=>{const items=POSTS.filter(p=>deriveWeek(p.date).start===st).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
     const label=items.length?deriveWeek(items[0].date).label:st;
     return `<div class="week-block"><span class="week-tag">${label} · ${items.length}건</span><div class="grid">${items.map((p,i)=>cardHtml(p,i)).join("")}</div></div>`;}).join("")}`;
@@ -658,7 +659,7 @@ function viewAuthors(){
   return `<div class="sec-head" style="margin-top:34px"><h2>작성자</h2><span>작성자별 아카이빙</span></div>
   <div class="authors">${names.map(n=>{const bio=(AUTHORS_META[n]&&AUTHORS_META[n].bio)||"";
     return `<div class="author-card" onclick="location.hash='#/author/${encodeURIComponent(n)}'">
-    ${avatarHtml(n)}<div class="nm">${n}</div><div class="ct">아카이브 ${map[n].length}건</div>${bio?`<div class="abio">${bio}</div>`:""}</div>`;}).join("")}</div>`;
+    ${avatarHtml(n)}<div class="nm">${n}</div><div class="ct">기록 ${map[n].length}건</div>${bio?`<div class="abio">${bio}</div>`:""}</div>`;}).join("")}</div>`;
 }
 function viewAuthor(name){
   const items=POSTS.filter(p=>p.author===name).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
@@ -712,7 +713,7 @@ function sideCardHtml(p,cur){
     <div class="sm"><span class="who">${p.author||""}</span><span>·</span><span>${fmtDate(p.date)}</span>
       ${t?`<span class="tag ${tagClass(t)}" style="margin-left:auto">${t}</span>`:""}</div></a>`;
 }
-/* 상세 페이지 우측 1/3 — 위: 최신 아카이브 3, 아래: 같은 토픽 3 */
+/* 상세 페이지 우측 1/3 — 위: 최신 기록 3, 아래: 같은 토픽 3 */
 function postSideHtml(p){
   const N=3;
   const latest=[...POSTS].sort((a,b)=>String(b.date).localeCompare(String(a.date)))
@@ -724,7 +725,7 @@ function postSideHtml(p){
     .sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,N);
   return `<aside class="post-side">
     <section class="spanel">
-      <div class="sh"><h3>최신 아카이브</h3><span>최근 업데이트 순</span></div>
+      <div class="sh"><h3>최신 기록</h3><span>최근 업데이트 순</span></div>
       <div class="slist">${latest.length?latest.map(x=>sideCardHtml(x)).join(""):`<div class="sempty">아직 다른 글이 없습니다.</div>`}</div>
       <a class="smore" href="#/latest">전체 보기 →</a>
     </section>
