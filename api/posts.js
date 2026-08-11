@@ -301,6 +301,7 @@ export default async function handler(req, res) {
   const token = process.env.NOTION_TOKEN;
   const dbId = process.env.NOTION_DB_ID;
   const debug = req.query && (req.query.debug || req.query.debug === "");
+  const probe = req.query && (req.query.probe || req.query.probe === "");
 
   if (!token || !dbId) {
     res.status(500).json({ error: "NOTION_TOKEN / NOTION_DB_ID 환경변수가 설정되지 않았습니다." });
@@ -350,6 +351,41 @@ export default async function handler(req, res) {
         });
         return;
       }
+    }
+
+    /* 진단용 — 페이지 본문에 어떤 블록이 들어있는지, 그리고 파일/임베드 블록이
+       실제로 어떤 형태로 내려오는지 확인합니다. (임시. 주소 자체는 노출하지 않습니다) */
+    if (probe) {
+      const KNOWN = ["paragraph","heading_1","heading_2","heading_3","bulleted_list_item",
+        "numbered_list_item","quote","callout","to_do","code","divider","image","table","table_row"];
+      const typeCount = {};
+      const found = [];
+      for (const page of results) {
+        const title = readText(getProp(page.properties || {}, "Title"));
+        let blocks = [];
+        try { blocks = await fetchChildren(page.id, token); } catch (e) { continue; }
+        for (const b of blocks) {
+          typeCount[b.type] = (typeCount[b.type] || 0) + 1;
+          if (KNOWN.includes(b.type)) continue;
+          const node = b[b.type] || {};
+          const url = (node.external && node.external.url) || (node.file && node.file.url) || node.url || "";
+          const item = { 글: title, 블록: b.type, 이름: node.name || null, 주소있음: !!url };
+          if (url) {
+            try {
+              const r = await fetch(url);
+              item.응답 = r.status;
+              item.content_type = r.headers.get("content-type");
+              item.content_disposition = r.headers.get("content-disposition");
+              item.크기 = r.headers.get("content-length");
+              const head = (await r.text()).slice(0, 120);
+              item.앞부분 = head.replace(/\s+/g, " ");
+            } catch (e) { item.가져오기실패 = String(e.message || e).slice(0, 120); }
+          }
+          found.push(item);
+        }
+      }
+      res.status(200).json({ 블록_종류별_개수: typeCount, 코드가_모르는_블록: found });
+      return;
     }
 
     // 3) 변환
