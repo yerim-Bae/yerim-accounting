@@ -21,13 +21,24 @@
 
 <style>
   /* =====================================================================
-     Yerim's House — 데일리 대시보드 시안
+     Yerim's House — 하루를 옆으로 넘기며 읽는 시안
 
-     이 파일은 기존 index.html 과 완전히 분리된 미리보기입니다.
-     · 색·폰트 토큰 값은 index.html 과 똑같이 맞춰 두 화면이 한 몸으로 보이게 했습니다.
-       (기존 파일을 고친 게 아니라 같은 값을 여기 다시 적어둔 것입니다)
-     · 이 페이지의 모든 새 클래스는 yh- 로 시작하고, body 에 .yh 를 걸어
-       혹시라도 다른 페이지와 이름이 부딪히지 않게 했습니다.
+     읽는 순서
+       첫 화면      인사말만. 다른 건 아무것도 없습니다.
+       가로 구간    아래로 스크롤하면 화면이 오른쪽으로 밀려갑니다.
+                    07:30 → 08:30 → 09:30 → 21:00
+       마무리       바닥글
+
+     ★ 스크롤을 가로채지 않습니다
+       휠을 붙잡아 강제로 넘기는 방식이 아니라, "평소대로 내려간 만큼"
+       화면이 옆으로 밀리는 방식입니다. 중간에 멈추거나 되돌릴 수 있고,
+       스크롤바 위치도 정직하게 남습니다.
+
+     ★ 모바일과 "움직임 줄이기" 설정에서는 가로 이동을 끄고
+       위에서 아래로 읽는 평범한 배치가 됩니다. (맨 아래 미디어쿼리)
+
+     이 파일은 기존 index.html 과 완전히 분리돼 있습니다. 새 클래스는 전부
+     yh- 로 시작하고 body 에 .yh 를 걸어 이름이 부딪히지 않게 했습니다.
      ===================================================================== */
   :root{
     --ivory:#F5F1EB;          /* 기본 배경 */
@@ -54,6 +65,7 @@
     -webkit-font-smoothing:antialiased;
     /* 한글이 단어 중간에서 잘리지 않게 합니다 */
     word-break:keep-all;overflow-wrap:break-word;
+    overflow-x:hidden;
   }
   .yh a{color:inherit;text-decoration:none}
   .yh img{max-width:100%}
@@ -62,25 +74,18 @@
   .yh-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
-  /* =====================================================================
-     등장 — 아래에서 8px 올라오며 선명해지는 정도. 0.7초면 끝납니다.
-     자바스크립트가 살아 있을 때만 숨겼다가 보여줍니다. 스크립트가 막히면
-     처음부터 그냥 다 보입니다.
-     ===================================================================== */
+  /* ---- 등장 (0.7초) ---- */
   @keyframes yh-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .yh-rise{opacity:1}
   .yh-js .yh-rise{opacity:0;animation:yh-rise .7s cubic-bezier(.22,.7,.3,1) forwards}
-  .yh-d1{animation-delay:.05s}.yh-d2{animation-delay:.14s}.yh-d3{animation-delay:.23s}
-  .yh-d4{animation-delay:.32s}.yh-d5{animation-delay:.41s}
-  .yh-reveal{transition:opacity .55s ease,transform .55s cubic-bezier(.22,.7,.3,1)}
-  .yh-js .yh-reveal{opacity:0;transform:translateY(10px)}
-  .yh-js .yh-reveal.yh-in{opacity:1;transform:none}
+  .yh-d1{animation-delay:.05s}.yh-d2{animation-delay:.16s}.yh-d3{animation-delay:.27s}
+  .yh-d4{animation-delay:.38s}.yh-d5{animation-delay:.5s}
   .yh-animoff .yh-rise{animation:none!important;opacity:1!important;transform:none!important}
 
   /* =====================================================================
-     상단 줄 — 로고 · 이동 메뉴 · 서울 시각
+     상단 줄
      ===================================================================== */
-  .yh-top{position:sticky;top:0;z-index:40;background:var(--ivory);
+  .yh-top{position:fixed;top:0;left:0;right:0;z-index:50;background:var(--ivory);
     border-bottom:1px solid transparent;transition:border-color .2s ease}
   .yh-top.yh-stuck{border-bottom-color:var(--ink-08)}
   .yh-top .yh-wrap{display:flex;align-items:center;gap:20px;height:var(--bar)}
@@ -88,207 +93,184 @@
     transition:transform .18s cubic-bezier(.22,.7,.3,1),opacity .18s ease}
   .yh-logo img{display:block;height:22px;width:auto}
   .yh-logo:hover,.yh-logo:focus-visible{transform:translateY(-1px);opacity:.85}
-  .yh-topnav{display:flex;gap:18px;margin-left:auto;white-space:nowrap;overflow:auto;
-    scrollbar-width:none}
+  .yh-topnav{display:flex;gap:18px;margin-left:auto;white-space:nowrap;overflow:auto;scrollbar-width:none}
   .yh-topnav::-webkit-scrollbar{display:none}
-  .yh-topnav a{font-size:12.5px;font-weight:600;color:var(--ink-40);
-    transition:color .18s ease}
+  .yh-topnav a{font-size:12.5px;font-weight:600;color:var(--ink-40);transition:color .18s ease}
   .yh-topnav a:hover,.yh-topnav a:focus-visible,.yh-topnav a.yh-here{color:var(--orange)}
   .yh-clock{flex:none;display:flex;align-items:baseline;gap:8px;font-size:11.5px;
     letter-spacing:.13em;color:var(--ink-40);text-transform:uppercase;font-variant-numeric:tabular-nums}
   .yh-clock b{font-weight:600;color:var(--ink-60);letter-spacing:.06em}
-  /* 태블릿 — 시각은 접고 이동 메뉴는 살려둡니다 (좌우로 밀어 볼 수 있습니다) */
-  @media(max-width:900px){
-    .yh-clock{display:none}
-    .yh-topnav{margin-left:auto;gap:16px}
-  }
-  /* 모바일 — 상단 줄은 로고만. 구간 이동은 아래 카드가 대신합니다 */
-  @media(max-width:640px){
-    .yh-topnav{display:none}
-    .yh-top .yh-wrap{justify-content:space-between}
-  }
+  @media(max-width:900px){ .yh-clock{display:none} .yh-topnav{gap:16px} }
+  @media(max-width:640px){ .yh-topnav{display:none} .yh-top .yh-wrap{justify-content:space-between} }
 
   /* =====================================================================
-     첫 화면 — 인사말 + 하루 대시보드
+     첫 화면 — 인사말만
      ===================================================================== */
-  .yh-hero{min-height:calc(100svh - var(--bar));display:flex;flex-direction:column;
-    justify-content:center;padding:22px 0 28px}
+  .yh-hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;
+    padding:calc(var(--bar) + 40px) 0 40px;position:relative}
   .yh-eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.2em;color:var(--orange);
     text-transform:uppercase}
-  .yh-hello{margin-top:14px;font-family:var(--serif);font-weight:600;
-    font-size:clamp(26px,3.5vw,40px);line-height:1.3;letter-spacing:-.02em;text-wrap:balance}
-  .yh-lede{margin-top:14px;max-width:36em;font-size:clamp(13.5px,1.3vw,15.5px);
-    line-height:1.8;color:var(--ink-60)}
+  .yh-hello{margin-top:22px;font-family:var(--serif);font-weight:600;
+    font-size:clamp(30px,5.4vw,58px);line-height:1.28;letter-spacing:-.025em;text-wrap:balance}
+  .yh-lede{margin-top:28px;max-width:34em;font-size:clamp(14.5px,1.6vw,17px);
+    line-height:1.9;color:var(--ink-60)}
+  .yh-cue{position:absolute;left:0;right:0;bottom:34px}
+  .yh-cue .yh-wrap{display:flex;align-items:center;gap:10px;
+    font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-40)}
+  .yh-cue i{font-style:normal;color:var(--orange);animation:yh-nudge 2.4s ease-in-out infinite}
+  @keyframes yh-nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
 
-  /* ---- 하루 대시보드 그리드 ----
-     종이 위에 정리한 인덱스처럼 보이게, 카드는 상자가 아니라 "가로줄로 구분된 칸"입니다.
-     둥근 모서리·그림자·그라데이션을 쓰지 않습니다. */
-  .yh-grid{margin-top:clamp(20px,2.6vw,32px);display:grid;gap:0;
-    grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);
-    border-top:1px solid var(--ink);border-left:1px solid var(--ink-14)}
-  .yh-card{position:relative;display:flex;flex-direction:column;
-    padding:14px 20px 16px;border-right:1px solid var(--ink-14);border-bottom:1px solid var(--ink-14);
-    transition:background-color .22s ease}
-  .yh-card:hover,.yh-card:focus-within{background:rgba(216,102,47,.055)}
-  /* 칸 위에 얹히는 주황 선 — hover 하면 왼쪽에서 오른쪽으로 그어집니다 */
-  .yh-card::before{content:"";position:absolute;left:0;right:0;top:-1px;height:2px;
-    background:var(--orange);transform:scaleX(0);transform-origin:left;
-    transition:transform .32s cubic-bezier(.22,.7,.3,1)}
-  .yh-card:hover::before,.yh-card:focus-within::before{transform:scaleX(1)}
+  /* =====================================================================
+     가로로 넘어가는 하루
 
-  .yh-cmeta{display:flex;align-items:baseline;gap:12px}
-  .yh-time{font-size:12.5px;font-weight:700;letter-spacing:.06em;color:var(--orange);
+     .yh-rail   세로로 길게 자리를 잡아두는 껍데기 (스크롤 거리를 만듭니다)
+     .yh-stage  그 안에서 화면에 붙어 있는 창
+     .yh-track  창 안에서 옆으로 미끄러지는 띠
+     .yh-panel  띠 위의 한 장면
+     ===================================================================== */
+  .yh-rail{position:relative;height:calc(var(--steps,4) * 100svh)}
+  .yh-stage{position:sticky;top:var(--bar);height:calc(100svh - var(--bar));
+    overflow:hidden;display:flex;flex-direction:column;
+    border-top:1px solid var(--ink-14)}
+  .yh-track{flex:1;display:flex;min-height:0;
+    transform:translate3d(0,0,0);will-change:transform}
+  .yh-panel{flex:0 0 100%;min-width:0;display:flex;align-items:center;
+    padding:26px 0;position:relative;
+    border-right:1px solid var(--ink-08)}
+  /* 지금 보고 있는 장면만 또렷하게, 옆 장면은 살짝 물러나 있습니다 */
+  .yh-panel{opacity:.35;transition:opacity .45s ease}
+  .yh-panel.yh-live{opacity:1}
+
+  .yh-pmeta{display:flex;align-items:baseline;gap:14px}
+  .yh-time{font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--orange);
     font-variant-numeric:tabular-nums}
-  .yh-kicker{font-size:11px;font-weight:700;letter-spacing:.17em;color:var(--ink-40);
+  .yh-kicker{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--ink-40);
     text-transform:uppercase}
-  .yh-ct{margin-top:10px;font-family:var(--serif);font-weight:600;
-    font-size:clamp(15.5px,1.7vw,19px);line-height:1.48;letter-spacing:-.015em}
-  .yh-cd{margin-top:8px;font-size:13px;line-height:1.66;color:var(--ink-60);max-width:34em}
-  .yh-keys{margin-top:10px;font-size:11.5px;font-weight:700;letter-spacing:.14em;
+  .yh-pt{margin-top:14px;font-family:var(--serif);font-weight:600;
+    font-size:clamp(22px,3.4vw,40px);line-height:1.34;letter-spacing:-.022em;text-wrap:balance}
+  .yh-pd{margin-top:16px;font-size:clamp(13.5px,1.4vw,15.5px);line-height:1.85;
+    color:var(--ink-60);max-width:38em}
+  .yh-pd + .yh-pd{margin-top:10px}
+  .yh-keys{margin-top:18px;font-size:11.5px;font-weight:700;letter-spacing:.16em;
     color:var(--ink-40);text-transform:uppercase}
-  /* 칸 전체를 눌러 상세로 내려가게 하는 투명 판. 제목 링크에서 뻗어 나옵니다. */
-  .yh-stretch::after{content:"";position:absolute;inset:0;z-index:1}
-  .yh-cfoot{margin-top:auto;padding-top:14px;display:flex;flex-wrap:wrap;gap:10px 18px;
-    align-items:center;position:relative;z-index:2}
+  .yh-acts{margin-top:26px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center}
+
+  /* 한 장면 안의 두 칸 — 왼쪽 글, 오른쪽 곁들이는 것 */
+  .yh-cols{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+    gap:clamp(28px,4vw,56px);align-items:center;width:100%}
+  @media(max-width:980px){ .yh-cols{grid-template-columns:minmax(0,1fr);gap:24px} }
+  /* 가로 이동은 살아 있는데 폭이 좁아 두 칸이 한 칸으로 접히는 구간.
+     한 장면 높이가 화면을 넘지 않도록 사진을 정사각형으로 낮춥니다. */
+  @media(min-width:901px) and (max-width:980px){
+    .yh-panel{padding:18px 0}
+    .yh-shots{max-width:430px}
+    .yh-shot .yh-frame{aspect-ratio:1}
+    .yh-pd + .yh-pd{display:none}
+  }
 
   /* ---- 링크와 화살표 ---- */
-  .yh-go{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;
+  .yh-go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;
     color:var(--ink);transition:color .2s ease}
   .yh-go i{font-style:normal;display:inline-block;transition:transform .2s cubic-bezier(.22,.7,.3,1)}
   .yh-go:hover,.yh-go:focus-visible{color:var(--orange)}
   .yh-go:hover i,.yh-go:focus-visible i{transform:translateX(4px)}
   .yh-go.yh-ext:hover i,.yh-go.yh-ext:focus-visible i{transform:translate(4px,-4px)}
-  /* 아직 주소가 없는 곳 — 자리는 그대로 두고 조용히 눌리지 않습니다 */
   .yh-go.yh-pending{color:var(--ink-40);cursor:default}
   .yh-go.yh-pending i{opacity:.5}
+  /* 가장 중요한 링크 하나 — 밑줄이 그어져 있다가 hover 하면 채워집니다 */
+  .yh-go.yh-primary{padding-bottom:5px;border-bottom:2px solid var(--orange)}
 
-  /* ---- 09:30 칸을 가장 크게 ---- */
-  .yh-card--brief{grid-column:1;grid-row:1}
-  .yh-card--move {grid-column:1;grid-row:2}
-  .yh-card--field{grid-column:2;grid-row:1 / span 3;justify-content:center}
-  .yh-card--after{grid-column:1;grid-row:3}
-  .yh-card--field{padding:24px 26px 26px}
-  .yh-card--field .yh-ct{font-size:clamp(20px,2.5vw,29px);margin-top:14px}
-  .yh-card--field .yh-cd{font-size:14.5px;margin-top:12px}
-  /* 로고 질감 — 평소엔 없다가 이 칸에 마우스를 올리면 은은하게 떠오릅니다 */
-  .yh-card--field::after{content:"";position:absolute;right:14px;bottom:14px;
-    width:min(42%,190px);aspect-ratio:1;background:url("assets/favicon-180.png?v=8") no-repeat center/contain;
-    opacity:0;transition:opacity .45s ease;pointer-events:none}
-  .yh-card--field:hover::after,.yh-card--field:focus-within::after{opacity:.09}
-
-  /* ---- 09:30 안의 진행 순서 ---- */
-  .yh-flow{margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
-    font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-40)}
-  .yh-flow span{padding:4px 9px;border:1px solid var(--ink-14);background:var(--ivory)}
-  .yh-flow span:last-child{border-color:rgba(216,102,47,.4);color:var(--rust)}
+  /* ---- 09:30 의 진행 순서 ---- */
+  .yh-flow{margin-top:20px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;
+    font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-40)}
+  .yh-flow span{padding:5px 10px;border:1px solid var(--ink-14);background:var(--ivory)}
+  .yh-flow span:last-child{border-color:rgba(216,102,47,.45);color:var(--rust)}
   .yh-flow i{font-style:normal;color:var(--ink-14)}
 
-  /* ---- 21:00 안의 인덱스 줄 ---- */
-  .yh-index{margin-top:12px;display:flex;flex-direction:column;position:relative;z-index:2}
-  .yh-row{display:flex;align-items:baseline;gap:12px;padding:6px 0;
-    border-top:1px solid var(--ink-08);font-size:13px;transition:color .18s ease}
-  .yh-row:first-child{border-top:0}
+  /* ---- 21:00 의 인덱스 줄 ---- */
+  .yh-index{display:flex;flex-direction:column}
+  .yh-row{display:flex;align-items:baseline;gap:14px;padding:11px 0;
+    border-top:1px solid var(--ink-08);font-size:14px;transition:color .18s ease}
   .yh-row .yh-rn{font-size:11px;font-weight:700;color:var(--ink-40);letter-spacing:.06em;flex:none}
   .yh-row .yh-rt{font-weight:600}
+  .yh-row .yh-rs{font-weight:400;color:var(--ink-40);font-size:13px}
   .yh-row .yh-ra{margin-left:auto;font-size:12px;color:var(--ink-40);flex:none;
     transition:transform .18s cubic-bezier(.22,.7,.3,1),color .18s ease}
   a.yh-row:hover,a.yh-row:focus-visible{color:var(--orange)}
   a.yh-row:hover .yh-ra,a.yh-row:focus-visible .yh-ra{color:var(--orange);transform:translateX(3px)}
   span.yh-row{color:var(--ink-40)}
 
-  @media(max-width:900px){
-    /* 태블릿 — 두 열, 09:30 은 한 줄 전체 */
-    .yh-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-    .yh-card--brief{grid-column:1;grid-row:1}
-    .yh-card--move {grid-column:2;grid-row:1}
-    .yh-card--field{grid-column:1 / -1;grid-row:2;padding:26px 24px 28px}
-    .yh-card--after{grid-column:1 / -1;grid-row:3}
-    .yh-hero{justify-content:flex-start;padding-top:32px}
-  }
-  @media(max-width:640px){
-    /* 모바일 — 시간순 한 열 */
-    .yh-grid{grid-template-columns:minmax(0,1fr)}
-    .yh-card--brief,.yh-card--move,.yh-card--field,.yh-card--after{grid-column:1;grid-row:auto}
-    .yh-card{padding:20px 18px 22px}
-    .yh-card--field{padding:22px 18px 24px}
-    .yh-hero{min-height:0;padding:26px 0 34px}
-    .yh-lede{margin-top:14px}
-    .yh-grid{margin-top:26px}
-  }
-
-  /* =====================================================================
-     아래로 이어지는 하루 — 상세 구간
-     ===================================================================== */
-  .yh-sec{padding:clamp(64px,9vw,104px) 0;scroll-margin-top:var(--bar)}
-  .yh-sec + .yh-sec{border-top:1px solid var(--ink-08)}
-  .yh-shead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
-    padding-bottom:16px;border-bottom:1px solid var(--ink-14)}
-  .yh-shead h2{font-family:var(--serif);font-size:clamp(20px,2.6vw,27px);font-weight:600;
-    letter-spacing:-.02em}
-  .yh-shead .yh-snote{margin-left:auto;font-size:12.5px;color:var(--ink-40)}
-  @media(max-width:640px){.yh-shead .yh-snote{display:none}}
-  .yh-body{margin-top:28px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:44px}
-  @media(max-width:840px){.yh-body{grid-template-columns:minmax(0,1fr);gap:30px}}
-  .yh-lead{font-family:var(--serif);font-size:clamp(17px,2.2vw,21px);font-weight:500;
-    line-height:1.62;letter-spacing:-.02em}
-  .yh-p{margin-top:16px;font-size:14.5px;line-height:1.85;color:var(--ink-60);max-width:42em}
-  .yh-p + .yh-p{margin-top:12px}
-  .yh-acts{margin-top:26px;display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}
-
-  /* 인용 — 감사 준비 구간의 문제의식 */
-  .yh-quote{margin-top:4px;padding:22px 24px;background:var(--ivory-2);
-    border-left:2px solid var(--orange)}
-  .yh-quote p{font-family:var(--serif);font-size:clamp(15.5px,1.9vw,18px);line-height:1.7;
+  /* ---- 인용 (09:30 의 문제의식) ---- */
+  .yh-quote{padding:20px 22px;background:var(--ivory-2);border-left:2px solid var(--orange)}
+  .yh-quote p{font-family:var(--serif);font-size:clamp(14.5px,1.6vw,17px);line-height:1.72;
     letter-spacing:-.01em}
-  .yh-quote cite{display:block;margin-top:12px;font-style:normal;font-size:12px;
-    letter-spacing:.1em;text-transform:uppercase;color:var(--ink-40)}
+  .yh-quote cite{display:block;margin-top:12px;font-style:normal;font-size:11px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
 
-  /* 기능 목록 */
-  .yh-feats{list-style:none;margin-top:8px}
-  .yh-feats li{display:grid;grid-template-columns:26px 1fr;gap:4px 12px;
-    padding:16px 0;border-top:1px solid var(--ink-08)}
+  /* ---- 기능 세 줄 ---- */
+  .yh-feats{list-style:none}
+  .yh-feats li{display:grid;grid-template-columns:24px 1fr;gap:3px 12px;
+    padding:13px 0;border-top:1px solid var(--ink-08)}
   .yh-feats li:first-child{border-top:0;padding-top:0}
-  .yh-feats .yh-fn{font-size:11.5px;font-weight:700;color:var(--orange);letter-spacing:.06em}
-  .yh-feats .yh-ft{font-weight:600;font-size:15px;letter-spacing:-.01em}
-  .yh-feats .yh-fd{grid-column:2;font-size:13.5px;line-height:1.75;color:var(--ink-60)}
+  .yh-feats .yh-fn{font-size:11px;font-weight:700;color:var(--orange);letter-spacing:.06em}
+  .yh-feats .yh-ft{font-weight:600;font-size:14.5px;letter-spacing:-.01em}
+  .yh-feats .yh-fd{grid-column:2;font-size:13px;line-height:1.7;color:var(--ink-60)}
 
-  /* 운동 사진 자리 — 사진이 들어와도 화면이 밀리지 않게 비율을 미리 잡아둡니다 */
-  .yh-shots{margin-top:30px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-  @media(max-width:640px){.yh-shots{grid-template-columns:minmax(0,1fr);gap:14px}}
+  /* ---- 08:30 의 사진 세 자리 ---- */
+  .yh-shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
   .yh-shot{margin:0}
   .yh-shot .yh-frame{position:relative;aspect-ratio:4/5;background:var(--ivory-2);
-    border:1px solid var(--ink-08);display:flex;align-items:center;justify-content:center;
-    overflow:hidden}
+    border:1px solid var(--ink-08);display:flex;align-items:center;justify-content:center;overflow:hidden}
   .yh-shot img{width:100%;height:100%;object-fit:cover;display:block}
-  .yh-shot .yh-empty{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
-  .yh-shot figcaption{margin-top:10px;font-size:12.5px;color:var(--ink-60)}
+  .yh-shot .yh-empty{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
+  .yh-shot figcaption{margin-top:8px;font-size:11.5px;color:var(--ink-60)}
   .yh-shot figcaption b{font-weight:600;color:var(--ink)}
 
-  /* 기록 숫자 — Study Log 에서 가져옵니다 */
-  .yh-stat{display:flex;align-items:baseline;gap:10px;margin-top:22px}
-  .yh-stat .yh-num{font-family:var(--serif);font-size:clamp(30px,5vw,44px);font-weight:600;
+  /* ---- 07:30 의 기록 숫자 ---- */
+  .yh-stat{display:flex;align-items:baseline;gap:12px}
+  .yh-stat .yh-num{font-family:var(--serif);font-size:clamp(34px,5vw,52px);font-weight:600;
     line-height:1;letter-spacing:-.03em}
-  .yh-stat .yh-nl{font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--ink-40);
+  .yh-stat .yh-nl{font-size:11.5px;font-weight:700;letter-spacing:.14em;color:var(--ink-40);
     text-transform:uppercase}
-  .yh-tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+  .yh-tags{margin-top:16px;display:flex;flex-wrap:wrap;gap:6px}
   .yh-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;
     background:var(--ink-08);color:var(--ink-60)}
+
+  /* ---- 09:30 장면에 은은하게 떠오르는 로고 질감 ---- */
+  .yh-panel--field::after{content:"";position:absolute;right:4%;bottom:8%;
+    width:min(30%,240px);aspect-ratio:1;
+    background:url("assets/favicon-180.png?v=8") no-repeat center/contain;
+    opacity:0;transition:opacity .7s ease;pointer-events:none}
+  .yh-panel--field.yh-live::after{opacity:.085}
+
+  /* =====================================================================
+     아래쪽 진행 표시 — 지금 하루의 어디쯤인지
+     ===================================================================== */
+  .yh-steps{flex:none;border-top:1px solid var(--ink-14);background:var(--ivory)}
+  .yh-steps .yh-wrap{display:flex;gap:0}
+  .yh-step{flex:1;padding:11px 0 13px;text-align:left;background:none;border:0;
+    border-top:2px solid transparent;margin-top:-1px;
+    font:inherit;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-40);cursor:pointer;transition:color .2s ease,border-color .2s ease}
+  .yh-step b{display:block;font-size:12.5px;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+  .yh-step:hover{color:var(--ink-60)}
+  .yh-step.yh-on{color:var(--orange);border-top-color:var(--orange)}
+  @media(max-width:640px){ .yh-step span{display:none} .yh-step{text-align:center} }
 
   /* =====================================================================
      바닥
      ===================================================================== */
-  .yh-foot{padding:40px 0 56px;border-top:1px solid var(--ink-14);font-size:12.5px;color:var(--ink-40)}
+  .yh-foot{padding:44px 0 56px;border-top:1px solid var(--ink-14);font-size:12.5px;color:var(--ink-40)}
   .yh-foot .yh-wrap{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
   .yh-foot a{font-weight:600;color:var(--ink-60);transition:color .2s ease}
   .yh-foot a:hover,.yh-foot a:focus-visible{color:var(--orange)}
   .yh-badge{display:inline-block;padding:2px 8px;border:1px solid var(--ink-14);
     font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40)}
 
-  /* 키보드로 이동할 때도 마우스와 같은 수준으로 보이게 합니다 */
   .yh :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 
   /* =====================================================================
-     커서 — 기존 사이트와 같은 주황 점. 마우스가 있는 기기에서만.
+     커서 — 기존 사이트와 같은 주황 점
      ===================================================================== */
   @media (hover:hover) and (pointer:fine){
     body.yh{cursor:none}
@@ -305,11 +287,29 @@
     #yh-cur.yh-press i{transform:scale(.78)}
   }
 
-  /* 움직임을 줄여달라고 설정한 분에게는 애니메이션과 부드러운 스크롤을 끕니다 */
+  /* =====================================================================
+     ★ 가로 이동을 끄는 조건
+       · 화면이 좁을 때 (모바일·작은 태블릿)
+       · 화면이 낮아서 한 장면이 다 안 들어갈 때
+       · 움직임을 줄여달라고 설정했을 때
+       이때는 그냥 위에서 아래로 읽는 평범한 배치가 됩니다.
+     ===================================================================== */
+  @media (max-width:900px), (max-height:560px), (prefers-reduced-motion:reduce){
+    .yh-rail{height:auto!important}
+    .yh-stage{position:static;height:auto;overflow:visible;border-top:0}
+    .yh-track{display:block;transform:none!important;will-change:auto}
+    .yh-panel{display:block;flex:none;opacity:1!important;border-right:0;
+      border-top:1px solid var(--ink-14);padding:clamp(44px,8vw,72px) 0;
+      scroll-margin-top:var(--bar)}
+    .yh-panel--field::after{display:none}
+    .yh-steps{display:none}
+    .yh-cols{grid-template-columns:minmax(0,1fr);gap:26px;align-items:start}
+    .yh-shots{gap:10px}
+  }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     .yh *,.yh *::before,.yh *::after{animation:none!important;transition:none!important}
-    .yh-rise,.yh-reveal,.yh-js .yh-rise,.yh-js .yh-reveal{opacity:1!important;transform:none!important}
+    .yh-rise{opacity:1!important;transform:none!important}
     #yh-cur i{transition:opacity .18s ease!important}
   }
 </style>
@@ -339,7 +339,7 @@
 <main>
 
 <!-- =====================================================================
-     첫 화면 — 인사말 + 하루 대시보드
+     첫 화면 — 인사말만
      ===================================================================== -->
 <section class="yh-hero" aria-labelledby="yhHello">
   <div class="yh-wrap">
@@ -349,210 +349,156 @@
       세상의 흐름을 읽고, 몸을 움직이고,<br>
       회사와 산업을 이해하고, 다시 공부합니다.
     </p>
+  </div>
+  <div class="yh-cue yh-rise yh-d5">
+    <div class="yh-wrap">스크롤하면 하루가 옆으로 넘어갑니다 <i aria-hidden="true">↓</i></div>
+  </div>
+</section>
 
-    <div class="yh-grid yh-rise yh-d4">
+<!-- =====================================================================
+     하루 — 아래로 스크롤하면 오른쪽으로 넘어갑니다
+     ===================================================================== -->
+<div class="yh-rail" id="yhRail" style="--steps:4">
+  <div class="yh-stage">
+
+    <div class="yh-track" id="yhTrack">
 
       <!-- 07:30 -->
-      <article class="yh-card yh-card--brief">
-        <div class="yh-cmeta"><span class="yh-time">07:30</span><span class="yh-kicker">Morning Brief</span></div>
-        <h2 class="yh-ct"><a class="yh-stretch" href="#morning">하루는 세상의 흐름을 읽는 일에서 시작합니다.</a></h2>
-        <p class="yh-cd">매일 주요 뉴스를 추적하고, 이해한 내용을 기록합니다.</p>
-        <div class="yh-cfoot">
-          <a class="yh-go" data-link="newsTracking">뉴스 트래킹 보기 <i aria-hidden="true">→</i></a>
+      <section class="yh-panel yh-panel--brief" id="morning" aria-labelledby="yhH1">
+        <div class="yh-wrap">
+          <div class="yh-cols">
+            <div>
+              <div class="yh-pmeta"><span class="yh-time">07:30</span><span class="yh-kicker">Morning Brief</span></div>
+              <h2 class="yh-pt" id="yhH1">하루는 세상의 흐름을<br>읽는 일에서 시작합니다.</h2>
+              <p class="yh-pd">매일 주요 뉴스를 추적하고, 이해한 내용을 기록합니다.</p>
+              <p class="yh-pd">
+                블록체인·디지털자산 업계에서 실제로 무슨 일이 일어나는지 매주 골라 읽고,
+                요약과 제 해석을 함께 남깁니다. 산업을 알아야 회계 판단이 선다고 생각해서 시작한 기록입니다.
+              </p>
+              <div class="yh-acts">
+                <a class="yh-go yh-primary" data-link="newsTracking">뉴스 트래킹 보기 <i aria-hidden="true">→</i></a>
+              </div>
+            </div>
+            <div>
+              <div class="yh-stat" id="yhTrackStat" hidden>
+                <span class="yh-num" id="yhTrackCount"></span>
+                <span class="yh-nl">Notes</span>
+              </div>
+              <div class="yh-tags" id="yhTrackCats"></div>
+            </div>
+          </div>
         </div>
-      </article>
+      </section>
 
       <!-- 08:30 -->
-      <article class="yh-card yh-card--move">
-        <div class="yh-cmeta"><span class="yh-time">08:30</span><span class="yh-kicker">Move</span></div>
-        <h2 class="yh-ct"><a class="yh-stretch" href="#move">생각하기 전에, 먼저 움직입니다.</a></h2>
-        <p class="yh-cd">5K와 10K 마라톤, 그리고 테니스 대회까지. 꾸준히 몸을 움직이며 다음 목표를 준비합니다.</p>
-        <p class="yh-keys">5K · 10K · Tennis</p>
-        <div class="yh-cfoot">
-          <a class="yh-go" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
+      <section class="yh-panel yh-panel--move" id="move" aria-labelledby="yhH2">
+        <div class="yh-wrap">
+          <div class="yh-cols">
+            <div>
+              <div class="yh-pmeta"><span class="yh-time">08:30</span><span class="yh-kicker">Move</span></div>
+              <h2 class="yh-pt" id="yhH2">생각하기 전에,<br>먼저 움직입니다.</h2>
+              <p class="yh-pd">
+                5K와 10K 마라톤, 그리고 테니스 대회까지.
+                꾸준히 몸을 움직이며 다음 목표를 준비합니다.
+              </p>
+              <p class="yh-pd">
+                기록을 남기는 방식도 공부와 같습니다. 목표를 정하고, 과정을 남기고, 다음 목표를 세웁니다.
+              </p>
+              <p class="yh-keys">5K · 10K · Tennis</p>
+              <div class="yh-acts">
+                <a class="yh-go" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
+              </div>
+            </div>
+            <div class="yh-shots" id="yhShots"></div>
+          </div>
         </div>
-      </article>
+      </section>
 
-      <!-- 09:30 — 가장 크게 -->
-      <article class="yh-card yh-card--field">
-        <div class="yh-cmeta"><span class="yh-time">09:30</span><span class="yh-kicker">Before Fieldwork</span></div>
-        <h2 class="yh-ct"><a class="yh-stretch" href="#fieldwork">이제, 근무할 시간.</a></h2>
-        <p class="yh-cd">감사 업무를 시작하기 전, 오늘 만날 회사가 어떤 산업에서 어떻게 돈을 버는지 먼저 이해합니다.</p>
-        <div class="yh-flow" aria-label="감사 준비 순서: 회사, 산업, 비즈니스 모델, 계정과 위험">
-          <span>Company</span><i aria-hidden="true">→</i>
-          <span>Industry</span><i aria-hidden="true">→</i>
-          <span>Business Model</span><i aria-hidden="true">→</i>
-          <span>Accounts &amp; Risks</span>
+      <!-- 09:30 — 하루의 한가운데 -->
+      <section class="yh-panel yh-panel--field" id="fieldwork" aria-labelledby="yhH3">
+        <div class="yh-wrap">
+          <div class="yh-cols">
+            <div>
+              <div class="yh-pmeta"><span class="yh-time">09:30</span><span class="yh-kicker">Before Fieldwork</span></div>
+              <h2 class="yh-pt" id="yhH3">이제, 근무할 시간.</h2>
+              <p class="yh-pd">
+                감사 업무를 시작하기 전, 오늘 만날 회사가 어떤 산업에서
+                어떻게 돈을 버는지 먼저 이해합니다.
+              </p>
+              <div class="yh-flow" aria-label="감사 준비 순서: 회사, 산업, 비즈니스 모델, 계정과 위험">
+                <span>Company</span><i aria-hidden="true">→</i>
+                <span>Industry</span><i aria-hidden="true">→</i>
+                <span>Business Model</span><i aria-hidden="true">→</i>
+                <span>Accounts &amp; Risks</span>
+              </div>
+              <div class="yh-acts">
+                <a class="yh-go yh-primary" data-link="auditPrep">Audit Prep 사용해보기 <i aria-hidden="true">↗</i></a>
+                <a class="yh-go" data-link="github">만든 과정 보기 <i aria-hidden="true">↗</i></a>
+              </div>
+            </div>
+            <div>
+              <blockquote class="yh-quote">
+                <p>
+                  신입회계사는 충분한 회사와 산업 이해 없이 필드에 투입되기도 합니다.
+                  감사는 회사가 속한 산업, 비즈니스 모델과 거래구조를 이해하는 데서
+                  시작해야 한다고 생각합니다.
+                </p>
+                <cite>문제의식</cite>
+              </blockquote>
+              <ol class="yh-feats" style="margin-top:20px">
+                <li>
+                  <span class="yh-fn">01</span><span class="yh-ft">산업 카드덱</span>
+                  <p class="yh-fd">그 산업이 어떻게 돈을 버는지 먼저 훑습니다.</p>
+                </li>
+                <li>
+                  <span class="yh-fn">02</span><span class="yh-ft">DART 공시로 만든 회사 층</span>
+                  <p class="yh-fd">실제 공시에서 그 회사만의 사실을 끌어와 얹습니다.</p>
+                </li>
+                <li>
+                  <span class="yh-fn">03</span><span class="yh-ft">갈라지는 지점 찾기</span>
+                  <p class="yh-fd">일반론과 실제가 어긋나는 곳이 곧 질문이 될 자리입니다.</p>
+                </li>
+              </ol>
+            </div>
+          </div>
         </div>
-        <div class="yh-cfoot">
-          <a class="yh-go" data-link="auditPrep">Audit Prep 사용해보기 <i aria-hidden="true">↗</i></a>
-        </div>
-      </article>
+      </section>
 
       <!-- 21:00 -->
-      <article class="yh-card yh-card--after">
-        <div class="yh-cmeta"><span class="yh-time">21:00</span><span class="yh-kicker">After Hours</span></div>
-        <h2 class="yh-ct"><a class="yh-stretch" href="#after">업무가 끝나도 관심은 계속됩니다.</a></h2>
-        <p class="yh-cd">궁금했던 분야를 공부하고, 다른 사람에게 설명할 수 있는 자료로 만듭니다.</p>
-        <div class="yh-index" id="yhAfterIndex"></div>
-      </article>
-
-    </div>
-  </div>
-</section>
-
-<!-- =====================================================================
-     07:30 Morning Brief
-     ===================================================================== -->
-<section class="yh-sec" id="morning" aria-labelledby="yhMorningH">
-  <div class="yh-wrap">
-    <div class="yh-shead yh-reveal">
-      <span class="yh-time">07:30</span>
-      <h2 id="yhMorningH">Morning Brief</h2>
-      <span class="yh-snote">세상의 흐름을 읽는 시간</span>
-    </div>
-    <div class="yh-body">
-      <div class="yh-reveal">
-        <p class="yh-lead">하루는 세상의 흐름을 읽는 일에서 시작합니다.</p>
-        <p class="yh-p">
-          블록체인·디지털자산 업계에서 실제로 무슨 일이 일어나는지 매주 골라 읽고,
-          요약과 제 해석을 함께 남깁니다. 산업을 알아야 회계 판단이 선다고 생각해서 시작한 기록입니다.
-        </p>
-        <p class="yh-p">
-          읽고 끝내지 않고 노션에 정리하면 이 사이트의 Study Log 로 자동 반영되도록 만들어 두었습니다.
-          기록이 쌓이는 속도 자체가 관심이 이어지고 있다는 증거라고 생각합니다.
-        </p>
-        <div class="yh-acts">
-          <a class="yh-go" data-link="newsTracking">뉴스 트래킹 보기 <i aria-hidden="true">→</i></a>
+      <section class="yh-panel yh-panel--after" id="after" aria-labelledby="yhH4">
+        <div class="yh-wrap">
+          <div class="yh-cols">
+            <div>
+              <div class="yh-pmeta"><span class="yh-time">21:00</span><span class="yh-kicker">After Hours</span></div>
+              <h2 class="yh-pt" id="yhH4">업무가 끝나도<br>관심은 계속됩니다.</h2>
+              <p class="yh-pd">
+                궁금했던 분야를 공부하고, 다른 사람에게 설명할 수 있는 자료로 만듭니다.
+              </p>
+              <p class="yh-pd">
+                RWA 스터디, BAY 리서치팀 운영, 아티클, 블록체인 온보딩 자료는 따로 벌인 일이 아닙니다.
+                설명할 수 있게 되었을 때 비로소 이해한 것이라고 생각해서,
+                공부의 마지막 단계는 언제나 남이 읽을 수 있는 결과물입니다.
+              </p>
+            </div>
+            <div class="yh-index" id="yhAfterList"></div>
+          </div>
         </div>
-      </div>
-      <div class="yh-reveal">
-        <div class="yh-stat" id="yhTrackStat" hidden>
-          <span class="yh-num" id="yhTrackCount"></span>
-          <span class="yh-nl">Notes</span>
-        </div>
-        <div class="yh-tags" id="yhTrackCats"></div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
-<!-- =====================================================================
-     08:30 Move
-     ===================================================================== -->
-<section class="yh-sec" id="move" aria-labelledby="yhMoveH">
-  <div class="yh-wrap">
-    <div class="yh-shead yh-reveal">
-      <span class="yh-time">08:30</span>
-      <h2 id="yhMoveH">Move</h2>
-      <span class="yh-snote">생각보다 먼저 움직이는 시간</span>
-    </div>
-    <div class="yh-body">
-      <div class="yh-reveal">
-        <p class="yh-lead">생각하기 전에, 먼저 움직입니다.</p>
-        <p class="yh-p">
-          5K와 10K 마라톤, 그리고 테니스 대회까지. 꾸준히 몸을 움직이며 다음 목표를 준비합니다.
-          오래 앉아 숫자를 들여다보는 일일수록 몸을 먼저 깨워두는 편이 하루 전체를 버티게 해준다고 느낍니다.
-        </p>
-        <p class="yh-p">
-          기록을 남기는 방식도 공부와 같습니다. 목표를 정하고, 과정을 남기고, 다음 목표를 세웁니다.
-        </p>
-        <div class="yh-acts">
-          <a class="yh-go" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
-        </div>
-      </div>
-      <div class="yh-reveal">
-        <p class="yh-keys">5K · 10K · Tennis</p>
-      </div>
-    </div>
-    <div class="yh-shots yh-reveal" id="yhShots"></div>
-  </div>
-</section>
+    </div><!-- /track -->
 
-<!-- =====================================================================
-     09:30 Before Fieldwork — 이 사이트의 핵심 구간
-     ===================================================================== -->
-<section class="yh-sec" id="fieldwork" aria-labelledby="yhFieldH">
-  <div class="yh-wrap">
-    <div class="yh-shead yh-reveal">
-      <span class="yh-time">09:30</span>
-      <h2 id="yhFieldH">Before Fieldwork</h2>
-      <span class="yh-snote">감사에 들어가기 전에 하는 일</span>
-    </div>
-    <div class="yh-body">
-      <div class="yh-reveal">
-        <blockquote class="yh-quote">
-          <p>
-            신입회계사는 충분한 회사와 산업 이해 없이 필드에 투입되기도 합니다.
-            감사는 회사가 속한 산업, 비즈니스 모델과 거래구조를 이해하는 데서 시작해야 한다고 생각합니다.
-          </p>
-          <cite>문제의식</cite>
-        </blockquote>
-        <p class="yh-p">
-          그래서 감사 계획 단계에서 무엇을 물어야 할지 정하는 도구를 직접 만들었습니다.
-          산업 카드덱 위에 DART 공시로 만든 회사 층을 얹어, 산업 일반론과 회사의 실제 사실이
-          갈라지는 지점을 찾습니다. 그 갈라지는 지점이 곧 질문이 되어야 할 자리입니다.
-        </p>
-        <div class="yh-flow" aria-label="감사 준비 순서: 회사, 산업, 비즈니스 모델, 계정과 위험">
-          <span>Company</span><i aria-hidden="true">→</i>
-          <span>Industry</span><i aria-hidden="true">→</i>
-          <span>Business Model</span><i aria-hidden="true">→</i>
-          <span>Accounts &amp; Risks</span>
-        </div>
-        <div class="yh-acts">
-          <a class="yh-go" data-link="auditPrep">Audit Prep 사용해보기 <i aria-hidden="true">↗</i></a>
-          <a class="yh-go" data-link="github">만든 과정 보기 <i aria-hidden="true">↗</i></a>
-        </div>
+    <!-- 지금 하루의 어디쯤인지 -->
+    <nav class="yh-steps" id="yhSteps" aria-label="하루의 장면">
+      <div class="yh-wrap">
+        <button class="yh-step" type="button" data-go="0"><b>07:30</b><span>Morning Brief</span></button>
+        <button class="yh-step" type="button" data-go="1"><b>08:30</b><span>Move</span></button>
+        <button class="yh-step" type="button" data-go="2"><b>09:30</b><span>Before Fieldwork</span></button>
+        <button class="yh-step" type="button" data-go="3"><b>21:00</b><span>After Hours</span></button>
       </div>
-      <div class="yh-reveal">
-        <ol class="yh-feats">
-          <li>
-            <span class="yh-fn">01</span><span class="yh-ft">산업 카드덱</span>
-            <p class="yh-fd">그 산업이 어떻게 돈을 버는지, 어디에서 이익이 나고 어디에서 새는지를 먼저 훑습니다.</p>
-          </li>
-          <li>
-            <span class="yh-fn">02</span><span class="yh-ft">DART 공시로 만든 회사 층</span>
-            <p class="yh-fd">실제 공시에서 그 회사만의 사실을 끌어와 산업 일반론 위에 얹습니다.</p>
-          </li>
-          <li>
-            <span class="yh-fn">03</span><span class="yh-ft">갈라지는 지점 찾기</span>
-            <p class="yh-fd">일반론과 실제가 어긋나는 곳을 짚어 감사 계획 단계의 질문 목록으로 만듭니다.</p>
-          </li>
-        </ol>
-      </div>
-    </div>
-  </div>
-</section>
+    </nav>
 
-<!-- =====================================================================
-     21:00 After Hours
-     ===================================================================== -->
-<section class="yh-sec" id="after" aria-labelledby="yhAfterH">
-  <div class="yh-wrap">
-    <div class="yh-shead yh-reveal">
-      <span class="yh-time">21:00</span>
-      <h2 id="yhAfterH">After Hours</h2>
-      <span class="yh-snote">관심을 결과물로 만드는 시간</span>
-    </div>
-    <div class="yh-body">
-      <div class="yh-reveal">
-        <p class="yh-lead">업무가 끝나도 관심은 계속됩니다.</p>
-        <p class="yh-p">
-          RWA 스터디, BAY 리서치팀 운영, 아티클, 블록체인 온보딩 자료는 각각 따로 벌인 일이 아닙니다.
-          궁금한 것이 생기면 먼저 공부하고, 공부한 것을 남에게 설명할 수 있을 만큼 정리하고,
-          정리한 것을 남길 수 있는 형태로 만드는 하나의 흐름입니다.
-        </p>
-        <p class="yh-p">
-          설명할 수 있게 되었을 때 비로소 이해한 것이라고 생각합니다.
-          그래서 공부의 마지막 단계는 언제나 남이 읽을 수 있는 결과물입니다.
-        </p>
-      </div>
-      <div class="yh-reveal">
-        <div class="yh-index" id="yhAfterList"></div>
-      </div>
-    </div>
-  </div>
-</section>
+  </div><!-- /stage -->
+</div><!-- /rail -->
 
 </main>
 
@@ -576,7 +522,7 @@
      "" 로 비워두면 자리는 그대로 두되 조용히 눌리지 않는 상태가 됩니다.
      ext:true 면 새 탭에서 열리고 화살표가 ↗ 로 바뀝니다.
 
-   HOUSE.photos — 운동 사진 세 장.
+   HOUSE.photos — 08:30 장면의 운동 사진 세 장.
      src 에 파일 경로(예: "assets/move-1.jpg")를 넣으면 그 자리에 사진이 들어갑니다.
      비워두면 같은 크기의 빈 자리로 남아서, 나중에 사진을 넣어도 화면이 밀리지 않습니다.
    ========================================================================= */
@@ -602,10 +548,10 @@ const HOUSE = {
   ],
 
   afterHours: [
-    { key:"rwaStudy",   title:"RWA Study",  note:"실물자산 토큰화 스터디" },
-    { key:"bayResearch",title:"BAY Research",note:"리서치팀 운영" },
-    { key:"articles",   title:"Articles",   note:"산업 분석 아티클" },
-    { key:"onboarding", title:"Onboarding", note:"블록체인 교육자료" }
+    { key:"rwaStudy",    title:"RWA Study",   note:"실물자산 토큰화 스터디" },
+    { key:"bayResearch", title:"BAY Research",note:"리서치팀 운영" },
+    { key:"articles",    title:"Articles",    note:"산업 분석 아티클" },
+    { key:"onboarding",  title:"Onboarding",  note:"블록체인 교육자료" }
   ]
 };
 /* ▲▲▲ 여기까지 ▲▲▲ */
@@ -618,7 +564,6 @@ const yhEsc = (s)=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"
     const cfg = HOUSE.links[el.dataset.link];
     const arrow = el.querySelector("i");
     if(!cfg || !cfg.href){
-      // 주소가 없으면 링크가 아니라 그냥 글자로 둡니다 (키보드로도 잡히지 않게)
       el.removeAttribute("href");
       el.classList.add("yh-pending");
       el.setAttribute("aria-disabled","true");
@@ -628,8 +573,7 @@ const yhEsc = (s)=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"
     el.href = cfg.href;
     el.setAttribute("aria-label", cfg.label);
     if(cfg.ext){
-      el.target = "_blank";
-      el.rel = "noopener";
+      el.target = "_blank"; el.rel = "noopener";
       el.classList.add("yh-ext");
       if(arrow) arrow.textContent = "↗";
     }else if(arrow){
@@ -638,39 +582,24 @@ const yhEsc = (s)=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"
   });
 })();
 
-/* ---- 21:00 인덱스 줄 (첫 화면 카드 안 + 상세 구간, 같은 데이터로) -------- */
+/* ---- 21:00 인덱스 줄 --------------------------------------------------- */
 (function(){
-  const rows = HOUSE.afterHours.map((it,i)=>{
+  const box = document.getElementById("yhAfterList");
+  if(!box) return;
+  box.innerHTML = HOUSE.afterHours.map((it,i)=>{
     const cfg = HOUSE.links[it.key] || {};
     const n   = String(i+1).padStart(2,"0");
     const body =
       `<span class="yh-rn">${n}</span>` +
-      `<span class="yh-rt">${yhEsc(it.title)}</span>` +
+      `<span class="yh-rt">${yhEsc(it.title)} <span class="yh-rs">— ${yhEsc(it.note)}</span></span>` +
       `<span class="yh-ra" aria-hidden="true">${cfg.href ? (cfg.ext?"↗":"→") : "·"}</span>`;
     return cfg.href
       ? `<a class="yh-row" href="${yhEsc(cfg.href)}"${cfg.ext?' target="_blank" rel="noopener"':""} aria-label="${yhEsc(it.title)} — ${yhEsc(it.note)}">${body}</a>`
       : `<span class="yh-row" aria-disabled="true" title="${yhEsc(it.title)} — 준비 중">${body}</span>`;
   }).join("");
-
-  const compact = document.getElementById("yhAfterIndex");
-  const full    = document.getElementById("yhAfterList");
-  if(compact) compact.innerHTML = rows;
-  if(full){
-    full.innerHTML = HOUSE.afterHours.map((it,i)=>{
-      const cfg = HOUSE.links[it.key] || {};
-      const n   = String(i+1).padStart(2,"0");
-      const body =
-        `<span class="yh-rn">${n}</span>` +
-        `<span class="yh-rt">${yhEsc(it.title)} <span style="font-weight:400;color:var(--ink-40)">— ${yhEsc(it.note)}</span></span>` +
-        `<span class="yh-ra" aria-hidden="true">${cfg.href ? (cfg.ext?"↗":"→") : "·"}</span>`;
-      return cfg.href
-        ? `<a class="yh-row" href="${yhEsc(cfg.href)}"${cfg.ext?' target="_blank" rel="noopener"':""} aria-label="${yhEsc(it.title)} — ${yhEsc(it.note)}">${body}</a>`
-        : `<span class="yh-row" aria-disabled="true" title="${yhEsc(it.title)} — 준비 중">${body}</span>`;
-    }).join("");
-  }
 })();
 
-/* ---- 운동 사진 세 자리 ------------------------------------------------- */
+/* ---- 08:30 사진 세 자리 ------------------------------------------------ */
 (function(){
   const box = document.getElementById("yhShots");
   if(!box) return;
@@ -685,6 +614,88 @@ const yhEsc = (s)=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"
   }).join("");
 })();
 
+/* =========================================================================
+   가로로 넘어가는 부분
+
+   아래로 내려간 거리를 그대로 옆으로 옮기는 것뿐입니다. 휠을 가로채거나
+   스크롤을 붙잡지 않기 때문에, 중간에 멈추거나 되돌리는 게 자유롭습니다.
+   ========================================================================= */
+const yhRail = (function(){
+  const rail  = document.getElementById("yhRail");
+  const track = document.getElementById("yhTrack");
+  const panels= [...document.querySelectorAll(".yh-panel")];
+  const steps = [...document.querySelectorAll(".yh-step")];
+  const n = panels.length;
+  if(!rail || !track || !n) return {goTo:()=>{}, isOn:()=>false};
+
+  // 가로 이동을 끄는 조건 — CSS 의 미디어쿼리와 같은 조건입니다
+  const flat = matchMedia("(max-width:900px), (max-height:560px), (prefers-reduced-motion:reduce)");
+
+  let railTop=0, span=1, stageW=0, raf=0, live=-1;
+
+  function measure(){
+    railTop = rail.getBoundingClientRect().top + scrollY;
+    const stage = rail.querySelector(".yh-stage");
+    stageW = stage ? stage.clientWidth : innerWidth;
+    span = Math.max(1, rail.offsetHeight - (stage ? stage.offsetHeight : innerHeight));
+  }
+
+  function apply(){
+    raf = 0;
+    if(flat.matches){ track.style.transform = ""; return; }
+    let p = (scrollY - railTop) / span;
+    p = p < 0 ? 0 : (p > 1 ? 1 : p);
+    track.style.transform = "translate3d(" + (-p * (n-1) * stageW) + "px,0,0)";
+
+    const idx = Math.min(n-1, Math.round(p * (n-1)));
+    if(idx !== live){
+      live = idx;
+      panels.forEach((el,i)=> el.classList.toggle("yh-live", i===idx));
+      steps.forEach((el,i)=>{
+        el.classList.toggle("yh-on", i===idx);
+        el.setAttribute("aria-current", i===idx ? "true" : "false");
+      });
+    }
+  }
+
+  function onScroll(){ if(!raf) raf = requestAnimationFrame(apply); }
+
+  // i 번째 장면이 화면에 오도록 세로 위치를 계산해 이동합니다
+  function goTo(i){
+    if(flat.matches){
+      const el = panels[i];
+      if(el) el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth", block:"start"});
+      return;
+    }
+    measure();
+    const y = railTop + span * (i/(n-1));
+    scrollTo({top:y, behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth"});
+  }
+
+  measure(); apply();
+  addEventListener("scroll", onScroll, {passive:true});
+  addEventListener("resize", ()=>{ measure(); apply(); });
+  addEventListener("load", ()=>{ measure(); apply(); });
+  if(flat.addEventListener) flat.addEventListener("change", ()=>{ measure(); apply(); });
+
+  steps.forEach(b=> b.addEventListener("click", ()=> goTo(+b.dataset.go)));
+
+  return {goTo, isOn:()=>!flat.matches, index:()=>live, panels};
+})();
+
+/* ---- 상단 메뉴로 각 장면에 바로 가기 ----------------------------------- */
+(function(){
+  const ids = ["morning","move","fieldwork","after"];
+  document.querySelectorAll(".yh-topnav a[href^='#']").forEach(a=>{
+    a.addEventListener("click", e=>{
+      const i = ids.indexOf(a.getAttribute("href").slice(1));
+      if(i < 0) return;
+      e.preventDefault();
+      yhRail.goTo(i);
+    });
+  });
+})();
+
 /* ---- 서울 시각 — 장식입니다. 이 값에 따라 내용이 바뀌지 않습니다 -------- */
 (function(){
   const el = document.getElementById("yhClock");
@@ -694,52 +705,15 @@ const yhEsc = (s)=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"
     fmt = new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Seoul",hour:"2-digit",minute:"2-digit",hour12:false});
   }catch(e){ return; }
   const tick = ()=>{ el.textContent = fmt.format(new Date()); };
-  tick();
-  setInterval(tick, 20000);
+  tick(); setInterval(tick, 20000);
 })();
 
 /* ---- 상단 줄: 스크롤하면 아래에 얇은 선이 생깁니다 --------------------- */
 (function(){
   const bar = document.getElementById("yhTop");
   if(!bar) return;
-  const on = ()=> bar.classList.toggle("yh-stuck", window.scrollY > 4);
-  on();
-  addEventListener("scroll", on, {passive:true});
-})();
-
-/* ---- 지금 보고 있는 구간을 상단 메뉴에 표시합니다 ---------------------- */
-(function(){
-  const links = [...document.querySelectorAll(".yh-topnav a[href^='#']")];
-  if(!links.length || !("IntersectionObserver" in window)) return;
-  const byId = new Map(links.map(a=>[a.getAttribute("href").slice(1), a]));
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      const a = byId.get(e.target.id);
-      if(a && e.isIntersecting){
-        links.forEach(l=>l.classList.remove("yh-here"));
-        a.classList.add("yh-here");
-      }
-    });
-  }, {rootMargin:"-45% 0px -50% 0px"});
-  byId.forEach((a,id)=>{ const s=document.getElementById(id); if(s) io.observe(s); });
-})();
-
-/* ---- 스크롤해서 화면에 들어오면 한 번만 나타납니다 --------------------- */
-(function(){
-  const items=[...document.querySelectorAll(".yh-reveal")];
-  const sweep=()=>{
-    let left=false;
-    for(const el of items){
-      if(el.classList.contains("yh-in")) continue;
-      const r=el.getBoundingClientRect();
-      if(r.top < innerHeight*0.92 && r.bottom > 0) el.classList.add("yh-in");
-      else left=true;
-    }
-    if(!left){ removeEventListener("scroll",sweep); removeEventListener("resize",sweep); }
-  };
-  addEventListener("scroll",sweep,{passive:true});
-  addEventListener("resize",sweep);
-  sweep();
+  const on = ()=> bar.classList.toggle("yh-stuck", scrollY > 4);
+  on(); addEventListener("scroll", on, {passive:true});
 })();
 
 /* 안전망 — 첫 화면 글자는 무슨 일이 있어도 1.5초 뒤엔 보이게 못박습니다 */
@@ -778,7 +752,7 @@ setTimeout(()=>document.documentElement.classList.add("yh-animoff"), 1500);
     var t=e.target;
     if(t.closest && t.closest("iframe")){ el.classList.remove("yh-on"); return; }
     el.classList.add("yh-on");
-    el.classList.toggle("yh-ring", !!(t.closest && (t.closest(HIT) || t.closest(".yh-card"))));
+    el.classList.toggle("yh-ring", !!(t.closest && t.closest(HIT)));
   },{passive:true});
   addEventListener("mousedown",function(){ el.classList.add("yh-press"); },{passive:true});
   addEventListener("mouseup",function(){ el.classList.remove("yh-press"); },{passive:true});
