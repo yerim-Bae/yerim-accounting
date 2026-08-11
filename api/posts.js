@@ -361,7 +361,10 @@ export default async function handler(req, res) {
       const typeCount = {};
       const found = [];
       for (const page of results) {
-        const title = readText(getProp(page.properties || {}, "Title"));
+        const props = page.properties || {};
+        // 게시된 글만 살펴봅니다 (미공개 글 제목이 새어 나가지 않게)
+        if (!PUBLISH_STATUS.includes(normStatus(readStatus(getProp(props, "Status"))))) continue;
+        const title = readText(getProp(props, "Title"));
         let blocks = [];
         try { blocks = await fetchChildren(page.id, token); } catch (e) { continue; }
         for (const b of blocks) {
