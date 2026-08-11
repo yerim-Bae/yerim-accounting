@@ -330,7 +330,13 @@
   .article .insight a.ibookmark .ibk-h{flex:none;font-size:11px;font-weight:700;letter-spacing:.06em;
     text-transform:uppercase;color:var(--faint);white-space:nowrap}
   .post-layout .article h1{font-size:28px;line-height:1.38;margin-bottom:16px}
-  .post-side{position:sticky;top:72px;display:grid;grid-template-rows:1fr 1fr;gap:16px;min-width:0}
+  .post-side{position:sticky;top:72px;display:grid;grid-template-rows:auto 1fr;gap:16px;min-width:0}
+  /* 첫 칸의 아래선을 왼쪽 표지 이미지의 아래선과 맞춥니다.
+     본문:사이드 = 2:1 이고 표지는 2:1 비율이라, 표지 높이가 곧 사이드 칸의 폭과 같습니다.
+     그래서 첫 칸을 정사각형으로 두면 두 아래선이 정확히 맞습니다.
+     칸 안에는 항상 기사 3건만 들어가고 제목도 줄 수가 제한돼 있어 자리가 남습니다.
+     그래도 혹시 넘칠 때를 대비해 상자 밖으로 삐져나오지 않게 막아둡니다. */
+  .post-side > .spanel:first-child{aspect-ratio:1/1;overflow:hidden}
   .spanel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 16px 14px;box-shadow:var(--shadow);
           display:flex;flex-direction:column;min-height:0}
   .spanel .sh{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
@@ -355,6 +361,8 @@
     #app.wide{max-width:var(--maxw)}
     .post-layout{grid-template-columns:1fr}
     .post-side{position:static;grid-template-rows:auto auto;margin-top:8px}
+    /* 한 칸으로 접히면 옆에 맞출 표지가 없으므로 정사각형을 풉니다 */
+    .post-side > .spanel:first-child{aspect-ratio:auto}
   }
 
   /* =========================================================================
