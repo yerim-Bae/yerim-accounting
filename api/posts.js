@@ -377,8 +377,12 @@ export default async function handler(req, res) {
             try {
               const r = await fetch(url);
               item.응답 = r.status;
+              item.호스트 = (() => { try { return new URL(url).host; } catch (e) { return "?"; } })();
+              item.만료파라미터 = /X-Amz-Expires|Expires=/i.test(url);
               item.content_type = r.headers.get("content-type");
               item.content_disposition = r.headers.get("content-disposition");
+              item.x_frame_options = r.headers.get("x-frame-options");
+              item.csp = (r.headers.get("content-security-policy") || "").slice(0, 120) || null;
               item.크기 = r.headers.get("content-length");
               const head = (await r.text()).slice(0, 120);
               item.앞부분 = head.replace(/\s+/g, " ");
