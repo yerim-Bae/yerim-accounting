@@ -51,6 +51,8 @@
     --rule-page:3px solid var(--text);              /* 페이지 최상단 (제호 아래) */
     --rule-strong:1px solid rgba(28,26,25,.55);     /* 강조 섹션 상·하단 */
     --rule-col:1px solid rgba(28,26,25,.20);        /* 칼럼 세로 구분선 */
+    --rule-col-c:rgba(28,26,25,.20);                /* 위와 같은 색 — 막대로 그릴 때 씁니다 */
+    --rule-inset:0.7cm;                             /* 세로 구분선을 위아래로 띄우는 거리 */
     --rule-item:1px solid rgba(28,26,25,.13);       /* 기사와 기사 사이 */
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -330,13 +332,16 @@
   /* ---- 1면 3단 ---- */
   .front{display:grid;grid-template-columns:var(--cols);margin:0 calc(-1 * var(--gut));
     border-bottom:var(--rule-strong)}
-  .front > *{padding:var(--s6) var(--gut) var(--s7);min-width:0;display:flex;flex-direction:column}
-  .front > * + *{border-left:var(--rule-col)}
+  .front > *{padding:var(--s6) var(--gut) var(--s7);min-width:0;display:flex;flex-direction:column;position:relative}
+  /* 칼럼 세로선은 테두리가 아니라 가는 막대로 그립니다.
+     위아래를 --rule-inset(0.7cm) 만큼 띄워 지면 위·아래 가로선에 닿지 않게 합니다. */
+  .front > * + *::before{content:"";position:absolute;left:0;top:var(--rule-inset);bottom:var(--rule-inset);
+    width:1px;background:var(--rule-col-c)}
 
   @media(max-width:980px){
     .front{grid-template-columns:minmax(0,1fr);margin:0}
     .front > *{padding-left:0;padding-right:0}
-    .front > * + *{border-left:none;border-top:var(--rule-col)}
+    .front > * + *::before{left:0;right:0;top:0;bottom:auto;width:auto;height:1px}
   }
 
   /* ---- 왼쪽: 한눈에 보기 ---- */
@@ -344,9 +349,13 @@
   .glance .upd{display:flex;align-items:center;gap:var(--s1);margin:var(--s2) 0 var(--s4);
     font-size:11.5px;font-weight:700;letter-spacing:.03em;color:var(--faint)}
   .glance .upd i{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none;animation:pulse 2s infinite}
-  .glance ol{list-style:none;counter-reset:g;border-top:var(--rule-item)}
+  /* 목록이 칼럼 높이를 채우도록 늘어납니다. 각 항목이 균등하게 넓어져
+     오른쪽 칼럼(PICK)의 아래 기준선과 자연스럽게 맞습니다. */
+  .glance ol{list-style:none;counter-reset:g;border-top:var(--rule-item);
+    flex:1 1 auto;display:flex;flex-direction:column}
   /* 모든 항목의 위아래 여백과 번호·제목 간격을 같은 값으로 둡니다 */
   .glance li{counter-increment:g;display:grid;grid-template-columns:16px minmax(0,1fr);gap:var(--s3);
+    align-content:center;flex:1 1 0;min-height:0;
     padding:var(--s3) 0;border-bottom:var(--rule-item)}
   /* 마지막 항목도 위아래 여백을 똑같이 두고 선만 뺍니다 (목록의 리듬 유지) */
   .glance li:last-child{border-bottom:none}
@@ -404,9 +413,6 @@
     margin-top:var(--s2);transition:color .15s;
     display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
   .viewbox .vcell:hover .vt{color:var(--accent)}
-  /* 두 칸의 작성자 줄을 같은 기준선에 놓습니다 */
-  .viewbox .vby{margin-top:auto;padding-top:var(--s3);display:flex;align-items:center;gap:var(--s2);
-    font-size:12px;font-weight:700;line-height:1.5;color:var(--muted)}
 
 
   /* ---- 1면 아래 4단 ----
@@ -416,8 +422,9 @@
     grid-template-rows:auto auto 1fr auto;
     margin:0 calc(-1 * var(--gut));border-bottom:var(--rule-strong)}
   .frontrow > *{grid-row:span 4;display:grid;grid-template-rows:subgrid;
-    padding:var(--s6) var(--gut);min-width:0;cursor:pointer}
-  .frontrow > * + *{border-left:var(--rule-col)}
+    padding:var(--s6) var(--gut);min-width:0;cursor:pointer;position:relative}
+  .frontrow > * + *::before{content:"";position:absolute;left:0;top:var(--rule-inset);bottom:var(--rule-inset);
+    width:1px;background:var(--rule-col-c)}
   .frontrow h3{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.033em;line-height:1.36;transition:color .15s;
     display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .frontrow > *:hover h3{color:var(--accent)}
@@ -436,12 +443,13 @@
   }
   @media(max-width:980px){
     .frontrow{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .frontrow > *:nth-child(odd){border-left:none}
+    .frontrow > *:nth-child(odd)::before{display:none}
     .frontrow > *:nth-child(n+3){border-top:var(--rule-item)}
   }
   @media(max-width:560px){
     .frontrow{grid-template-columns:minmax(0,1fr);grid-template-rows:none;margin:0}
-    .frontrow > *{grid-row:auto;display:block;padding:var(--s6) 0;border-left:none}
+    .frontrow > *{grid-row:auto;display:block;padding:var(--s6) 0}
+    .frontrow > *::before{display:none}
     .frontrow > * + *{border-top:var(--rule-item)}
   }
 
@@ -755,7 +763,7 @@ function dashTopic(name){
 window.dashTopic = dashTopic;
 
 /* ---- 1면 조각들 ---- */
-const GLANCE_N = 6;   // 왼쪽 "한눈에 보기" 줄 수
+const GLANCE_N = 5;   // 왼쪽 "한눈에 보기" 줄 수
 const ROW_N    = 4;   // 1면 아래 가로줄 기사 수
 
 // 왼쪽 단 — 번호가 붙은 한 줄 목록
@@ -780,7 +788,7 @@ function leadHtml(p){
     <h2>${p.title}</h2>
     ${ex?`<p class="deck">${ex}</p>`:""}
     ${cover}
-    <div class="lfoot">${avatarHtml(p.author)}<span>${p.author||""}</span><span>·</span><span>${fmtDate(p.date)}</span>${cardTopicsHtml(p)}</div>
+    <div class="lfoot"><span>${fmtDate(p.date)}</span>${cardTopicsHtml(p)}</div>
   </article>`;
 }
 // 오른쪽 단 — 보조기사 바로 아래에 직접 고른 글 2칸
@@ -794,7 +802,6 @@ function asideHtml(second, picks){
       `<div class="vcell" onclick="location.hash='#/post/${p.id}'">
         <div class="vk">Pick</div>
         <div class="vt">${p.title}</div>
-        <div class="vby">${avatarHtml(p.author)}<span>${p.author||""}</span></div>
       </div>`).join("")}</div>` : "";
   return `<div class="aside">${s}${box}</div>`;
 }
