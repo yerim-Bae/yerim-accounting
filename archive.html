@@ -17,10 +17,11 @@
 <meta name="twitter:title" content="Yerim Bae · 회계 공부 아카이브" />
 <meta name="twitter:description" content="배예림이 정리한 회계 공부 기록과 인사이트 아카이브" />
 <meta name="twitter:image" content="https://yerim-accounting.vercel.app/assets/og-image.png?v=1" />
-<link rel="icon" href="favicon.ico?v=5" sizes="any" />
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=5" />
-<link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-512.png?v=5" />
-<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png?v=5" />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=6" />
+<link rel="icon" href="favicon.ico?v=6" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=6" />
+<link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-512.png?v=6" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png?v=6" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -51,10 +52,7 @@
   /* ---------- header ---------- */
   header{position:sticky;top:0;z-index:20;background:rgba(245,241,235,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
   .nav{display:flex;align-items:center;gap:24px;height:66px}
-  .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em}
-  .brand .mark{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center}
-  .brand .mark svg{width:100%;height:100%;display:block}
-  .brand .mark img{width:100%;height:100%;object-fit:contain;display:block}
+  .brand{display:flex;align-items:center;font-weight:800;letter-spacing:-.02em}
   .brand .bt{display:block;line-height:1.15}
   .brand .bt b{font-size:15.5px;font-weight:800;color:var(--text)}
   .brand small{display:block;font-size:11px;font-weight:600;color:var(--faint);letter-spacing:.01em;margin-top:1px}
@@ -65,8 +63,6 @@
   /* 모바일: 헤더를 컴팩트하게 — 메뉴가 가로 한 줄 유지 (PC는 영향 없음) */
   @media(max-width:600px){
     .nav{gap:10px;height:58px}
-    .brand{gap:8px}
-    .brand .mark{width:28px;height:28px;flex:0 0 28px}
     .brand .bt b{font-size:14px;white-space:nowrap}
     .brand small{display:none}
     .nav .links{gap:2px}
@@ -76,7 +72,7 @@
 
   /* ---------- hero ---------- */
   .hero{position:relative;padding:56px 0 26px}
-  .hero .hcopy{position:relative;z-index:2;max-width:600px}
+  .hero .hcopy{position:relative;z-index:2;max-width:720px}
   .hero .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;letter-spacing:.02em;
     color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:16px}
   .hero .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(216,102,47,.5);animation:pulse 2s infinite}
@@ -90,30 +86,7 @@
     border-radius:12px;padding:9px 14px;font-size:13px;color:var(--muted);box-shadow:var(--shadow)}
   .hero .meta .chip b{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.02em;font-family:var(--serif)}
 
-  /* ---------- hero crystal animation ---------- */
-  .hero-art{position:absolute;top:0;right:8px;width:340px;height:100%;z-index:1;pointer-events:none;display:grid;place-items:center}
-  .hero-art .glow{position:absolute;width:240px;height:240px;border-radius:50%;
-    background:radial-gradient(circle,rgba(46,166,255,.28) 0%,rgba(11,92,255,.10) 45%,rgba(11,92,255,0) 70%);
-    filter:blur(6px);animation:breathe 5s ease-in-out infinite}
-  @keyframes breathe{0%,100%{transform:scale(.92);opacity:.75}50%{transform:scale(1.08);opacity:1}}
-  .crystals{position:relative;width:220px;height:220px}
-  .cube{position:absolute;width:74px;height:74px;border-radius:12px;
-    background:linear-gradient(150deg,#5fbcff 0%,#1f74ff 45%,#0a3ecc 100%);
-    box-shadow:inset 0 2px 8px rgba(255,255,255,.55),inset 0 -10px 18px rgba(6,32,120,.55),0 14px 30px rgba(11,92,255,.35);
-    border:1px solid rgba(255,255,255,.35)}
-  .cube::before{content:"";position:absolute;inset:8px 8px auto 8px;height:26px;border-radius:8px;
-    background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0))}
-  .cube.c1{top:22px;left:26px;animation:float1 6s ease-in-out infinite}
-  .cube.c2{top:78px;left:104px;width:64px;height:64px;animation:float2 6.6s ease-in-out infinite}
-  .cube.c3{top:132px;left:34px;width:58px;height:58px;animation:float3 7.2s ease-in-out infinite}
-  @keyframes float1{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(2deg)}}
-  @keyframes float2{0%,100%{transform:translateY(-6px) rotate(3deg)}50%{transform:translateY(10px) rotate(-2deg)}}
-  @keyframes float3{0%,100%{transform:translateY(4px) rotate(-2deg)}50%{transform:translateY(-12px) rotate(3deg)}}
-  /* 실제 크리스탈 이미지를 넣으면 아래로 자동 대체됩니다 */
-  .hero-art img.crystal-img{position:relative;width:auto;max-width:300px;max-height:210px;filter:drop-shadow(0 22px 38px rgba(11,92,255,.34));animation:floatImg 6.5s ease-in-out infinite}
-  @keyframes floatImg{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-16px) rotate(1.5deg)}}
-  @media(max-width:760px){.hero-art{display:none}.hero .hcopy{max-width:none}}
-  @media(prefers-reduced-motion:reduce){.cube,.crystals .cube,.glow,.crystal-img,.hero .eyebrow .dot{animation:none!important}}
+  @media(prefers-reduced-motion:reduce){.hero .eyebrow .dot{animation:none!important}}
 
   /* ---------- sections ---------- */
   .sec-head{display:flex;align-items:baseline;gap:12px;margin:40px 0 18px}
@@ -384,15 +357,6 @@
   <div class="wrap nav">
     <!-- 로고를 누르면 포트폴리오 첫 화면으로 돌아갑니다. 아카이브 홈은 아래 "홈" 링크입니다 -->
     <a href="index.html" class="brand">
-      <span class="mark" id="brandMark">
-        <!-- 워드마크에서 잘라낸 마크(assets/logo-mark.png)가 있으면 사용, 없으면 아래 SVG 폴백 -->
-        <img src="assets/logo-mark.png" alt="Yerim Bae" onerror="this.remove();var f=document.getElementById('brandFallback');if(f)f.style.display='block'" />
-        <svg id="brandFallback" style="display:none" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Yerim Bae">
-          <rect x="4" y="6" width="15" height="10" rx="2.5" fill="#1C1A19"/>
-          <rect x="4" y="19" width="10" height="15" rx="2.5" fill="#1C1A19"/>
-          <rect x="22" y="6" width="14" height="14" rx="3" fill="#1C1A19"/>
-        </svg>
-      </span>
       <span class="bt"><b>Yerim Bae</b><small>Accounting Study Archive · 회계 공부 아카이브</small></span>
     </a>
     <nav class="links">
@@ -544,11 +508,6 @@ ${tagsHtml(p.tags)}
 function heroHtml(){
   const banner = USING_SAMPLE ? `<div class="banner">⚙️ 지금은 샘플 데이터로 보이는 중이에요. 노션 연결·배포가 끝나면 실제 데이터가 표시됩니다.</div>`:"";
   return `<section class="hero">
-    <div class="hero-art" aria-hidden="true">
-      <div class="glow"></div>
-      <img class="crystal-img" src="assets/crystal.png" alt="" onerror="this.remove();var c=document.getElementById('cssCrystals');if(c)c.style.display='block'" />
-      <div class="crystals" id="cssCrystals" style="display:none"><span class="cube c1"></span><span class="cube c2"></span><span class="cube c3"></span></div>
-    </div>
     <div class="hcopy">
       <h1><span class="hl">Accounting</span><br class="hbr"> Study Archive</h1>
       <div class="meta">
