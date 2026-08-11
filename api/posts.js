@@ -8,6 +8,10 @@
 // 읽는 속성(열) 이름: Title · Author · Date of Issue · Content Summary ·
 //                    Insight · Source · Tag(선택) · Status
 // Status가 "홈페이지 게시"인 글만 사이트에 게시됩니다.
+//
+// 페이지 본문에서 읽는 블록: 문단·소제목·목록·인용·콜아웃·체크박스·코드·구분선·
+//   이미지·표·임베드(HTML)·링크 북마크·파일 첨부
+//   HTML 임베드와 파일은 iframe 안에 가둬서 보여줍니다(사이트 디자인·보안 격리).
 // 진단: 주소 뒤에 ?debug=1 을 붙이면 원본 개수/상태값을 확인할 수 있습니다.
 // =====================================================================
 
@@ -287,6 +291,41 @@ async function readInsightBody(pageId, token) {
         });
         if (tb) html += `<div class="itbl-wrap"><table class="itbl">${tb}</table></div>`;
       }
+      /* 노션 본문에 넣은 HTML(임베드·파일 업로드)을 그대로 살려서 보여줍니다.
+         반드시 iframe 안에 가둡니다 — 안 그러면 올린 HTML 의 <style> 이 사이트 전체
+         디자인을 덮어쓰고, 그 안의 스크립트가 이 사이트 권한으로 실행됩니다.
+         sandbox 에 allow-same-origin 을 주지 않아 iframe 은 이 사이트를 건드릴 수 없습니다. */
+      else if (t === "embed" || t === "pdf" || t === "file") {
+        const u = node.url || (node.external && node.external.url) || (node.file && node.file.url) || "";
+        const nm = node.name || "";
+        const capTxt = (node.caption || []).map((c) => c.plain_text).join("").trim();
+        if (u) {
+          // 파일 첨부는 HTML/PDF 만 화면에 펼치고, 나머지는 내려받기 링크로 둡니다
+          const isPage = t !== "file" || /\.(html?|pdf)(\?|$)/i.test(nm || u);
+          if (isPage) {
+            html += `<figure class="iembed"><iframe src="${esc(u)}" loading="lazy"` +
+              ` sandbox="allow-scripts allow-popups" referrerpolicy="no-referrer"` +
+              ` title="${esc(capTxt || nm || "첨부 자료")}"></iframe>` +
+              (capTxt ? `<figcaption>${rtHtml(node.caption)}</figcaption>` : "") + `</figure>`;
+          } else {
+            html += `<a class="ibookmark" href="${esc(u)}" target="_blank" rel="noopener">` +
+              `<span class="ibk-t">${esc(nm || capTxt || "첨부 파일")}</span>` +
+              `<span class="ibk-h">내려받기</span></a>`;
+          }
+        }
+      }
+      // 링크 북마크 — 지금까지는 화면에서 그냥 사라지고 있었습니다
+      else if (t === "bookmark" || t === "link_preview") {
+        const u = node.url || "";
+        if (u) {
+          const capTxt = (node.caption || []).map((c) => c.plain_text).join("").trim();
+          let host = "";
+          try { host = new URL(u).host.replace(/^www\./, ""); } catch (e) { host = ""; }
+          html += `<a class="ibookmark" href="${esc(u)}" target="_blank" rel="noopener">` +
+            `<span class="ibk-t">${esc(capTxt || u)}</span>` +
+            (host ? `<span class="ibk-h">${esc(host)} ↗</span>` : "") + `</a>`;
+        }
+      }
       else { const x = rtHtml(node.rich_text); if (x.trim()) html += `<p>${x}</p>`; }
     }
     flushImage();
@@ -301,7 +340,6 @@ export default async function handler(req, res) {
   const token = process.env.NOTION_TOKEN;
   const dbId = process.env.NOTION_DB_ID;
   const debug = req.query && (req.query.debug || req.query.debug === "");
-  const probe = req.query && (req.query.probe || req.query.probe === "");
 
   if (!token || !dbId) {
     res.status(500).json({ error: "NOTION_TOKEN / NOTION_DB_ID 환경변수가 설정되지 않았습니다." });
@@ -351,48 +389,6 @@ export default async function handler(req, res) {
         });
         return;
       }
-    }
-
-    /* 진단용 — 페이지 본문에 어떤 블록이 들어있는지, 그리고 파일/임베드 블록이
-       실제로 어떤 형태로 내려오는지 확인합니다. (임시. 주소 자체는 노출하지 않습니다) */
-    if (probe) {
-      const KNOWN = ["paragraph","heading_1","heading_2","heading_3","bulleted_list_item",
-        "numbered_list_item","quote","callout","to_do","code","divider","image","table","table_row"];
-      const typeCount = {};
-      const found = [];
-      for (const page of results) {
-        const props = page.properties || {};
-        // 게시된 글만 살펴봅니다 (미공개 글 제목이 새어 나가지 않게)
-        if (!PUBLISH_STATUS.includes(normStatus(readStatus(getProp(props, "Status"))))) continue;
-        const title = readText(getProp(props, "Title"));
-        let blocks = [];
-        try { blocks = await fetchChildren(page.id, token); } catch (e) { continue; }
-        for (const b of blocks) {
-          typeCount[b.type] = (typeCount[b.type] || 0) + 1;
-          if (KNOWN.includes(b.type)) continue;
-          const node = b[b.type] || {};
-          const url = (node.external && node.external.url) || (node.file && node.file.url) || node.url || "";
-          const item = { 글: title, 블록: b.type, 이름: node.name || null, 주소있음: !!url };
-          if (url) {
-            try {
-              const r = await fetch(url);
-              item.응답 = r.status;
-              item.호스트 = (() => { try { return new URL(url).host; } catch (e) { return "?"; } })();
-              item.만료파라미터 = /X-Amz-Expires|Expires=/i.test(url);
-              item.content_type = r.headers.get("content-type");
-              item.content_disposition = r.headers.get("content-disposition");
-              item.x_frame_options = r.headers.get("x-frame-options");
-              item.csp = (r.headers.get("content-security-policy") || "").slice(0, 120) || null;
-              item.크기 = r.headers.get("content-length");
-              const head = (await r.text()).slice(0, 120);
-              item.앞부분 = head.replace(/\s+/g, " ");
-            } catch (e) { item.가져오기실패 = String(e.message || e).slice(0, 120); }
-          }
-          found.push(item);
-        }
-      }
-      res.status(200).json({ 블록_종류별_개수: typeCount, 코드가_모르는_블록: found });
-      return;
     }
 
     // 3) 변환
