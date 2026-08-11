@@ -228,15 +228,20 @@
 
   /* 프레임보다 세로로 긴 이미지(로고·인포그래픽 등)는 자르지 않고 전부 보여주고,
      남는 좌우 여백은 같은 이미지를 흐리게 깔아 자연스럽게 채웁니다 */
-  .pcover.fit img,.thumb.fit img,.feat-cover.fit img{object-fit:contain}
-  .pcover.fit img,.feat-cover.fit img{padding:16px}
+  .pcover.fit img,.thumb.fit img,.feat-cover.fit img,
+  .lcover.fit img,.acover.fit img,.rcover.fit img{object-fit:contain}
+  .pcover.fit img,.feat-cover.fit img,.lcover.fit img{padding:16px}
+  .acover.fit img,.rcover.fit img{padding:12px}
+  .lead:hover .lcover.fit img{transform:none}
   .thumb.fit img{padding:10px}
   .card:hover .thumb.fit img{transform:none}
   .feat-main:hover .feat-cover.fit img{transform:none}
-  .pcover.fit::before,.thumb.fit::before,.feat-cover.fit::before{content:"";position:absolute;inset:0;z-index:0;
+  .pcover.fit::before,.thumb.fit::before,.feat-cover.fit::before,
+  .lcover.fit::before,.acover.fit::before,.rcover.fit::before{content:"";position:absolute;inset:0;z-index:0;
     background-image:var(--bgimg);background-size:cover;background-position:center;
     filter:blur(30px) saturate(1.1);transform:scale(1.25)}
-  .pcover.fit::after,.thumb.fit::after,.feat-cover.fit::after{content:"";position:absolute;inset:0;z-index:0;background:rgba(255,255,255,.30)}
+  .pcover.fit::after,.thumb.fit::after,.feat-cover.fit::after,
+  .lcover.fit::after,.acover.fit::after,.rcover.fit::after{content:"";position:absolute;inset:0;z-index:0;background:rgba(255,255,255,.30)}
   /* 본문 안 이미지 (두 번째 이후) */
   .article .insight figure.ifig{margin:16px 0}
   .article .insight figure.ifig img{width:100%;max-height:420px;object-fit:contain;display:block;
@@ -296,14 +301,14 @@
   }
 
   /* ---- 1면 3단 ---- */
+  /* 좌우로 20px 씩 넘겨 놓고 각 단에 같은 20px 안여백을 줍니다.
+     이렇게 해야 바깥쪽 단만 넓어지지 않고 네 단의 글상자 폭이 똑같아집니다. */
   .front{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,2fr) minmax(0,1.06fr);
-    border-bottom:1px solid var(--text)}
-  .front > *{padding:24px 22px 28px;min-width:0}
-  .front > *:first-child{padding-left:0}
-  .front > *:last-child{padding-right:0}
+    margin:0 -20px;border-bottom:1px solid var(--text)}
+  .front > *{padding:24px 20px 28px;min-width:0}
   .front > * + *{border-left:1px dashed var(--border-strong)}
   @media(max-width:980px){
-    .front{grid-template-columns:minmax(0,1fr)}
+    .front{grid-template-columns:minmax(0,1fr);margin:0}
     .front > *{padding:24px 0 26px}
     .front > * + *{border-left:none;border-top:1px dashed var(--border-strong)}
   }
@@ -318,21 +323,26 @@
     padding:12px 0;border-top:1px solid var(--border)}
   .glance li:first-child{border-top:none;padding-top:0}
   .glance li::before{content:counter(g);font-family:var(--serif);font-size:13px;font-weight:700;color:var(--accent);line-height:1.75}
-  .glance a{font-size:13.5px;line-height:1.7;font-weight:700;color:var(--text);
+  /* 제목과 주제를 한 덩어리로 묶습니다.
+     묶지 않으면 주제가 별도 칸으로 밀려 16px 폭에서 한 글자씩 세로로 쪼개집니다. */
+  .glance .gtext{min-width:0}
+  .glance a{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+    font-size:13.5px;line-height:1.7;font-weight:700;color:var(--text);
     text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;text-decoration-color:var(--border-strong)}
   .glance a:hover{color:var(--accent);text-decoration-color:var(--accent)}
   .glance .gmeta{display:block;margin-top:4px;font-size:11px;font-weight:700;letter-spacing:.05em;
-    text-transform:uppercase;color:var(--faint)}
+    text-transform:uppercase;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
   /* 가운데 — 머리기사 */
   .lead{cursor:pointer}
   .lead h2{font-family:var(--serif);font-size:clamp(25px,3.5vw,39px);font-weight:700;
     letter-spacing:-.04em;line-height:1.22;text-align:center;transition:color .15s}
   .lead:hover h2{color:var(--accent)}
-  .lead .deck{margin:14px auto 0;max-width:33em;text-align:center;font-size:15px;line-height:1.72;color:var(--muted)}
+  .lead .deck{margin:14px auto 0;max-width:33em;text-align:center;font-size:15px;line-height:1.72;color:var(--muted);
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .lead figure{margin-top:20px}
   .lead .lcover{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:var(--bg-soft)}
-  .lead .lcover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+  .lead .lcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
   .lead:hover .lcover img{transform:scale(1.02)}
   .lead figcaption{margin-top:7px;font-size:11px;font-weight:600;color:var(--faint);text-align:right}
   .lead .lfoot{margin-top:15px;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;
@@ -340,43 +350,49 @@
 
   /* 오른쪽 — 보조기사 + 고른 글 2칸 */
   .aside .astory{display:block;cursor:pointer}
-  .aside .astory h3{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.033em;line-height:1.32;transition:color .15s}
+  .aside .astory h3{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.033em;line-height:1.32;transition:color .15s;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .aside .astory:hover h3{color:var(--accent)}
-  .aside .astory .adesc{margin-top:9px;font-size:13.5px;line-height:1.68;color:var(--muted)}
-  .aside .acover{margin-top:13px;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
-  .aside .acover img{width:100%;height:100%;object-fit:cover;display:block}
+  .aside .astory .adesc{margin-top:9px;font-size:13.5px;line-height:1.68;color:var(--muted);
+    display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+  .aside .acover{position:relative;margin-top:13px;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
+  .aside .acover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
   .viewbox{display:grid;grid-template-columns:1fr 1fr;margin-top:20px;border-top:1px solid var(--text)}
   .viewbox .vcell{padding:14px 12px 4px;min-width:0;cursor:pointer}
   .viewbox .vcell:first-child{padding-left:0}
   .viewbox .vcell:last-child{padding-right:0}
   .viewbox .vcell + .vcell{border-left:1px dashed var(--border-strong)}
   .viewbox .vk{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-  .viewbox .vt{font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:-.025em;line-height:1.4;margin-top:7px;transition:color .15s}
+  .viewbox .vt{font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:-.025em;line-height:1.4;margin-top:7px;transition:color .15s;
+    display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
   .viewbox .vcell:hover .vt{color:var(--accent)}
   .viewbox .vby{display:flex;align-items:center;gap:7px;margin-top:12px;font-size:12px;font-weight:700;color:var(--muted)}
 
   /* 1면 아래 4단 */
-  .frontrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--text)}
-  .frontrow > *{padding:24px 18px 28px;min-width:0;cursor:pointer}
-  .frontrow > *:first-child{padding-left:0}
-  .frontrow > *:last-child{padding-right:0}
+  /* 네 칸의 글상자 폭을 똑같이 두기 위해 바깥으로 20px 넘기고 안여백을 20px 로 통일합니다 */
+  .frontrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0 -20px;border-bottom:1px solid var(--text)}
+  .frontrow > *{padding:24px 20px 28px;min-width:0;cursor:pointer}
   .frontrow > * + *{border-left:1px dashed var(--border-strong)}
-  .frontrow h3{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.033em;line-height:1.3;transition:color .15s}
+  /* 제목·요약의 줄 수를 고정해야 네 칸의 이미지가 같은 높이에서 시작합니다.
+     글이 짧아도 자리를 비워두고, 길면 잘라냅니다. */
+  .frontrow h3{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.033em;line-height:1.3;transition:color .15s;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:calc(1.3em * 3)}
   .frontrow > *:hover h3{color:var(--accent)}
-  .frontrow .rdesc{margin-top:10px;font-size:13.5px;line-height:1.68;color:var(--muted)}
-  .frontrow .rcover{margin-top:14px;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
-  .frontrow .rcover img{width:100%;height:100%;object-fit:cover;display:block}
+  .frontrow .rdesc{margin-top:10px;font-size:13.5px;line-height:1.68;color:var(--muted);
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:calc(1.68em * 3)}
+  .frontrow .rcover{position:relative;margin-top:14px;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
+  .frontrow .rcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
   .frontrow .rmeta{margin-top:11px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--faint)}
   @media(max-width:980px){
     .frontrow{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .frontrow > *:nth-child(odd){padding-left:0;border-left:none}
-    .frontrow > *:nth-child(even){padding-right:0}
+    .frontrow > *:nth-child(odd){border-left:none}
     .frontrow > *:nth-child(n+3){border-top:1px dashed var(--border-strong)}
   }
   @media(max-width:560px){
-    .frontrow{grid-template-columns:minmax(0,1fr)}
+    .frontrow{grid-template-columns:minmax(0,1fr);margin:0}
     .frontrow > *{padding:22px 0 24px;border-left:none}
     .frontrow > * + *{border-top:1px dashed var(--border-strong)}
+    .frontrow h3,.frontrow .rdesc{min-height:0}
   }
 
   /* ---------- 홈(대시보드) ---------- */
@@ -577,7 +593,10 @@ function fitCover(img){
   const fr = Number(box.dataset.fr) || 2;                 // 프레임 가로/세로 비율
   const ir = img.naturalWidth / img.naturalHeight;        // 이미지 가로/세로 비율
   if(!ir || !isFinite(ir)) return;
-  if(ir < fr*0.62){                                       // 너무 많이 잘려나갈 이미지
+  // 잘림을 어디까지 참을지. 기본 .62 는 기존 화면 그대로 두고,
+  // 1면처럼 틀이 얕은 곳은 data-fit-at 으로 더 일찍(=덜 잘리게) 넘깁니다.
+  const at = Number(box.dataset.fitAt) || 0.62;
+  if(ir < fr*at){                                         // 너무 많이 잘려나갈 이미지
     box.classList.add("fit");
     box.style.setProperty("--bgimg", `url("${img.currentSrc||img.src}")`);
   }
@@ -688,7 +707,7 @@ function glanceHtml(items, updated){
     <div class="upd"><i></i>${updated?`업데이트 ${fmtDate(updated)}`:"업데이트 기록"}</div>
     <ol>${items.map(p=>{
       const t=(p.topics||[]).filter(Boolean)[0]||"";
-      return `<li><a href="#/post/${p.id}">${p.title}</a>${t?`<span class="gmeta">${t}</span>`:""}</li>`;
+      return `<li><div class="gtext"><a href="#/post/${p.id}">${p.title}</a>${t?`<span class="gmeta">${t}</span>`:""}</div></li>`;
     }).join("")}</ol>
   </div>`;
 }
@@ -696,7 +715,7 @@ function glanceHtml(items, updated){
 function leadHtml(p){
   const cap=(p.coverCaption||"").trim();
   const cover = p.cover
-    ? `<figure><div class="lcover"><img src="${p.cover}" alt="" onload="fitCover(this)" onerror="this.closest('figure').remove()"></div>
+    ? `<figure><div class="lcover" data-fr="1.6" data-fit-at="0.8"><img src="${p.cover}" alt="" onload="fitCover(this)" onerror="this.closest('figure').remove()"></div>
        ${cap?`<figcaption>${cap}</figcaption>`:""}</figure>` : "";
   const ex=(p.summary||"").replace(/\n/g," ");
   return `<article class="lead" onclick="location.hash='#/post/${p.id}'">
@@ -711,7 +730,7 @@ function asideHtml(second, picks){
   const s = second ? `<a class="astory" href="#/post/${second.id}">
       <h3>${second.title}</h3>
       ${second.summary?`<p class="adesc">${(second.summary||"").replace(/\n/g," ")}</p>`:""}
-      ${second.cover?`<div class="acover"><img src="${second.cover}" alt="" loading="lazy" onload="fitCover(this)" onerror="this.closest('.acover').remove()"></div>`:""}
+      ${second.cover?`<div class="acover" data-fr="1.333" data-fit-at="0.8"><img src="${second.cover}" alt="" loading="lazy" onload="fitCover(this)" onerror="this.closest('.acover').remove()"></div>`:""}
     </a>` : `<p class="empty" style="padding:0">아직 다른 글이 없습니다.</p>`;
   const box = picks.length ? `<div class="viewbox">${picks.map(p=>
       `<div class="vcell" onclick="location.hash='#/post/${p.id}'">
@@ -728,7 +747,7 @@ function frontRowHtml(items){
     `<article onclick="location.hash='#/post/${p.id}'">
       <h3>${p.title}</h3>
       ${p.summary?`<p class="rdesc">${(p.summary||"").replace(/\n/g," ")}</p>`:""}
-      ${p.cover?`<div class="rcover"><img src="${p.cover}" alt="" loading="lazy" onload="fitCover(this)" onerror="this.closest('.rcover').remove()"></div>`:""}
+      ${p.cover?`<div class="rcover" data-fr="1.333" data-fit-at="0.8"><img src="${p.cover}" alt="" loading="lazy" onload="fitCover(this)" onerror="this.closest('.rcover').remove()"></div>`:""}
       <div class="rmeta">${p.author||""} · ${fmtDate(p.date)}</div>
     </article>`).join("")}</div>`;
 }
