@@ -132,10 +132,6 @@
   .scroll-cue i{font-style:normal;animation:nudge 2.4s ease-in-out infinite}
   @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
 
-  /* =====================================================================
-     섹션 공통
-     ===================================================================== */
-
   /* =========================================================================
      커서 — 주황 점, 누를 수 있는 것 위에서는 링으로 벌어집니다.
      · 마우스가 있는 기기에서만 나타납니다 (터치 기기는 그대로)
@@ -160,6 +156,10 @@
     #cur.press i{transform:scale(.78)}
     @media (prefers-reduced-motion:reduce){ #cur i{transition:opacity .18s ease} }
   }
+  /* =====================================================================
+     섹션 공통
+     ===================================================================== */
+
   section{padding:96px 0}
   @media(max-width:640px){section{padding:68px 0}}
   .shead{display:flex;align-items:baseline;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--ink-14)}
@@ -505,8 +505,8 @@ setTimeout(()=>document.documentElement.classList.add("anim-off"), 1500);
     x=e.clientX; y=e.clientY;
     if(!raf) raf=requestAnimationFrame(draw);
     var t=e.target;
-    // 본문에 끼워 넣은 HTML 위에서는 기본 커서로 넘깁니다
-    if(t.closest && t.closest(".iembed")){ el.classList.remove("on"); return; }
+    // 다른 문서가 들어간 자리(iframe) 위에서는 좌표가 전달되지 않으므로 기본 커서로 넘깁니다
+    if(t.closest && t.closest("iframe")){ el.classList.remove("on"); return; }
     el.classList.add("on");
     el.classList.toggle("ring", !!(t.closest && t.closest(HIT)));
   },{passive:true});

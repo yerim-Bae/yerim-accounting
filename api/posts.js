@@ -291,27 +291,23 @@ async function readInsightBody(pageId, token) {
         });
         if (tb) html += `<div class="itbl-wrap"><table class="itbl">${tb}</table></div>`;
       }
-      /* 노션 본문에 넣은 HTML(임베드·파일 업로드)을 그대로 살려서 보여줍니다.
-         반드시 iframe 안에 가둡니다 — 안 그러면 올린 HTML 의 <style> 이 사이트 전체
-         디자인을 덮어쓰고, 그 안의 스크립트가 이 사이트 권한으로 실행됩니다.
-         sandbox 에 allow-same-origin 을 주지 않아 iframe 은 이 사이트를 건드릴 수 없습니다. */
+      /* 노션 본문에 올린 파일(HTML·PDF 등)은 페이지 안에 끼워 넣지 않고
+         "새 창에서 여는 링크"로 답니다. 좁은 틀에 가두면 공들여 맞춰둔
+         파일 자체의 디자인이 눌리기 때문입니다.
+         주소는 노션 원본이 아니라 /api/file 중계를 씁니다 — 노션 파일 주소는
+         약 1시간 뒤 만료돼서, 링크로 걸어두면 나중에 누를 때 깨집니다. */
       else if (t === "embed" || t === "pdf" || t === "file") {
         const u = node.url || (node.external && node.external.url) || (node.file && node.file.url) || "";
         const nm = node.name || "";
         const capTxt = (node.caption || []).map((c) => c.plain_text).join("").trim();
         if (u) {
-          // 파일 첨부는 HTML/PDF 만 화면에 펼치고, 나머지는 내려받기 링크로 둡니다
+          const href = `/api/file?id=${encodeURIComponent(b.id)}`;
+          // HTML·PDF 는 열어보는 자료, 나머지는 내려받는 파일로 안내를 다르게 씁니다
           const isPage = t !== "file" || /\.(html?|pdf)(\?|$)/i.test(nm || u);
-          if (isPage) {
-            html += `<figure class="iembed"><iframe src="${esc(u)}" loading="lazy"` +
-              ` sandbox="allow-scripts allow-popups" referrerpolicy="no-referrer"` +
-              ` title="${esc(capTxt || nm || "첨부 자료")}"></iframe>` +
-              (capTxt ? `<figcaption>${rtHtml(node.caption)}</figcaption>` : "") + `</figure>`;
-          } else {
-            html += `<a class="ibookmark" href="${esc(u)}" target="_blank" rel="noopener">` +
-              `<span class="ibk-t">${esc(nm || capTxt || "첨부 파일")}</span>` +
-              `<span class="ibk-h">내려받기</span></a>`;
-          }
+          html += `<a class="ifile" href="${href}" target="_blank" rel="noopener">` +
+            `<span class="if-k">${isPage ? "첨부 자료" : "첨부 파일"}</span>` +
+            `<span class="if-t">${esc(capTxt || nm || "첨부 자료 열어보기")}</span>` +
+            `<span class="if-go">${isPage ? "새 창에서 열기 ↗" : "내려받기 ↗"}</span></a>`;
         }
       }
       // 링크 북마크 — 지금까지는 화면에서 그냥 사라지고 있었습니다

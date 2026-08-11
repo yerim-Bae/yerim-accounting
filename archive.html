@@ -295,12 +295,24 @@
   .article .insight figure.ifig figcaption{margin-top:8px;padding:0 2px;font-size:13px;font-weight:600;
                                            color:var(--faint);text-align:right;line-height:1.6}
   .article .insight figure.ifig figcaption a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
-  /* 노션 본문에 넣은 HTML 자료 — iframe 안에 가둬서 사이트 디자인과 섞이지 않게 합니다 */
-  .article .insight figure.iembed{margin:18px 0}
-  .article .insight figure.iembed iframe{display:block;width:100%;height:clamp(320px,52vw,540px);
-    border:1px solid var(--border);border-radius:2px;background:var(--card)}
-  .article .insight figure.iembed figcaption{margin-top:8px;padding:0 2px;font-size:13px;font-weight:600;
-    color:var(--faint);text-align:right;line-height:1.6}
+  /* 노션 본문에 올린 자료(HTML·PDF 등) — 페이지 안에 끼워 넣지 않고 새 창으로 엽니다.
+     좁은 틀에 가두면 자료 자체의 디자인이 눌리기 때문입니다. */
+  .article .insight a.ifile{display:grid;grid-template-columns:minmax(0,1fr) auto;
+    align-items:baseline;gap:8px 18px;margin:20px 0;padding:17px 20px;
+    border:1px solid var(--border-strong);background:var(--bg-soft);
+    transition:border-color .15s,background-color .15s}
+  .article .insight a.ifile:hover{border-color:var(--text);background:var(--card)}
+  .article .insight a.ifile .if-k{grid-column:1/-1;font-size:10.5px;font-weight:800;
+    letter-spacing:.12em;line-height:1.5;text-transform:uppercase;color:var(--accent)}
+  .article .insight a.ifile .if-t{font-family:var(--serif);font-size:16px;font-weight:700;
+    letter-spacing:-.025em;line-height:1.5;color:var(--text);word-break:keep-all;overflow-wrap:anywhere}
+  .article .insight a.ifile .if-go{font-size:12px;font-weight:700;color:var(--faint);
+    white-space:nowrap;transition:color .15s}
+  .article .insight a.ifile:hover .if-go{color:var(--accent)}
+  @media(max-width:560px){
+    .article .insight a.ifile{grid-template-columns:minmax(0,1fr)}
+    .article .insight a.ifile .if-go{margin-top:2px}
+  }
   /* 링크 북마크·첨부 파일 */
   .article .insight a.ibookmark{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
     margin:14px 0;padding:13px 16px;border:1px solid var(--border);border-radius:2px;
@@ -1171,8 +1183,8 @@ loadData();
     x=e.clientX; y=e.clientY;
     if(!raf) raf=requestAnimationFrame(draw);
     var t=e.target;
-    // 본문에 끼워 넣은 HTML 위에서는 기본 커서로 넘깁니다
-    if(t.closest && t.closest(".iembed")){ el.classList.remove("on"); return; }
+    // 다른 문서가 들어간 자리(iframe) 위에서는 좌표가 전달되지 않으므로 기본 커서로 넘깁니다
+    if(t.closest && t.closest("iframe")){ el.classList.remove("on"); return; }
     el.classList.add("on");
     el.classList.toggle("ring", !!(t.closest && t.closest(HIT)));
   },{passive:true});
