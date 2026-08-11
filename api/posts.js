@@ -357,17 +357,15 @@ export default async function handler(req, res) {
       results.map(async (page, i) => {
         const p = page.properties || {};
         const status = readStatus(getProp(p, "Status"));
-        // 인사이트: Insight 속성에 글이 있으면 그 텍스트를 HTML 문단으로, 없으면 페이지 본문(표 포함)을 HTML로
+        // 인사이트: Insight 속성과 페이지 본문을 "둘 다" 읽습니다.
+        // (예전에는 속성에 한 글자라도 있으면 본문을 통째로 건너뛰어서,
+        //  속성에 한 줄 메모만 적고 본문에 정리해 둔 글의 내용이 사라졌습니다)
         const insightProp = readText(getProp(p, "Insight"));
-        let insight = "", insightMd = "", bodyImages = [];
-        if (meaningfulInsight(insightProp)) {
-          // 속성에 적힌 글은 마크다운 원문 그대로 넘기고, 화면에서 marked.js가 해석합니다
-          insightMd = insightProp;
-        } else {
-          const body = await readInsightBody(page.id, token);
-          insight = body.html;
-          bodyImages = body.images;
-        }
+        // 속성에 적힌 글은 마크다운 원문 그대로 넘기고, 화면에서 marked.js가 해석합니다
+        const insightMd = meaningfulInsight(insightProp) ? insightProp : "";
+        const body = await readInsightBody(page.id, token);
+        const insight = body.html;
+        const bodyImages = body.images;
         // 대표 이미지: 본문 첫 이미지 → 페이지 표지 → Image/썸네일 속성 순
         const first = bodyImages[0] || null;
         const cover = (first && first.url) || pageCoverUrl(page) || readImageProp(p) || "";
@@ -376,14 +374,10 @@ export default async function handler(req, res) {
         const dateProp = getProp(p, "Date of Issue");
         const sourceProp = getProp(p, "Source");
         const tagProp = getProp(p, "Tag");
-        const likeProp = getProp(p, "Likes");
-        const viewProp = getProp(p, "Views");
         return {
           pick: readPick(p),                                 // Editor's Picks 노출 여부
           id: i + 1,
-          pageId: page.id,                                   // 좋아요 저장에 쓰는 고유 주소
-          likes: (likeProp && Number(likeProp.number)) || 0,
-          views: (viewProp && Number(viewProp.number)) || 0,
+          pageId: page.id,                                   // 노션 페이지 고유 주소
           status,
           title: readText(getProp(p, "Title")),
           author: readAuthor(getProp(p, "Author")),

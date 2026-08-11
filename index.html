@@ -32,7 +32,6 @@
     --text:#0d1220;--muted:#5a6478;--faint:#8a93a6;
     --accent:#0b5cff;--accent-2:#2ea6ff;--accent-deep:#0a3ecc;--accent-soft:rgba(11,92,255,.08);--accent-soft2:rgba(11,92,255,.14);
     --green:#0f9d63;--green-soft:rgba(15,157,99,.12);--amber:#d1810f;--amber-soft:rgba(209,129,15,.12);
-    --like:#e5484d;--like-soft:rgba(229,72,77,.09);
     --radius:16px;--maxw:1120px;--shadow:0 1px 2px rgba(13,18,32,.04),0 8px 24px rgba(13,18,32,.05);--shadow-hover:0 4px 10px rgba(11,92,255,.08),0 18px 40px rgba(13,18,32,.10);
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -158,34 +157,6 @@
 
   .week-block{margin-bottom:34px}
   .week-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--accent);background:var(--accent-soft);padding:6px 13px;border-radius:9px;margin-bottom:14px}
-  /* minmax(0,1fr) 이 있어야 긴 제목이 칸을 밀어내지 않습니다 */
-  /* 최신·주차별과 같이 한 행에 두 개씩 */
-  .topics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
-  @media(max-width:1040px){.topics{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:640px){.topics{grid-template-columns:minmax(0,1fr)}}
-  /* 최신 기사 카드(.card)와 동일한 톤 — 테두리·그림자·모서리·전환 효과를 맞춥니다 */
-  .topic-card{min-width:0;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;
-    display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);
-    transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .2s,border-color .2s;
-    opacity:0;transform:translateY(10px);animation:cardIn .5s cubic-bezier(.2,.7,.3,1) forwards}
-  .topic-card:hover{transform:translateY(-4px);border-color:var(--border-strong);box-shadow:var(--shadow-hover)}
-  .topic-card .thead{display:flex;align-items:center;gap:8px;min-width:0}
-  .topic-card .tag{font-size:12px;padding:4px 11px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .topic-card .ct{margin-left:auto;color:var(--faint);font-size:13px;font-weight:700;white-space:nowrap}
-  .topic-card .peek{display:flex;flex-direction:column;gap:7px;min-width:0;margin-top:auto;padding-top:11px;border-top:1px solid var(--border)}
-  /* 기사 제목 앞 글머리 점. 점은 그대로 두고 제목만 말줄임 처리합니다 */
-  .topic-card .peek span{display:flex;gap:8px;min-width:0;color:var(--text);font-size:13.5px;font-weight:600;line-height:1.5;letter-spacing:-.01em}
-  .topic-card .peek span::before{content:"•";color:var(--accent);opacity:.55;flex:none;font-weight:900}
-  .topic-card:hover .peek span{color:var(--muted)}
-  .topic-card .peek span i{font-style:normal;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  /* 미분류는 주제가 아니라 "할 일"에 가까우므로 한 줄 전체를 쓰고 점선으로 구분합니다 */
-  .topic-card.muted{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap;
-    background:var(--bg-soft);border-style:dashed;border-color:var(--border-strong);box-shadow:none}
-  .topic-card.muted:hover{transform:translateY(0);box-shadow:none}
-  .topic-card.muted .ct{margin-left:0}
-  .topic-card.muted .tag{background:var(--card);color:var(--faint)}
-  .topic-card.muted .peek{display:none}
-  .topic-card.muted .mhint{color:var(--faint);font-size:12.5px;margin-left:auto;font-weight:600}
   .tag.tlink{cursor:pointer;transition:.15s}
   .tag.tlink:hover{filter:brightness(.92)}
   .authors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
@@ -236,32 +207,12 @@
   .article .insight table th,.article .insight table td{border:1px solid var(--border);padding:9px 12px;text-align:left;vertical-align:top;color:var(--text);white-space:normal}
   .article .insight table th{background:var(--bg-soft);font-weight:800;color:var(--text)}
   .article .insight table tr:nth-child(even) td{background:#fafbfe}
-  /* ---- 좋아요 ---- */
-  .likebar{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:22px;border-top:1px solid var(--border);flex-wrap:wrap}
-  .likebtn{display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border:1px solid var(--border-strong);border-radius:999px;
-    background:var(--card);font-family:inherit;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;transition:.15s;line-height:1}
-  .likebtn:hover:not(:disabled){border-color:var(--like);color:var(--like);background:var(--like-soft);transform:translateY(-1px)}
-  .likebtn:active:not(:disabled){transform:scale(.96)}
-  .likebtn:disabled{opacity:.5;cursor:default}
-  .likebtn svg{width:18px;height:18px;flex:none;transition:transform .18s cubic-bezier(.3,1.5,.5,1)}
-  .likebtn.on{border-color:var(--like);color:var(--like);background:var(--like-soft)}
-  .likebtn.on svg{fill:var(--like);stroke:var(--like)}
-  .likebtn.pop svg{transform:scale(1.35)}
-  .likebar .lhint{font-size:13px;color:var(--faint)}
-  .likebar .lhint.err{color:var(--like);font-weight:700;max-width:520px;line-height:1.5;word-break:break-word}
   /* 주제 배지는 카드 오른쪽 아래(작성자·날짜 줄 끝)에 붙습니다 */
   /* 주제 배지: 글자를 자르지 않고, 안 들어가면 줄바꿈해서 전부 보여줍니다 */
   .card .foot .ctopics,.feat-body .foot .ctopics{display:flex;align-items:center;flex-wrap:wrap;gap:5px;
     min-width:0;margin-left:auto;padding-left:6px;justify-content:flex-end;flex:0 1 auto}
   .card .foot .ctopics .tag,.feat-body .foot .ctopics .tag{font-size:10.5px;padding:2px 8px;white-space:nowrap;flex:0 0 auto}
-  /* 좋아요는 같은 줄 맨 오른쪽(주제 배지 뒤) */
-  /* 조회수 — 제목 옆이 아니라 작성자 줄 맨 오른쪽에 맞춰 놓습니다 */
   .article h1.ptitle{margin-top:12px}
-  .article .abyline .aview{margin-left:auto;flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
-                           color:var(--faint);font-size:13px;font-weight:600;white-space:nowrap}
-  .article .abyline .aview svg{width:14px;height:14px;flex:none;opacity:.8}
-  .article .abyline .aview b{font-weight:700;color:var(--muted)}
-  /* 카드의 좋아요 표시는 제거했습니다 — 좋아요는 기사 안에서 보고 누릅니다 */
   .src{display:inline-flex;align-items:center;gap:7px;margin-top:26px;padding:11px 17px;border:1px solid var(--border-strong);border-radius:11px;font-size:14px;font-weight:700;color:var(--muted);transition:.15s}
   .src:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
 
@@ -314,7 +265,7 @@
   .article .insight figure.ifig{margin:16px 0}
   .article .insight figure.ifig img{width:100%;max-height:420px;object-fit:contain;display:block;
                                     border:1px solid var(--border);border-radius:11px;background:var(--bg-soft)}
-  /* 본문 안 이미지 출처도 상단 배너와 동일한 모양 (오른쪽 아래, 읽음과 같은 크기·색) */
+  /* 본문 안 이미지 출처도 상단 배너와 동일한 모양 (오른쪽 아래, 작은 회색 글씨) */
   .article .insight figure.ifig figcaption{margin-top:8px;padding:0 2px;font-size:13px;font-weight:600;
                                            color:var(--faint);text-align:right;line-height:1.6}
   .article .insight figure.ifig figcaption a{color:var(--muted);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
@@ -383,7 +334,7 @@
   .fitem .fmeta{margin-top:6px;font-size:11px;color:var(--faint);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
   /* 주제별 탭 */
   .ttabs{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--border);margin-bottom:18px}
-  .ttab{font-family:inherit;font-size:13px;font-weight:700;padding:7px 15px;border-radius:999px;cursor:pointer;
+  .ttab{display:inline-flex;align-items:center;font-family:inherit;font-size:13px;font-weight:700;padding:7px 15px;border-radius:999px;cursor:pointer;
     background:var(--bg-soft);border:1px solid transparent;color:var(--muted);transition:.15s;letter-spacing:-.01em}
   .ttab:hover{color:var(--text);border-color:var(--border)}
   .ttab.on{background:var(--accent-soft);border-color:rgba(11,92,255,.25);color:var(--accent)}
@@ -403,17 +354,14 @@
     /* 글자 입력·선택 영역은 기본 커서 유지 (가독성) */
     input, textarea, [contenteditable]{cursor:text}
     /* 클릭 가능한 요소 위: 큰 크리스탈 */
-    a, button, .card, .card *, .topic-card, .topic-card *, .author-card, .author-card *,
-    .scard, .scard *, .fitem, .fitem *, .tag.tlink, .ttab, .back, .likebtn, .nav .links a{
+    a, button, .card, .card *, .author-card, .author-card *,
+    .scard, .scard *, .fitem, .fitem *, .tag.tlink, .ttab, .back, .nav .links a{
       cursor:image-set(url("assets/cursor-crystal.png") 1x, url("assets/cursor-crystal@2x.png") 2x) 18 17, pointer;
-    }
-    .likebtn:disabled{
-      cursor:image-set(url("assets/cursor-crystal-sm.png") 1x, url("assets/cursor-crystal-sm@2x.png") 2x) 12 11, default;
     }
 
     /* --- 2) 호버 효과 강화 (순수 CSS) --- */
     /* 카드가 조금 더 살아나도록 */
-    .card:hover, .topic-card:hover{transform:translateY(-6px) scale(1.012)}
+    .card:hover{transform:translateY(-6px) scale(1.012)}
     .author-card:hover{transform:translateY(-6px) scale(1.015)}
 
     /* 카드 안 태그가 하이라이트 */
@@ -433,7 +381,7 @@
 
   /* 애니메이션 최소화 설정을 켠 사용자는 움직임 없이 */
   @media (prefers-reduced-motion:reduce){
-    .card:hover,.topic-card:hover,.author-card:hover{transform:none!important}
+    .card:hover,.author-card:hover{transform:none!important}
     .nav .links a::after,.card .foot::after{transition:none!important}
   }
 
@@ -566,107 +514,6 @@ function deriveWeek(dateStr){
 }
 const tagsHtml = (tags)=>`<div class="tags">${tags.map(t=>`<span class="tag ${tagClass(t)}">${t}</span>`).join("")}</div>`;
 
-/* ---- 좋아요 ----
-   숫자는 노션 DB의 Likes 열에 저장되고, "내가 눌렀는지"는 이 브라우저에만 기록됩니다.
-   (로그인이 없어서 브라우저 저장소를 지우면 다시 누를 수 있습니다) */
-const LIKE_KEY = "bay_liked_v1";
-function likedSet(){
-  try{ return new Set(JSON.parse(localStorage.getItem(LIKE_KEY)||"[]")); }catch(e){ return new Set(); }
-}
-function setLiked(pageId, on){
-  try{
-    const s=likedSet(); on?s.add(pageId):s.delete(pageId);
-    localStorage.setItem(LIKE_KEY, JSON.stringify([...s]));
-  }catch(e){}
-}
-function isLiked(pageId){ return !!pageId && likedSet().has(pageId); }
-
-/* ---- 조회수 ----
-   같은 브라우저에서 같은 글은 하루 1회만 집계합니다(새로고침으로 부풀지 않게).
-   노션 DB에 "Views" 숫자 열이 없으면 아무 일도 일어나지 않고 조용히 넘어갑니다. */
-const VIEW_KEY = "bay_viewed_v1";
-const fmtCount = (n)=> Number(n||0).toLocaleString("ko-KR");
-function countView(p){
-  if(!p || !p.pageId || USING_SAMPLE) return;
-  const today = new Date().toISOString().slice(0,10);
-  let seen = {};
-  try{ seen = JSON.parse(localStorage.getItem(VIEW_KEY)||"{}"); }catch(e){ seen = {}; }
-  if(seen[p.pageId] === today) return;                 // 오늘 이미 읽은 글
-  seen[p.pageId] = today;
-  // 오래된 기록 정리 (최근 300건만 유지)
-  const keys = Object.keys(seen);
-  if(keys.length > 300) keys.slice(0, keys.length-300).forEach(k=>delete seen[k]);
-  try{ localStorage.setItem(VIEW_KEY, JSON.stringify(seen)); }catch(e){}
-
-  fetch("/api/view",{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({pageId:p.pageId})})
-    .then(r=>r.ok?r.json():null)
-    .then(d=>{
-      if(!d || typeof d.views !== "number") return;
-      p.views = d.views;
-      const el = document.getElementById("viewCount");
-      if(el) el.textContent = fmtCount(d.views);
-    })
-    .catch(()=>{});
-}
-const EYE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
-const HEART=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>`;
-
-function likeBarHtml(p){
-  if(USING_SAMPLE || !p.pageId){
-    return `<div class="likebar"><button class="likebtn" disabled>${HEART}<span>${p.likes||0}</span></button>
-      <span class="lhint">노션 연결·배포 후에 좋아요를 누를 수 있어요</span></div>`;
-  }
-  const on=isLiked(p.pageId);
-  return `<div class="likebar">
-    <button class="likebtn${on?" on":""}" id="likeBtn" data-page="${p.pageId}"
-      aria-pressed="${on}" aria-label="이 글 좋아요" onclick="toggleLike(this)">
-      ${HEART}<span id="likeCount">${p.likes||0}</span></button>
-    <span class="lhint" id="likeHint">${on?"이 글에 좋아요를 눌렀어요":"읽고 도움이 됐다면 눌러주세요"}</span>
-  </div>`;
-}
-function toggleLike(btn){
-  if(btn.dataset.busy==="1") return;
-  const pageId=btn.dataset.page;
-  const turningOn=!btn.classList.contains("on");
-  const $c=btn.querySelector("#likeCount"), $h=document.getElementById("likeHint");
-  const before=Number($c.textContent)||0;
-
-  // 먼저 화면부터 바꿔서 즉각 반응하게 하고, 실패하면 되돌립니다
-  btn.dataset.busy="1";
-  btn.classList.toggle("on",turningOn);
-  btn.setAttribute("aria-pressed",String(turningOn));
-  $c.textContent=Math.max(0,before+(turningOn?1:-1));
-  if(turningOn){ btn.classList.add("pop"); setTimeout(()=>btn.classList.remove("pop"),200); }
-  if($h){ $h.className="lhint"; $h.textContent=turningOn?"이 글에 좋아요를 눌렀어요":"읽고 도움이 됐다면 눌러주세요"; }
-
-  fetch("/api/like",{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({pageId,delta:turningOn?1:-1})})
-    .then(async r=>{
-      const raw=await r.text();
-      let d=null; try{ d=JSON.parse(raw); }catch(e){}
-      if(!r.ok||!d){
-        // 서버가 준 진짜 이유를 그대로 보여줍니다
-        if(r.status===404 && !d) throw new Error("api/like.js 파일이 아직 배포되지 않았어요 (404)");
-        throw new Error((d&&(d.error+(d.detail?" / "+d.detail:"")))||`서버 응답 ${r.status}: ${raw.slice(0,150)}`);
-      }
-      return d;
-    })
-    .then(d=>{
-      $c.textContent=d.likes;
-      setLiked(pageId,turningOn);
-      const post=POSTS.find(x=>x.pageId===pageId); if(post) post.likes=d.likes;
-    })
-    .catch(err=>{
-      btn.classList.toggle("on",!turningOn);
-      btn.setAttribute("aria-pressed",String(!turningOn));
-      $c.textContent=before;
-      if($h){ $h.className="lhint err"; $h.textContent="저장 실패 — "+(err&&err.message||err); }
-      console.warn("좋아요 저장 실패:",err);
-    })
-    .finally(()=>{ btn.dataset.busy=""; });
-}
-
 /* 카드 하단에 붙는 주제 배지 — 최대 3개.
    공간이 모자라면 뒤쪽 배지부터 자동으로 숨겨져(CSS) 잘린 글자가 생기지 않습니다.
    배지를 누르면 그 주제 목록으로 이동합니다(카드 클릭과 겹치지 않도록 전파를 막습니다) */
@@ -711,7 +558,6 @@ function coverHtml(p){
 }
 function cardHtml(p, i){
   const delay = Math.min((i||0)*60, 480);
-  /* 좋아요 수는 카드에서 빼고(기사 안에서 확인), 그 자리에 주제 배지를 더 보여줍니다 */
   return `<article class="card" style="animation-delay:${delay}ms" onclick="location.hash='#/post/${p.id}'">
     ${thumbHtml(p)}
 ${tagsHtml(p.tags)}
@@ -793,12 +639,10 @@ function viewDash(){
   const lead=sorted.find(p=>p.cover)||sorted[0];
   const side=sorted.filter(p=>String(p.id)!==String(lead.id)).slice(0,DASH_SIDE_N);
 
-  // Editor's Picks — 노션 Pick 체크박스가 켜진 글. 없으면 조회수·좋아요 순으로 대신 채웁니다
+  // Editor's Picks — 노션 Pick 체크박스가 켜진 글. 없으면 최신 글로 대신 채웁니다
   const picked=sorted.filter(p=>p.pick);
   const usePick=picked.length>0;
-  const picks=(usePick?picked:[...POSTS].sort((a,b)=>
-    ((b.views||0)+(b.likes||0)*3)-((a.views||0)+(a.likes||0)*3) || String(b.date).localeCompare(String(a.date))
-  )).slice(0,DASH_PICK_N);
+  const picks=(usePick?picked:sorted).slice(0,DASH_PICK_N);
 
   // 주제 탭 — 미분류 제외, 글 많은 순
   const map=topicMap();
@@ -817,7 +661,7 @@ function viewDash(){
     </div>
   </div>
 
-  <div class="sec-head"><h2>Editor's Picks</h2><span>${usePick?"이번 주 꼭 볼 이슈":"많이 읽은 순"}</span></div>
+  <div class="sec-head"><h2>Editor's Picks</h2><span>${usePick?"이번 주 꼭 볼 이슈":"최근 올린 글"}</span></div>
   ${(!usePick&&!USING_SAMPLE)?`<div class="banner" style="margin:-6px 0 16px">노션 DB에 <b>Pick</b> 체크박스 열을 만들고 체크하면 여기에 직접 고른 글이 표시됩니다.</div>`:""}
   <div class="grid">${picks.map((p,i)=>cardHtml(p,i)).join("")}</div>
 
@@ -849,30 +693,32 @@ function topicMap(){
   POSTS.forEach(p=>topicsOf(p).forEach(t=>{(map[t]=map[t]||[]).push(p);}));
   return map;
 }
-function viewTopics(){
-  const map=topicMap();
-  const names=Object.keys(map).sort((a,b)=>{
-    if(a===NO_TOPIC) return 1; if(b===NO_TOPIC) return -1;      // 미분류는 주제가 아니므로 맨 뒤
-    return map[b].length-map[a].length || a.localeCompare(b,"ko");  // 건수 많은 순 → 같으면 가나다순
+/* 주제 이름 정렬 — 건수 많은 순 → 같으면 가나다순, 미분류는 주제가 아니므로 맨 뒤 */
+function topicNamesSorted(map){
+  return Object.keys(map).sort((a,b)=>{
+    if(a===NO_TOPIC) return 1; if(b===NO_TOPIC) return -1;
+    return map[b].length-map[a].length || a.localeCompare(b,"ko");
   });
+}
+/* 주제별 화면 — 홈의 "주제별" 섹션과 같은 모양(탭 + 카드 그리드)입니다.
+   다른 점은 고른 주제의 글을 3개가 아니라 전부 보여준다는 것.
+   탭을 누르면 주소(#/topic/주제)가 바뀌므로 뒤로가기·링크 공유도 됩니다. */
+function viewTopicPage(sel){
+  const map=topicMap();
+  const names=topicNamesSorted(map);
   if(!names.length) return `<div class="sec-head" style="margin-top:34px"><h2>주제별</h2></div><p class="empty">아직 글이 없습니다.</p>`;
   const only=names.length===1&&names[0]===NO_TOPIC;
+  const cur=(sel&&map[sel])?sel:names[0];      // 주제를 안 골랐으면 첫 번째 주제
+  const items=map[cur].slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
   return `<div class="sec-head" style="margin-top:34px"><h2>주제별</h2><span>관심 주제로 모아보기</span></div>
   ${only?`<div class="banner">노션 DB에 <b>Topic</b> 열을 만들고 글마다 주제를 골라주시면 여기에 나뉘어 표시됩니다.</div>`:""}
-  <div class="topics">${names.map((n,i)=>{
-    const c=map[n].length, no=n===NO_TOPIC;
-    return `<div class="topic-card${no?" muted":""}" style="animation-delay:${Math.min(i*60,480)}ms" onclick="location.hash='#/topic/${encodeURIComponent(n)}'">
-      <div class="thead"><span class="tag ${tagClass(n)}">${n}</span><span class="ct">${c}건</span></div>
-      ${no?`<span class="mhint">아직 주제를 정하지 않은 글 — 노션에서 분류하면 위로 올라갑니다</span>`
-          :`<div class="peek">${map[n].slice(0,3).map(p=>`<span><i>${p.title}</i></span>`).join("")}</div>`}
-    </div>`;}).join("")}</div>`;
-}
-function viewTopic(name){
-  const items=POSTS.filter(p=>topicsOf(p).includes(name)).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
-  return `<div class="back" onclick="location.hash='#/topics'">← 주제 목록</div>
-  <div class="sec-head" style="margin-top:10px"><h2>${name}</h2><span>${items.length}건</span></div>
+  <div class="ttabs">${names.map(n=>
+    `<a class="ttab${n===cur?" on":""}" href="#/topic/${encodeURIComponent(n)}">${n}<span class="tn">${map[n].length}</span></a>`
+  ).join("")}</div>
   <div class="grid">${items.length?items.map((p,i)=>cardHtml(p,i)).join(""):'<p class="empty">이 주제의 글이 아직 없습니다.</p>'}</div>`;
 }
+function viewTopics(){ return viewTopicPage(""); }
+function viewTopic(name){ return viewTopicPage(name); }
 function viewAuthors(){
   const map={};POSTS.forEach(p=>{(map[p.author]=map[p.author]||[]).push(p);});
   const names=Object.keys(map).sort((a,b)=>map[b].length-map[a].length);
@@ -890,9 +736,9 @@ function viewAuthor(name){
   <div class="grid" style="margin-top:16px">${items.length?items.map((p,i)=>cardHtml(p,i)).join(""):'<p class="empty">아직 작성한 글이 없습니다.</p>'}</div>`;
 }
 /* ---- 인사이트 렌더링 ----
-   1) insightMd(노션 Insight 속성에 쓴 마크다운 원문)이 있으면 마크다운으로 해석
-   2) 없으면 insight(노션 본문 블록을 서버에서 HTML로 만든 것)를 그대로 사용
-   3) 둘 다 아닌 옛 데이터/샘플은 마크다운 문법이 보이면 마크다운으로 해석 */
+   1) insightMd(노션 Insight 속성에 쓴 마크다운 원문)를 마크다운으로 해석해 위에
+   2) insight(노션 페이지 본문 블록을 서버에서 HTML로 만든 것)를 이어서 아래에
+   둘 다 있으면 둘 다 보여줍니다 — 속성에 한 줄만 적고 본문에 정리한 글도 안 잘리게. */
 function looksLikeMd(s){
   return /^\s{0,3}#{1,6}\s|\n\s{0,3}#{1,6}\s|\*\*[^*\n]+\*\*|^\s*[-*+]\s+|\n\s*[-*+]\s+|^\s*\d+\.\s|\n\s*\d+\.\s|\[[^\]\n]+\]\([^)\s]+\)|^\s*>\s|\n\s*\|.*\|/.test(s);
 }
@@ -915,11 +761,15 @@ function mdToHtml(src){
   }).join("");
 }
 function insightHtml(p){
-  if(p.insightMd&&String(p.insightMd).trim()) return mdToHtml(p.insightMd);
+  const out=[];
+  const md=String(p.insightMd||"");
+  if(md.trim()) out.push(mdToHtml(md));
   const s=String(p.insight||"");
-  if(!s.trim()) return "";
-  if(/<[a-z]/i.test(s)) return s;
-  return looksLikeMd(s)?mdToHtml(s):`<p>${s}</p>`;
+  if(s.trim()){
+    if(/<[a-z]/i.test(s)) out.push(s);                              // 서버가 만든 HTML
+    else out.push(looksLikeMd(s)?mdToHtml(s):`<p>${s}</p>`);        // 옛 데이터/샘플
+  }
+  return out.join("");
 }
 /* 사이드바용 컴팩트 카드 */
 function sideCardHtml(p,cur){
@@ -964,12 +814,10 @@ function viewPost(id){
       <article class="article">${tagsHtml(p.tags)}
         <h1 class="ptitle">${p.title}</h1>
         <div class="abyline"><span class="byline">${avatarHtml(p.author)}<span class="who">${p.author}</span> · <span>${deriveWeek(p.date).label}</span> · <span>${p.date}</span></span>
-${(p.topics||[]).filter(Boolean).map(t=>`<a class="tag ${tagClass(t)} tlink" href="#/topic/${encodeURIComponent(t)}">${t}</a>`).join("")}
-          <span class="aview">${EYE}읽음 <b id="viewCount">${fmtCount(p.views)}</b></span></div>
+${(p.topics||[]).filter(Boolean).map(t=>`<a class="tag ${tagClass(t)} tlink" href="#/topic/${encodeURIComponent(t)}">${t}</a>`).join("")}</div>
         <h4>요약</h4><p class="psum">${fmtSummary(p.summary)}</p>
         <h4>인사이트</h4><div class="insight">${insightHtml(p)}</div>
-        ${src}
-        ${likeBarHtml(p)}</article>
+        ${src}</article>
     </div>
     ${postSideHtml(p)}
   </div>`;
@@ -991,7 +839,6 @@ function router(){
   else{html=viewDash();active="dash";}
   $app.innerHTML=html;
   $app.classList.toggle("wide", route==="post");
-  if(route==="post"){ const cur=POSTS.find(x=>String(x.id)===String(arg)); if(cur) countView(cur); }
   document.querySelectorAll(".links a").forEach(a=>a.classList.toggle("active",a.dataset.route===active));
   window.scrollTo(0,0);
 }
