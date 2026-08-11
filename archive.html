@@ -38,6 +38,20 @@
     --serif:"Noto Serif KR",serif;
     /* 1면과 같은 무드 — 각진 모서리, 그림자 없이 얇은 테두리로만 층위를 만듭니다 */
     --radius:3px;--maxw:1120px;--shadow:none;--shadow-hover:none;
+
+    /* ---- 간격 체계 (4px 단위) ----
+       임의의 값을 쓰지 않고 아래 8단계 안에서만 고릅니다.
+       같은 계층의 요소에는 반드시 같은 값을 씁니다. */
+    --s1:4px;  --s2:8px;  --s3:12px; --s4:16px;
+    --s5:20px; --s6:24px; --s7:32px; --s8:40px;
+    --gut:20px;              /* 칼럼 안여백 — 좌우 동일. 세로 구분선과의 거리 */
+
+    /* ---- 선 체계 (4종) ----
+       역할이 다른 선만 남기고, 굵기·색을 이 네 개로 통일합니다. */
+    --rule-page:3px solid var(--text);              /* 페이지 최상단 (제호 아래) */
+    --rule-strong:1px solid rgba(28,26,25,.55);     /* 강조 섹션 상·하단 */
+    --rule-col:1px solid rgba(28,26,25,.20);        /* 칼럼 세로 구분선 */
+    --rule-item:1px solid rgba(28,26,25,.13);       /* 기사와 기사 사이 */
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -280,149 +294,200 @@
   }
 
   /* =========================================================================
-     홈 1면 — 신문 조판 (semafor.com 의 지면 구성을 참고했습니다)
-     색은 지금 팔레트 그대로 두고, "구획을 선으로 나누는 방식"만 가져왔습니다.
-       · 가운데 제호(masthead), 위아래로 굵은 괘선
-       · 왼쪽 한눈에보기 / 가운데 머리기사 / 오른쪽 보조기사 3단
-       · 단과 단 사이는 점선 세로 괘선 (신문의 칼럼 룰)
-       · 카드·그림자 없이 글과 선만으로 층위를 만듭니다
+     홈 1면 — 신문 조판
+     ── 그리드 기준 ────────────────────────────────────────────────────────
+       · 지면 폭 1120px, 좌우 안여백 20px → 글상자 1080px
+       · 3단 비율 .92 : 2 : 1.06 (기존 비율 유지)
+       · 모든 단은 좌우 --gut(20px) 안여백을 똑같이 갖습니다.
+         단 묶음을 바깥으로 -20px 밀어, 첫 단 왼쪽선과 끝 단 오른쪽선이
+         제호·본문과 같은 기준선에 놓입니다.
+       · 1면은 위(.front) / 아래(.frontfoot) 두 덩어리로 나눕니다.
+         같은 칼럼 폭을 쓰므로 세로선은 이어지고, 아래 덩어리의 가로선은
+         세 단이 자동으로 같은 높이에서 시작합니다. 높이를 억지로 고정하지
+         않고 그리드만으로 수평 기준선을 맞추는 방식입니다.
+     ── 선 기준 ────────────────────────────────────────────────────────────
+       --rule-page   3px  제호 아래 (지면 최상단)
+       --rule-strong 1px  강조 구획의 위·아래
+       --rule-col    1px  칼럼 세로 구분선
+       --rule-item   1px  기사와 기사 사이 (가장 옅음)
+       점선은 쓰지 않습니다. 굵기는 모두 1px, 명도만 다릅니다.
      ========================================================================= */
-  .masthead{margin-top:14px;padding:16px 0 14px;border-top:1px solid var(--border);border-bottom:3px solid var(--text);
-    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px}
+  .front,.frontfoot{--cols:minmax(0,.92fr) minmax(0,2fr) minmax(0,1.06fr)}
+
+  .masthead{margin-top:var(--s3);padding:var(--s4) 0 var(--s3);
+    border-bottom:var(--rule-page);
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--s5)}
   .masthead .mh-l,.masthead .mh-r{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
   .masthead .mh-r{text-align:right}
   .masthead .mh-c{text-align:center;min-width:0}
-  .masthead .mh-tag{font-family:var(--serif);font-size:12px;font-style:italic;color:var(--muted);margin-bottom:7px}
+  .masthead .mh-tag{font-family:var(--serif);font-size:12px;font-style:italic;color:var(--muted);margin-bottom:var(--s2)}
   .masthead h1{font-family:var(--serif);font-size:clamp(30px,5.6vw,54px);font-weight:700;
     letter-spacing:.03em;line-height:1;text-transform:uppercase}
-  .masthead .mh-sub{margin-top:9px;font-size:12.5px;color:var(--muted)}
+  .masthead .mh-sub{margin-top:var(--s2);font-size:12.5px;color:var(--muted)}
   @media(max-width:700px){
-    .masthead{grid-template-columns:minmax(0,1fr);gap:8px;text-align:center}
+    .masthead{grid-template-columns:minmax(0,1fr);gap:var(--s2);text-align:center}
     .masthead .mh-l,.masthead .mh-r{text-align:center}
   }
 
-  /* ---- 1면 3단 ---- */
-  /* 좌우로 20px 씩 넘겨 놓고 각 단에 같은 20px 안여백을 줍니다.
-     이렇게 해야 바깥쪽 단만 넓어지지 않고 네 단의 글상자 폭이 똑같아집니다. */
-  .front{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,2fr) minmax(0,1.06fr);
-    margin:0 -20px;border-bottom:1px solid var(--text)}
-  /* 세 단을 세로 flex 로 두고 맨 아래 목록에 margin-top:auto 를 줍니다.
-     그래야 글 길이가 달라도 단 아래가 비어 보이지 않고 바닥선이 맞습니다. */
-  .front > *{padding:24px 20px 28px;min-width:0;display:flex;flex-direction:column}
-  .front > * + *{border-left:1px dashed var(--border-strong)}
+  /* ---- 1면 위 덩어리: 3단 ---- */
+  .front{display:grid;grid-template-columns:var(--cols);margin:0 calc(-1 * var(--gut))}
+  .front > *{padding:var(--s6) var(--gut) var(--s6);min-width:0;display:flex;flex-direction:column}
+  .front > * + *{border-left:var(--rule-col)}
+
+  /* ---- 1면 아래 덩어리: 같은 3단, 세 단의 가로선이 한 높이에서 시작 ---- */
+  .frontfoot{display:grid;grid-template-columns:var(--cols);margin:0 calc(-1 * var(--gut));
+    border-top:var(--rule-strong);border-bottom:var(--rule-strong)}
+  .frontfoot > *{padding:var(--s5) var(--gut) var(--s6);min-width:0;display:flex;flex-direction:column}
+  .frontfoot > * + *{border-left:var(--rule-col)}
+
   @media(max-width:980px){
-    .front{grid-template-columns:minmax(0,1fr);margin:0}
-    .front > *{padding:24px 0 26px}
-    .front > * + *{border-left:none;border-top:1px dashed var(--border-strong)}
+    .front,.frontfoot{grid-template-columns:minmax(0,1fr);margin:0}
+    .front > *,.frontfoot > *{padding-left:0;padding-right:0}
+    .front > * + *,.frontfoot > * + *{border-left:none;border-top:var(--rule-col)}
   }
 
-  /* 왼쪽 — 한눈에 보기 */
-  .glance h2{font-family:var(--serif);font-size:20px;font-weight:700;letter-spacing:-.035em;line-height:1.24}
-  .glance .upd{display:flex;align-items:center;gap:6px;margin:9px 0 15px;
+  /* ---- 왼쪽: 한눈에 보기 ---- */
+  .glance h2{font-family:var(--serif);font-size:20px;font-weight:700;letter-spacing:-.035em;line-height:1.3}
+  .glance .upd{display:flex;align-items:center;gap:var(--s1);margin:var(--s2) 0 var(--s4);
     font-size:11.5px;font-weight:700;letter-spacing:.03em;color:var(--faint)}
   .glance .upd i{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none;animation:pulse 2s infinite}
-  .glance ol{list-style:none;counter-reset:g}
-  .glance li{counter-increment:g;display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;
-    padding:12px 0;border-top:1px solid var(--border)}
-  .glance li:first-child{border-top:none;padding-top:0}
-  .glance li::before{content:counter(g);font-family:var(--serif);font-size:13px;font-weight:700;color:var(--accent);line-height:1.75}
+  .glance ol{list-style:none;counter-reset:g;border-top:var(--rule-item)}
+  /* 모든 항목의 위아래 여백과 번호·제목 간격을 같은 값으로 둡니다 */
+  .glance li{counter-increment:g;display:grid;grid-template-columns:16px minmax(0,1fr);gap:var(--s3);
+    padding:var(--s3) 0;border-bottom:var(--rule-item)}
+  /* 마지막 항목도 위아래 여백을 똑같이 두고 선만 뺍니다 (목록의 리듬 유지) */
+  .glance li:last-child{border-bottom:none}
+  .glance li::before{content:counter(g);font-family:var(--serif);font-size:13px;font-weight:700;
+    color:var(--accent);line-height:1.7;text-align:right}
   /* 제목과 주제를 한 덩어리로 묶습니다.
-     묶지 않으면 주제가 별도 칸으로 밀려 16px 폭에서 한 글자씩 세로로 쪼개집니다. */
+     묶지 않으면 주제가 번호 칸(16px)으로 밀려 한 글자씩 세로로 쪼개집니다. */
   .glance .gtext{min-width:0}
   .glance a{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
     font-size:13.5px;line-height:1.7;font-weight:700;color:var(--text);
-    text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;text-decoration-color:var(--border-strong)}
+    text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;text-decoration-color:rgba(28,26,25,.25)}
   .glance a:hover{color:var(--accent);text-decoration-color:var(--accent)}
-  .glance .gmeta{display:block;margin-top:4px;font-size:11px;font-weight:700;letter-spacing:.05em;
-    text-transform:uppercase;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .glance .gmeta{display:block;margin-top:var(--s1);font-size:11px;font-weight:700;letter-spacing:.05em;
+    line-height:1.5;text-transform:uppercase;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* 아래 덩어리의 왼쪽 칸 */
+  .glance-all{align-self:start;font-size:12px;font-weight:800;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--muted);transition:color .15s}
+  .glance-all:hover{color:var(--accent)}
 
-  /* 가운데 — 머리기사 */
+  /* ---- 가운데: 머리기사 ---- */
   .lead{cursor:pointer}
-  .lead h2{font-family:var(--serif);font-size:clamp(25px,3.5vw,39px);font-weight:700;
-    letter-spacing:-.04em;line-height:1.22;text-align:center;transition:color .15s}
+  .lead h2{font-family:var(--serif);font-size:clamp(25px,3.4vw,38px);font-weight:700;
+    letter-spacing:-.038em;line-height:1.26;text-align:center;transition:color .15s}
   .lead:hover h2{color:var(--accent)}
-  .lead .deck{margin:14px auto 0;max-width:33em;text-align:center;font-size:15px;line-height:1.72;color:var(--muted);
+  /* 부제도 제목·이미지와 같은 좌우 기준선을 씁니다 (max-width 로 좁히지 않음) */
+  .lead .deck{margin-top:var(--s3);text-align:center;font-size:15px;line-height:1.72;color:var(--muted);
     display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .lead figure{margin-top:20px}
+  .lead figure{margin-top:var(--s4)}
   .lead .lcover{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:var(--bg-soft)}
   .lead .lcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
   .lead:hover .lcover img{transform:scale(1.02)}
-  .lead figcaption{margin-top:7px;font-size:11px;font-weight:600;color:var(--faint);text-align:right}
-  .lead .lfoot{margin-top:15px;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;
-    font-size:12.5px;color:var(--faint)}
-  /* 가운데 단 아래 짧은 기사 두 건 */
-  .leadmore{margin-top:auto;padding-top:20px;display:grid;grid-template-columns:1fr 1fr;
-    border-top:1px solid var(--border-strong)}
-  .leadmore a{display:block;padding:0 16px;min-width:0}
+  /* 출처는 이미지의 오른쪽 끝선에 맞춥니다 */
+  .lead figcaption{margin-top:var(--s2);font-size:11px;font-weight:600;line-height:1.5;color:var(--faint);text-align:right}
+  /* 작성자 정보는 제목·부제와 같은 중심축에 맞춥니다 */
+  .lead .lfoot{margin-top:var(--s4);display:flex;justify-content:center;align-items:center;gap:var(--s2);flex-wrap:wrap;
+    font-size:12.5px;line-height:1.5;color:var(--faint)}
+
+  /* 가운데 아래: 짧은 기사 두 건 */
+  .leadmore{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .leadmore a{display:block;padding:0 var(--s4);min-width:0}
   .leadmore a:first-child{padding-left:0}
   .leadmore a:last-child{padding-right:0}
-  .leadmore a + a{border-left:1px dashed var(--border-strong)}
+  .leadmore a + a{border-left:var(--rule-col)}
   .leadmore .lm-t{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
-    font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:-.028em;line-height:1.4;transition:color .15s}
+    font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:-.028em;line-height:1.45;transition:color .15s}
   .leadmore a:hover .lm-t{color:var(--accent)}
-  .leadmore .lm-m{display:block;margin-top:7px;font-size:11px;font-weight:700;letter-spacing:.05em;
-    text-transform:uppercase;color:var(--faint)}
+  .leadmore .lm-m{display:block;margin-top:var(--s2);font-size:11px;font-weight:700;letter-spacing:.05em;
+    line-height:1.5;text-transform:uppercase;color:var(--faint)}
   @media(max-width:520px){
     .leadmore{grid-template-columns:1fr}
     .leadmore a{padding:0}
-    .leadmore a + a{border-left:none;border-top:1px dashed var(--border-strong);margin-top:14px;padding-top:14px}
+    .leadmore a + a{border-left:none;border-top:var(--rule-item);margin-top:var(--s3);padding-top:var(--s3)}
   }
-  /* 오른쪽 단 아래 제목 목록 */
-  .asidemore{margin-top:auto;padding-top:18px;border-top:1px solid var(--border-strong)}
-  .asidemore .amh{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--faint);margin-bottom:4px}
-  .asidemore a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-    padding:10px 0;border-top:1px solid var(--border);font-size:13.5px;font-weight:700;line-height:1.55;
-    color:var(--text);transition:color .15s}
-  .asidemore a:first-of-type{border-top:none}
-  .asidemore a:hover{color:var(--accent)}
 
-  /* 오른쪽 — 보조기사 + 고른 글 2칸 */
+  /* ---- 오른쪽: 보조기사 ---- */
   .aside .astory{display:block;cursor:pointer}
-  .aside .astory h3{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.033em;line-height:1.32;transition:color .15s;
+  .aside .astory h3{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.033em;line-height:1.38;transition:color .15s;
     display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .aside .astory:hover h3{color:var(--accent)}
-  .aside .astory .adesc{margin-top:9px;font-size:13.5px;line-height:1.68;color:var(--muted);
+  .aside .astory .adesc{margin-top:var(--s3);font-size:13.5px;line-height:1.68;color:var(--muted);
     display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
-  .aside .acover{position:relative;margin-top:13px;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
+  /* 이미지 폭은 칼럼 글상자 폭과 정확히 같습니다 */
+  .aside .acover{position:relative;margin-top:var(--s4);width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
   .aside .acover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
-  .viewbox{display:grid;grid-template-columns:1fr 1fr;margin-top:20px;border-top:1px solid var(--text)}
-  .viewbox .vcell{padding:14px 12px 4px;min-width:0;cursor:pointer}
-  .viewbox .vcell:first-child{padding-left:0}
-  .viewbox .vcell:last-child{padding-right:0}
-  .viewbox .vcell + .vcell{border-left:1px dashed var(--border-strong)}
-  .viewbox .vk{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-  .viewbox .vt{font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:-.025em;line-height:1.4;margin-top:7px;transition:color .15s;
+
+  /* 오른쪽 아래: 고른 글 2칸 + 더 읽기.
+     두 칸을 바깥으로 -12px 밀어 좌우 안여백을 12px 로 똑같이 맞추고,
+     칸 사이 세로선이 위·아래 가로선에 정확히 닿게 합니다. */
+  .viewbox{display:grid;grid-template-columns:1fr 1fr;margin:0 calc(-1 * var(--s3));
+    border-bottom:var(--rule-item)}
+  .viewbox .vcell{display:flex;flex-direction:column;padding:0 var(--s3) var(--s4);min-width:0;cursor:pointer}
+  .viewbox .vcell + .vcell{border-left:var(--rule-col)}
+  .viewbox .vk{font-size:10.5px;font-weight:800;letter-spacing:.08em;line-height:1.5;text-transform:uppercase;color:var(--accent)}
+  .viewbox .vt{font-family:var(--serif);font-size:14.5px;font-weight:700;letter-spacing:-.025em;line-height:1.45;
+    margin-top:var(--s2);transition:color .15s;
     display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
   .viewbox .vcell:hover .vt{color:var(--accent)}
-  .viewbox .vby{display:flex;align-items:center;gap:7px;margin-top:12px;font-size:12px;font-weight:700;color:var(--muted)}
+  /* 두 칸의 작성자 줄을 같은 기준선에 놓습니다 */
+  .viewbox .vby{margin-top:auto;padding-top:var(--s3);display:flex;align-items:center;gap:var(--s2);
+    font-size:12px;font-weight:700;line-height:1.5;color:var(--muted)}
 
-  /* 1면 아래 4단 */
-  /* 네 칸의 글상자 폭을 똑같이 두기 위해 바깥으로 20px 넘기고 안여백을 20px 로 통일합니다 */
-  .frontrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0 -20px;border-bottom:1px solid var(--text)}
-  .frontrow > *{padding:24px 20px 28px;min-width:0;cursor:pointer}
-  .frontrow > * + *{border-left:1px dashed var(--border-strong)}
-  /* 제목·요약의 줄 수를 고정해야 네 칸의 이미지가 같은 높이에서 시작합니다.
-     글이 짧아도 자리를 비워두고, 길면 잘라냅니다. */
-  .frontrow h3{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.033em;line-height:1.3;transition:color .15s;
-    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:calc(1.3em * 3)}
+  .asidemore{margin-top:var(--s4)}
+  .asidemore .amh{font-size:10.5px;font-weight:800;letter-spacing:.12em;line-height:1.5;
+    text-transform:uppercase;color:var(--faint);margin-bottom:var(--s2)}
+  .asidemore a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    padding:var(--s3) 0;border-top:var(--rule-item);font-size:13.5px;font-weight:700;line-height:1.6;
+    color:var(--text);transition:color .15s}
+  .asidemore a:first-of-type{border-top:none;padding-top:0}
+  .asidemore a:last-of-type{padding-bottom:0}
+  .asidemore a:hover{color:var(--accent)}
+
+  /* ---- 1면 아래 4단 ----
+     제목·요약·이미지·작성자 네 줄을 subgrid 로 묶어, 글 길이가 달라도
+     같은 줄끼리 같은 높이에 놓입니다. 높이를 강제로 고정하지 않습니다. */
+  .frontrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-template-rows:auto auto 1fr auto;
+    margin:0 calc(-1 * var(--gut));border-bottom:var(--rule-strong)}
+  .frontrow > *{grid-row:span 4;display:grid;grid-template-rows:subgrid;
+    padding:var(--s6) var(--gut);min-width:0;cursor:pointer}
+  .frontrow > * + *{border-left:var(--rule-col)}
+  .frontrow h3{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.033em;line-height:1.36;transition:color .15s;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .frontrow > *:hover h3{color:var(--accent)}
-  .frontrow .rdesc{margin-top:10px;font-size:13.5px;line-height:1.68;color:var(--muted);
-    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:calc(1.68em * 3)}
-  .frontrow .rcover{position:relative;margin-top:14px;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
+  .frontrow .rdesc{margin-top:var(--s3);font-size:13.5px;line-height:1.68;color:var(--muted);
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .frontrow .rcover{position:relative;align-self:start;margin-top:var(--s4);width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
   .frontrow .rcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
-  .frontrow .rmeta{margin-top:11px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--faint)}
+  .frontrow .rmeta{align-self:end;margin-top:var(--s3);font-size:11px;font-weight:700;letter-spacing:.05em;
+    line-height:1.5;text-transform:uppercase;color:var(--faint)}
+  /* subgrid 를 모르는 옛 브라우저에서는 줄 수만큼 자리를 잡아둡니다 */
+  @supports not (grid-template-rows:subgrid){
+    .frontrow{grid-template-rows:none}
+    .frontrow > *{grid-row:auto;display:block}
+    .frontrow h3{min-height:calc(1.36em * 3)}
+    .frontrow .rdesc{min-height:calc(1.68em * 3)}
+  }
   @media(max-width:980px){
     .frontrow{grid-template-columns:repeat(2,minmax(0,1fr))}
     .frontrow > *:nth-child(odd){border-left:none}
-    .frontrow > *:nth-child(n+3){border-top:1px dashed var(--border-strong)}
+    .frontrow > *:nth-child(n+3){border-top:var(--rule-item)}
   }
   @media(max-width:560px){
-    .frontrow{grid-template-columns:minmax(0,1fr);margin:0}
-    .frontrow > *{padding:22px 0 24px;border-left:none}
-    .frontrow > * + *{border-top:1px dashed var(--border-strong)}
-    .frontrow h3,.frontrow .rdesc{min-height:0}
+    .frontrow{grid-template-columns:minmax(0,1fr);grid-template-rows:none;margin:0}
+    .frontrow > *{grid-row:auto;display:block;padding:var(--s6) 0;border-left:none}
+    .frontrow > * + *{border-top:var(--rule-item)}
   }
+
+  /* ---- 한글 제목 줄바꿈 ----
+     조사나 낱말 중간에서 끊기지 않게 어절 단위로 넘깁니다.
+     아주 긴 URL 등만 예외적으로 끊습니다. */
+  .lead h2,.lead .deck,.glance a,.aside .astory h3,.aside .adesc,
+  .viewbox .vt,.asidemore a,.leadmore .lm-t,.frontrow h3,.frontrow .rdesc,
+  .masthead .mh-tag,.masthead .mh-sub{word-break:keep-all;overflow-wrap:anywhere}
+
 
   /* ---------- 홈(대시보드) ---------- */
   /* 왼쪽 큰 기사(2:1 이미지) + 오른쪽 최신 4건 */
@@ -740,6 +805,10 @@ function glanceHtml(items, updated){
     }).join("")}</ol>
   </div>`;
 }
+// 왼쪽 단 아래 칸 — 세 단의 가로선을 같은 높이에서 시작시키기 위한 자리이기도 합니다
+function glanceFootHtml(){
+  return `<div class="glance"><a class="glance-all" href="#/latest">최신 기록 전체 보기 →</a></div>`;
+}
 // 가운데 단 — 머리기사
 function leadHtml(p){
   const cap=(p.coverCaption||"").trim();
@@ -777,7 +846,8 @@ function asideHtml(second, picks, more){
         <div class="vt">${p.title}</div>
         <div class="vby">${avatarHtml(p.author)}<span>${p.author||""}</span></div>
       </div>`).join("")}</div>` : "";
-  return `<div class="aside">${s}${box}${asideMoreHtml(more||[])}</div>`;
+  // 위 덩어리에는 보조기사만, 아래 덩어리에는 고른 글 + 더 읽기가 들어갑니다
+  return {top:`<div class="aside">${s}</div>`, foot:`<div class="aside">${box}${asideMoreHtml(more||[])}</div>`};
 }
 /* 오른쪽 단 아래를 채우는 제목 목록. 역시 단 바닥에 붙입니다. */
 function asideMoreHtml(items){
@@ -822,13 +892,16 @@ function viewDash(){
   const picks=take(2,p=>p.pick);
   // 오른쪽 보조기사 = 남은 글 중 이미지가 있는 첫 글
   const second=take(1,p=>p.cover)[0] || take(1)[0] || null;
+  /* 1면 아래 가로줄 — 사진이 실리는 자리라 표지가 있는 글을 먼저 채웁니다.
+     한눈에보기·더읽기는 제목만 쓰므로 표지 없는 글로 채워도 됩니다. */
+  const row=take(ROW_N,p=>p.cover);
+  if(row.length<ROW_N) row.push(...take(ROW_N-row.length));
   // 왼쪽 한눈에보기
   const glance=take(GLANCE_N);
   // 가운데·오른쪽 단 아래를 채우는 짧은 목록
   const leadMore=take(2);
   const asideMore=take(3);
-  // 1면 아래 가로줄
-  const row=take(ROW_N);
+  const asideCols=asideHtml(second, picks, asideMore);
 
   // 주제 탭 — 미분류 제외, 글 많은 순
   const map=topicMap();
@@ -840,8 +913,13 @@ function viewDash(){
   return `${mastheadHtml()}
   <div class="front">
     ${glanceHtml(glance, sorted[0] && sorted[0].date)}
-    <div class="leadcol">${leadHtml(lead)}${leadMoreHtml(leadMore)}</div>
-    ${asideHtml(second, picks, asideMore)}
+    <div class="leadcol">${leadHtml(lead)}</div>
+    ${asideCols.top}
+  </div>
+  <div class="frontfoot">
+    ${glanceFootHtml()}
+    <div class="leadcol">${leadMoreHtml(leadMore)}</div>
+    ${asideCols.foot}
   </div>
   ${frontRowHtml(row)}
 
