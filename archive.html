@@ -407,14 +407,24 @@
 
 
   /* ---- 오른쪽: 보조기사 ---- */
-  .aside .astory{display:block;cursor:pointer}
+  /* 보조기사 글이 칼럼에 남는 높이를 정확히 채웁니다.
+     줄 수를 숫자로 못박으면 글 길이가 바뀔 때마다 어긋나므로,
+     요약이 남는 만큼 늘어나고 넘치는 부분은 흐려지며 잘립니다. */
+  .aside .astory{display:flex;flex-direction:column;min-height:0;flex:1 1 auto;cursor:pointer}
   .aside .astory h3{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.033em;line-height:1.38;transition:color .15s;
     display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .aside .astory:hover h3{color:var(--accent)}
   .aside .astory .adesc{margin-top:var(--s3);font-size:13.5px;line-height:1.68;color:var(--muted);
-    display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+    flex:1 1 0;min-height:calc(1.68em * 3);overflow:hidden;
+    -webkit-mask-image:linear-gradient(180deg,#000 calc(100% - 20px),transparent);
+            mask-image:linear-gradient(180deg,#000 calc(100% - 20px),transparent)}
+  /* 좁은 화면에서는 칸이 세로로 쌓여 남는 높이가 없으므로 줄 수로만 제한합니다 */
+  @media(max-width:980px){
+    .aside .astory{display:block}
+    .aside .astory .adesc{max-height:calc(1.68em * 6)}
+  }
   /* 이미지 폭은 칼럼 글상자 폭과 정확히 같습니다 */
-  .aside .acover{position:relative;margin-top:var(--s4);width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
+  .aside .acover{position:relative;flex:none;margin-top:var(--s4);width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
   .aside .acover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
 
   /* 고른 글 2칸 — 보조기사 바로 아래에 붙습니다.
@@ -809,11 +819,21 @@ function leadHtml(p){
     <div class="lfoot"><span>${fmtDate(p.date)}</span>${cardTopicsHtml(p)}</div>
   </article>`;
 }
+/* 오른쪽 보조기사에 실을 글.
+   요약이 짧으면(48자짜리도 있습니다) 칼럼 아래가 비어 보이므로
+   본문 앞부분을 이어 붙여 채웁니다. 넘치는 만큼은 CSS 가 잘라냅니다. */
+function asideLead(p){
+  const sum = String(p.summary || "").replace(/\s+/g, " ").trim();
+  if(sum.length >= 200) return sum;
+  const body = String(p.insight || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  if(!body) return sum;
+  return sum ? sum + " — " + body : body;
+}
 // 오른쪽 단 — 보조기사 바로 아래에 직접 고른 글 2칸
 function asideHtml(second, picks){
   const s = second ? `<a class="astory" href="#/post/${second.id}">
       <h3>${second.title}</h3>
-      ${second.summary?`<p class="adesc">${(second.summary||"").replace(/\n/g," ")}</p>`:""}
+      ${(()=>{const t=asideLead(second);return t?`<p class="adesc">${t}</p>`:"";})()}
       ${second.cover?`<div class="acover" data-fr="1.333" data-fit-at="0.8"><img src="${second.cover}" alt="" loading="lazy" onload="fitCover(this)" onerror="this.closest('.acover').remove()"></div>`:""}
     </a>` : `<p class="empty" style="padding:0">아직 다른 글이 없습니다.</p>`;
   const box = picks.length ? `<div class="viewbox">${picks.map(p=>
