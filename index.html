@@ -56,7 +56,6 @@
     background:var(--ivory);color:var(--ink);
     font-family:var(--sans);font-size:16px;line-height:1.6;
     -webkit-font-smoothing:antialiased;
-    /* 커스텀 마우스 포인터는 쓰지 않습니다 — 기본 커서가 가장 읽기 편합니다 */
   }
   a{color:inherit;text-decoration:none}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
@@ -136,6 +135,31 @@
   /* =====================================================================
      섹션 공통
      ===================================================================== */
+
+  /* =========================================================================
+     커서 — 주황 점, 누를 수 있는 것 위에서는 링으로 벌어집니다.
+     · 마우스가 있는 기기에서만 나타납니다 (터치 기기는 그대로)
+     · 점은 마우스를 정확히 따라가고, 모양이 바뀔 때만 부드럽게 움직입니다
+     · 본문에 끼워 넣은 HTML(iframe) 위에서는 기본 커서로 돌아갑니다
+     ========================================================================= */
+  @media (hover:hover) and (pointer:fine){
+    body{cursor:none}
+    /* 글자를 고르거나 입력하는 곳은 기본 커서를 그대로 둡니다 */
+    input,textarea,[contenteditable],iframe{cursor:auto}
+    #cur{position:fixed;top:0;left:0;z-index:2147483000;pointer-events:none;
+      transform:translate3d(-100px,-100px,0);will-change:transform}
+    #cur i{display:block;box-sizing:border-box;width:10px;height:10px;margin:-5px 0 0 -5px;
+      border-radius:50%;background:var(--orange);border:1.5px solid transparent;opacity:0;
+      transition:width .24s cubic-bezier(.22,.7,.3,1),height .24s cubic-bezier(.22,.7,.3,1),
+                 margin .24s cubic-bezier(.22,.7,.3,1),background-color .24s ease,
+                 border-color .24s ease,transform .16s ease,opacity .18s ease}
+    #cur.on i{opacity:1}
+    /* 누를 수 있는 것 위 — 속이 빈 링 */
+    #cur.ring i{width:32px;height:32px;margin:-16px 0 0 -16px;background:transparent;border-color:var(--orange)}
+    /* 누르는 동안 살짝 오므라듭니다 */
+    #cur.press i{transform:scale(.78)}
+    @media (prefers-reduced-motion:reduce){ #cur i{transition:opacity .18s ease} }
+  }
   section{padding:96px 0}
   @media(max-width:640px){section{padding:68px 0}}
   .shead{display:flex;align-items:baseline;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--ink-14)}
@@ -464,6 +488,32 @@ setTimeout(()=>document.documentElement.classList.add("anim-off"), 1500);
       }
     })
     .catch(()=>{});
+})();
+
+/* ---- 커서 (주황 점 → 링) ----
+   마우스가 있는 기기에서만 켜집니다. 잔상·자석 효과 같은 건 넣지 않았습니다. */
+(function(){
+  if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  var el=document.createElement("div");
+  el.id="cur"; el.setAttribute("aria-hidden","true"); el.innerHTML="<i></i>";
+  document.body.appendChild(el);
+  // 누를 수 있는 것들. 이 사이트의 카드·탭은 대부분 onclick 을 달고 있습니다.
+  var HIT='a,button,[onclick],[role="button"],label,summary';
+  var x=0,y=0,raf=0;
+  function draw(){ raf=0; el.style.transform="translate3d("+x+"px,"+y+"px,0)"; }
+  addEventListener("mousemove",function(e){
+    x=e.clientX; y=e.clientY;
+    if(!raf) raf=requestAnimationFrame(draw);
+    var t=e.target;
+    // 본문에 끼워 넣은 HTML 위에서는 기본 커서로 넘깁니다
+    if(t.closest && t.closest(".iembed")){ el.classList.remove("on"); return; }
+    el.classList.add("on");
+    el.classList.toggle("ring", !!(t.closest && t.closest(HIT)));
+  },{passive:true});
+  addEventListener("mousedown",function(){ el.classList.add("press"); },{passive:true});
+  addEventListener("mouseup",function(){ el.classList.remove("press"); },{passive:true});
+  document.addEventListener("mouseleave",function(){ el.classList.remove("on"); });
+  addEventListener("blur",function(){ el.classList.remove("on","press"); });
 })();
 </script>
 </body>
