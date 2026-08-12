@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2주차 온보딩 1교시 · 합의 알고리즘 v2</title>
+<style>
+:root{
+  --bg:#050d16; --navy:#0a1a2c; --navy2:#0d2138;
+  --panel:#12294a; --panel2:#16325a; --line:#27456e; --line2:#375f92;
+  --ink:#f3f7fc; --ink2:#c6d6e8; --ink3:#8ba7c8;
+  --blue:#5aa2f0; --blue2:#8cc0f7; --blued:#1e4a7d;
+  --amber:#f2a83f; --amberd:#5c3d0e;
+  --green:#3fd18b; --greend:#12503a;
+  --purple:#a58bf5; --red:#ef7070;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;background:var(--bg);overflow:hidden}
+body{font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Segoe UI",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;color:var(--ink)}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%}
+
+/* ---------- slide frame ---------- */
+.slide{position:absolute;inset:0;background:var(--navy);padding:60px 92px 104px;
+  opacity:0;visibility:hidden;transition:opacity .3s ease,transform .3s ease;
+  transform:translateX(24px);overflow:hidden;display:flex;flex-direction:column}
+.slide.on{opacity:1;visibility:visible;transform:none;z-index:2}
+.slide::before{content:"";position:absolute;left:0;top:0;width:100%;height:6px;background:var(--blue)}
+.slide[data-c="pow"]::before{background:var(--amber)}
+.slide[data-c="pos"]::before{background:var(--green)}
+
+.s-kicker{display:flex;align-items:center;gap:14px;font-size:22px;color:var(--ink3);letter-spacing:.02em}
+.s-kicker b{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:32px;
+  padding:0 10px;border-radius:6px;background:var(--blued);color:var(--blue2);font-size:20px;font-weight:700}
+.slide[data-c="pow"] .s-kicker b{background:var(--amberd);color:var(--amber)}
+.slide[data-c="pos"] .s-kicker b{background:var(--greend);color:var(--green)}
+h2.s-title{margin:14px 0 0;font-size:58px;line-height:1.15;letter-spacing:-.02em}
+p.s-lead{margin:16px 0 0;font-size:31px;line-height:1.4;color:var(--blue2);font-weight:600}
+.s-body{flex:1;margin-top:30px;min-height:0}
+.s-basis{margin-top:auto;padding-top:14px;font-size:19px;color:var(--ink3)}
+.s-next{margin-top:18px;padding:14px 22px;border-left:4px solid var(--blue);
+  background:rgba(90,162,240,.09);border-radius:0 10px 10px 0;font-size:24px;color:var(--ink2);line-height:1.35}
+.slide[data-c="pow"] .s-next{border-left-color:var(--amber);background:rgba(242,168,63,.09)}
+.slide[data-c="pos"] .s-next{border-left-color:var(--green);background:rgba(63,209,139,.09)}
+.s-next b{color:var(--ink);font-weight:700}
+
+/* ---------- generic blocks ---------- */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.g23{display:grid;grid-template-columns:1.15fr .85fr;gap:28px}
+.g32{display:grid;grid-template-columns:.85fr 1.15fr;gap:28px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 28px}
+.card.q{background:var(--navy2)}
+.card h4{margin:0 0 14px;font-size:29px;line-height:1.25}
+.card h4 .n{display:inline-block;min-width:34px;height:34px;line-height:34px;text-align:center;margin-right:12px;
+  border-radius:8px;background:var(--blued);color:var(--blue2);font-size:21px;font-weight:700}
+.card p{margin:0 0 10px;font-size:25px;line-height:1.5;color:var(--ink2)}
+.card p:last-child{margin-bottom:0}
+ul.bl{list-style:none;margin:0;padding:0}
+ul.bl>li{position:relative;padding-left:28px;margin-bottom:15px;font-size:26px;line-height:1.5;color:var(--ink2)}
+ul.bl>li:last-child{margin-bottom:0}
+ul.bl>li::before{content:"";position:absolute;left:4px;top:12px;width:9px;height:9px;border-radius:2px;background:var(--blue)}
+.slide[data-c="pow"] ul.bl>li::before{background:var(--amber)}
+.slide[data-c="pos"] ul.bl>li::before{background:var(--green)}
+ul.bl>li b{color:var(--ink)}
+ul.bl.sm>li{font-size:24px;margin-bottom:12px}
+.hl{color:var(--blue2);font-weight:700}
+.hl-a{color:var(--amber);font-weight:700}
+.hl-g{color:var(--green);font-weight:700}
+.mono{font-family:Consolas,"D2Coding",monospace;letter-spacing:-.01em}
+.callout{border:1px solid var(--line2);background:var(--navy2);border-radius:12px;padding:22px 26px;font-size:25px;line-height:1.5;color:var(--ink2)}
+.callout b{color:var(--ink)}
+.tag{display:inline-block;padding:5px 14px;border-radius:999px;font-size:20px;font-weight:700;
+  background:var(--blued);color:var(--blue2)}
+.tag.a{background:var(--amberd);color:var(--amber)}
+.tag.g{background:var(--greend);color:var(--green)}
+.tag.r{background:#5a1f22;color:var(--red)}
+table.tbl{width:100%;border-collapse:collapse}
+table.tbl th,table.tbl td{border:1px solid var(--line);padding:16px 20px;font-size:25px;line-height:1.4;text-align:left;vertical-align:top}
+table.tbl thead th{background:var(--panel2);color:var(--ink);font-size:26px}
+table.tbl tbody th{background:var(--navy2);color:var(--ink2);width:210px;font-weight:600}
+table.tbl td{color:var(--ink2)}
+table.tbl.cmp th,table.tbl.cmp td{padding:12px 20px}
+table.tbl td.pow{background:rgba(242,168,63,.07)}
+table.tbl td.pos{background:rgba(63,209,139,.07)}
+
+/* ---------- flow ---------- */
+.flow{display:flex;align-items:stretch;gap:0}
+.flow .st{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:16px 13px;text-align:center;font-size:24px;line-height:1.35;color:var(--ink2);
+  display:flex;flex-direction:column;justify-content:center;gap:8px}
+.flow .st i{display:block;font-size:18px;color:var(--ink3);font-style:normal}
+.flow .st b{color:var(--ink);font-weight:700}
+.flow .ar{flex:0 0 34px;display:flex;align-items:center;justify-content:center;color:var(--line2);font-size:28px}
+.flow.pow .st{border-color:#6b4a17}
+.flow.v{flex-direction:column;gap:0}
+.flow.v .ar{flex:0 0 26px}
+
+/* ---------- chain diagram ---------- */
+.chain{display:flex;align-items:center;gap:0}
+.blk{flex:1;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+.blk .bh{background:var(--panel2);padding:10px 14px;font-size:21px;color:var(--blue2);font-weight:700;
+  display:flex;justify-content:space-between;align-items:center}
+.blk .bb{padding:14px}
+.blk .row{font-size:20px;color:var(--ink3);margin-bottom:8px;line-height:1.3}
+.blk .row:last-child{margin-bottom:0}
+.blk .row s{display:block;font-size:17px;color:var(--ink3);text-decoration:none}
+.blk .row .v{color:var(--ink2);font-family:Consolas,monospace;font-size:20px}
+.blk.bad{border-color:var(--red)}
+.blk.bad .bh{background:#4a1c20;color:#ffb4b4}
+.blk.warn{border-color:var(--amber)}
+.blk.warn .bh{background:var(--amberd);color:var(--amber)}
+.link{flex:0 0 46px;text-align:center;color:var(--line2);font-size:26px}
+.link.bad{color:var(--red)}
+
+/* ---------- section cover ---------- */
+.cover{justify-content:center;padding:80px 110px 120px}
+.cover .cn{font-size:150px;font-weight:800;line-height:.9;color:rgba(90,162,240,.22);letter-spacing:-.04em}
+.slide.cover[data-c="pow"] .cn{color:rgba(242,168,63,.22)}
+.slide.cover[data-c="pos"] .cn{color:rgba(63,209,139,.22)}
+.cover .cl{margin-top:8px;font-size:26px;color:var(--ink3);letter-spacing:.14em}
+.cover h2{margin:18px 0 0;font-size:66px;line-height:1.2;max-width:1180px}
+.cover .cq{margin-top:26px;font-size:32px;color:var(--blue2);line-height:1.4;max-width:1150px}
+.cover-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+
+/* ---------- title slide ---------- */
+.title{justify-content:center;padding:90px 110px}
+.title .tk{font-size:28px;color:var(--blue2);letter-spacing:.18em;font-weight:700}
+.title h1{margin:26px 0 0;font-size:96px;line-height:1.1;letter-spacing:-.03em}
+.title .ts{margin:24px 0 0;font-size:34px;color:var(--ink2);line-height:1.45}
+.title .tq{margin:44px 0 0;max-width:1300px;border-left:5px solid var(--blue);padding:22px 30px;
+  background:rgba(90,162,240,.09);border-radius:0 12px 12px 0}
+.title .tq span{display:block;font-size:21px;color:var(--ink3);letter-spacing:.1em;margin-bottom:10px}
+.title .tq p{margin:0;font-size:34px;line-height:1.4;color:var(--ink);font-weight:600}
+.title .tf{margin-top:52px;font-size:24px;color:var(--ink3)}
+
+/* ---------- bars ---------- */
+.bars{display:flex;flex-direction:column;gap:26px}
+.bar{display:grid;grid-template-columns:250px 1fr;align-items:center;gap:22px}
+.bar .nm{font-size:27px;color:var(--ink);font-weight:700}
+.bar .nm s{display:block;text-decoration:none;font-size:20px;color:var(--ink3);font-weight:400;margin-top:4px}
+.bar .tr{height:52px;background:var(--navy2);border:1px solid var(--line);border-radius:8px;position:relative}
+.bar .fl{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--blued);
+  display:flex;align-items:center;justify-content:flex-end;padding-right:14px}
+.bar .fl.a{background:#6b4a17}
+.bar .fl.g{background:var(--greend)}
+.bar .fl.v{background:var(--blue)}
+.bar .fl span{font-size:23px;font-weight:700;color:var(--ink);white-space:nowrap}
+.bar .fl.min span{position:absolute;left:calc(100% + 14px);color:var(--ink2)}
+
+/* ---------- bottom chrome ---------- */
+#bar{position:absolute;left:0;right:0;bottom:0;height:64px;padding:0 92px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg);border-top:1px solid var(--line);z-index:5}
+#secs{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:0;overflow:hidden}
+#secs .sc{font-size:19px;color:var(--ink3);padding:5px 12px;border-radius:6px;background:transparent;white-space:nowrap}
+#secs .sc.on{background:var(--panel2);color:var(--ink)}
+#secs .sc.on.pow{background:var(--amberd);color:var(--amber)}
+#secs .sc.on.pos{background:var(--greend);color:var(--green)}
+#pg{font-size:21px;color:var(--ink3);white-space:nowrap;flex:0 0 auto;margin-left:20px}
+#pg b{color:var(--ink);font-size:25px}
+#prog{position:absolute;left:0;bottom:0;height:3px;background:var(--blue);width:0;transition:width .3s ease;z-index:6}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 ================================================== -->
+<section class="slide title" data-sec="0">
+  <div class="tk">블록체인 온보딩 세션 · 2주차 1교시</div>
+  <h1>블록체인 합의 알고리즘</h1>
+  <p class="ts">왜 거래를 블록으로 묶는지, 누가 블록을 만드는지, 그리고 왜 블록체인은 느린지를 하나의 흐름으로 이해하는 시간임</p>
+  <div class="tq">
+    <span>오늘 수업의 핵심 질문</span>
+    <p>서로를 신뢰할 수 없는 참여자들이, 중앙기관 없이 하나의 기록에 어떻게 합의하는가</p>
+  </div>
+  <div class="tf">블록 단위 저장 → 해시 체인 → 블록 생성자 선정(PoW · PoS) → 합의 → 속도와 trade-off</div>
+</section>
+
+<!-- 2 ================================================== -->
+<section class="slide" data-sec="0">
+  <div class="s-kicker"><b>OPEN</b> 오늘의 목표</div>
+  <h2 class="s-title">이 7가지 질문에 스스로 답하기</h2>
+  <p class="s-lead">수업이 끝나면 아래 질문을 다른 사람에게 설명할 수 있는 상태가 목표임</p>
+  <div class="s-body">
+    <div class="g4">
+      <div class="card q"><h4><span class="n">1</span>왜 블록인가</h4><p>왜 거래를 하나씩 기록하지 않고 블록으로 묶는지 설명할 수 있음</p></div>
+      <div class="card q"><h4><span class="n">2</span>왜 전부 비교하지 않는가</h4><p>과거 데이터를 매번 전부 대조하지 않아도 되는 이유를 설명할 수 있음</p></div>
+      <div class="card q"><h4><span class="n">3</span>누가 블록을 만드는가</h4><p>블록 생성자를 정하는 방법과 보상이 필요한 이유를 설명할 수 있음</p></div>
+      <div class="card q"><h4><span class="n">4</span>무엇을 비용으로 삼는가</h4><p>PoW가 무엇을 비용으로, PoS가 무엇을 담보로 삼는지 구분할 수 있음</p></div>
+    </div>
+    <div class="g3" style="margin-top:24px">
+      <div class="card q"><h4><span class="n">5</span>왜 느린가</h4><p>합의 과정이 블록체인의 속도를 느리게 만드는 구조를 설명할 수 있음</p></div>
+      <div class="card q"><h4><span class="n">6</span>무엇을 해결하는가</h4><p>이중지불 문제와 비잔틴 장군 문제를 합의가 어떻게 다루는지 설명할 수 있음</p></div>
+      <div class="card q"><h4><span class="n">7</span>왜 trade-off가 생기는가</h4><p>속도를 높일수록 어떤 비용과 우려가 따라오는지 설명할 수 있음</p></div>
+    </div>
+  </div>
+  <div class="s-next">첫 질문부터 시작함. <b>블록체인의 블록과 체인이 각각 무엇이었는지</b> 짧게 복습함</div>
+</section>
+
+<!-- 3 ================================================== -->
+<section class="slide cover" data-sec="1">
+  <div class="cover-wrap">
+    <div>
+      <div class="cn">01</div>
+      <div class="cl">SECTION 01</div>
+      <h2>블록 단위 저장과 노드</h2>
+      <p class="cq">왜 거래를 하나씩 기록하지 않고, 일정 시간 모아서 블록으로 묶는가</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 560 380" width="100%">
+        <g fill="#5aa2f0" opacity=".55">
+          <circle cx="40" cy="60" r="9"></circle><circle cx="86" cy="112" r="9"></circle><circle cx="36" cy="168" r="9"></circle>
+          <circle cx="96" cy="220" r="9"></circle><circle cx="44" cy="272" r="9"></circle><circle cx="90" cy="318" r="9"></circle>
+        </g>
+        <g stroke="#27456e" stroke-width="2" fill="none">
+          <path d="M52 62 L196 176"></path><path d="M96 114 L196 182"></path><path d="M48 170 L196 188"></path>
+          <path d="M106 220 L196 196"></path><path d="M56 272 L196 202"></path><path d="M100 316 L196 208"></path>
+        </g>
+        <rect x="200" y="120" width="150" height="140" rx="12" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></rect>
+        <text x="275" y="180" fill="#8cc0f7" font-size="24" font-weight="700" text-anchor="middle">BLOCK</text>
+        <text x="275" y="214" fill="#8ba7c8" font-size="18" text-anchor="middle">거래 묶음</text>
+        <path d="M356 190 L404 190" stroke="#375f92" stroke-width="3"></path>
+        <path d="M396 182 L406 190 L396 198" fill="#375f92"></path>
+        <rect x="412" y="140" width="46" height="100" rx="8" fill="#16325a" stroke="#27456e"></rect>
+        <rect x="466" y="140" width="46" height="100" rx="8" fill="#16325a" stroke="#27456e"></rect>
+        <rect x="520" y="140" width="30" height="100" rx="8" fill="#0d2138" stroke="#27456e"></rect>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ================================================== -->
+<section class="slide" data-sec="1">
+  <div class="s-kicker"><b>01</b> 블록 단위 저장과 노드 · 복습</div>
+  <h2 class="s-title">블록체인 기초에 대해서 복습해보자</h2>
+  <p class="s-lead">블록은 거래 내역을 담는 저장소이고, 체인은 그 블록들을 순서대로 이어 붙이는 연결고리임</p>
+  <div class="s-body">
+    <div class="g3">
+      <div class="card">
+        <h4>블록</h4>
+        <p>일정 시간 동안 모인 거래 내역을 담아 두는 저장소임.</p>
+        <p>거래를 한 건씩 흘려보내지 않고 묶음 단위로 보관함.</p>
+      </div>
+      <div class="card">
+        <h4>체인</h4>
+        <p>블록들을 만들어진 순서대로 이어 붙이는 연결고리임.</p>
+        <p>이 연결고리 역할을 하는 값이 바로 <span class="hl">해시값</span>임.</p>
+      </div>
+      <div class="card">
+        <h4>해시 함수</h4>
+        <p>입력을 넣으면 언제나 일정한 자리 수의 값을 반환하는 함수임.</p>
+        <p>반환된 값(output)만 보고 원래 입력(input)을 유추하는 것은 매우 어려움.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:26px">
+      오늘은 <b>왜 블록의 형태로 저장하고, 어떻게 체인으로 연결하는지</b> 그 원리를 살펴봄. 원리를 알면 블록체인에 기록된 정보의 <b>위변조가 왜 어렵고, 변경 흔적이 왜 쉽게 드러나는지</b>까지 이해할 수 있음.
+    </div>
+  </div>
+  <div class="s-next">블록과 체인을 실제로 저장하고 검증하는 주체가 필요함. 그 주체가 <b>노드</b>임</div>
+</section>
+
+<!-- 5 ================================================== -->
+<section class="slide" data-sec="1">
+  <div class="s-kicker"><b>01</b> 블록 단위 저장과 노드</div>
+  <h2 class="s-title">노드는 무엇을 하는가</h2>
+  <p class="s-lead">노드는 분산 저장 네트워크에 참여해 거래를 검증·전파하고 기록을 유지하는 컴퓨터임</p>
+  <div class="s-body">
+    <div class="g23">
+      <div>
+        <ul class="bl">
+          <li>블록체인의 특징은 데이터를 <b>여러 대의 컴퓨터에 분산 저장</b>한다는 점임.</li>
+          <li>이 분산 저장 네트워크에 참여하는 컴퓨터를 <b>노드(node)</b>라고 부름.</li>
+          <li>노드는 블록에 기록하도록 요청된 정보가 <b>유효한 거래인지 검증</b>함.</li>
+          <li>노드끼리 통신하며 서로의 기록을 <b>동기화</b>함.</li>
+          <li>저장된 정보를 외부에서 조회할 수 있도록 <b>저장소를 운영</b>함.</li>
+        </ul>
+        <div class="callout" style="margin-top:24px">
+          분산 저장이기 때문에 특정 한 대를 해킹해도 기록 전체를 바꿀 수 없음. 대신 <b>여러 노드가 같은 기록을 갖고 있는지 맞춰 보는 과정</b>이 반드시 필요해짐.
+        </div>
+      </div>
+      <svg viewBox="0 0 460 400" width="100%">
+        <g stroke="#27456e" stroke-width="2" fill="none">
+          <path d="M110 90 L340 90"></path><path d="M110 90 L110 300"></path><path d="M340 90 L340 300"></path>
+          <path d="M110 300 L340 300"></path><path d="M110 90 L340 300"></path><path d="M340 90 L110 300"></path>
+          <path d="M225 40 L110 90"></path><path d="M225 40 L340 90"></path><path d="M225 350 L110 300"></path><path d="M225 350 L340 300"></path>
+        </g>
+        <g>
+          <circle cx="110" cy="90" r="26" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></circle>
+          <circle cx="340" cy="90" r="26" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></circle>
+          <circle cx="110" cy="300" r="26" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></circle>
+          <circle cx="340" cy="300" r="26" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></circle>
+          <circle cx="225" cy="40" r="26" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></circle>
+          <circle cx="225" cy="350" r="26" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></circle>
+        </g>
+        <g fill="#8cc0f7" font-size="16" text-anchor="middle">
+          <text x="110" y="96">노드</text><text x="340" y="96">노드</text>
+          <text x="110" y="306">노드</text><text x="340" y="306">노드</text>
+          <text x="225" y="46">노드</text><text x="225" y="356">노드</text>
+        </g>
+        <text x="225" y="196" fill="#c6d6e8" font-size="19" text-anchor="middle">검증 · 전파 · 동기화</text>
+      </svg>
+    </div>
+  </div>
+  <div class="s-next">그렇다면 이 노드들은 <b>왜 거래를 한 건씩이 아니라 블록 단위로</b> 기록하는지 살펴보도록 하자</div>
+</section>
+
+<!-- 6 ================================================== -->
+<section class="slide" data-sec="1">
+  <div class="s-kicker"><b>01</b> 블록 단위 저장과 노드</div>
+  <h2 class="s-title">거래가 블록이 되기까지</h2>
+  <p class="s-lead">거래는 요청 즉시 기록되지 않고, 수집·검증·합의를 거쳐 체인에 기록됨</p>
+  <div class="s-body">
+    <div class="flow">
+      <div class="st"><i>STEP 1</i><b>거래 요청</b>사용자가 거래를<br>네트워크에 제출함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>STEP 2</i><b>일정 시간 수집</b>노드가 들어온<br>거래를 모음</div>
+      <div class="ar">›</div>
+      <div class="st"><i>STEP 3</i><b>유효성 검증</b>기록해도 되는<br> 거래인지 확인함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>STEP 4</i><b>블록으로 봉인</b>유효한 거래만<br> 묶어 블록을 만듦</div>
+      <div class="ar">›</div>
+      <div class="st"><i>STEP 5</i><b>검증 · 합의</b>같은 블록을<br>기록하는지 맞춰 봄</div>
+      <div class="ar">›</div>
+      <div class="st"><i>STEP 6</i><b>체인에 기록</b>블록이 체인에<br>연결되어 확정됨</div>
+    </div>
+    <div class="g3" style="margin-top:30px">
+      <div class="card"><h4>이중지불 여부</h4><p>이미 쓴 잔액을 다시 쓰려는 거래인지 확인함.</p></div>
+      <div class="card"><h4>잔액 충분성</h4><p>보내려는 금액만큼 잔액이 실제로 있는지 확인함.</p></div>
+      <div class="card"><h4>서명 유효성</h4><p>지갑의 주인이 제대로 서명한 거래인지 확인함.</p></div>
+    </div>
+    <div class="callout" style="margin-top:22px">STEP 3의 <b>유효성 검증</b>에서 위 세 가지를 확인함. 유효한 거래만 블록에 담기고, 조건을 만족하지 못한 거래는 블록에 포함되지 않음.</div>
+  </div>
+  <div class="s-next">그런데 왜 이렇게 <b>모았다가 한 번에</b> 처리하는지, 그 이유를 다음 장에서 확인함</div>
+</section>
+
+<!-- 7 ================================================== -->
+<section class="slide" data-sec="1">
+  <div class="s-kicker"><b>01</b> 블록 단위 저장과 노드</div>
+  <h2 class="s-title">왜 블록으로 묶을까</h2>
+  <p class="s-lead">신뢰할 수 있는 중앙기관이 없어 검증과 합의를 거쳐야 하므로, 정해진 주기마다 함께 처리하는 편이 효율적임</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:#5a3a3a">
+        <h4><span class="tag r">가정</span> &nbsp;거래를 하나씩 기록하면</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>거래 한 건마다 모든 노드가 검증하고 합의해야 함.</li>
+          <li>노드들이 <b>끊임없이 통신</b>해야 하므로 부담이 계속 누적됨.</li>
+          <li>중앙기관이 대신 확정해 주지 않으므로 이 과정을 생략할 수 없음.</li>
+        </ul>
+        <svg viewBox="0 0 480 120" width="100%" style="margin-top:16px">
+          <g stroke="#ef7070" stroke-width="2" opacity=".8" fill="none">
+            <path d="M40 60 L120 30"></path><path d="M40 60 L120 60"></path><path d="M40 60 L120 90"></path>
+            <path d="M120 30 L200 60"></path><path d="M120 60 L200 30"></path><path d="M120 90 L200 60"></path>
+            <path d="M200 30 L280 60"></path><path d="M200 60 L280 90"></path><path d="M280 60 L360 30"></path>
+            <path d="M280 90 L360 60"></path><path d="M360 30 L440 60"></path><path d="M360 60 L440 90"></path>
+          </g>
+          <g fill="#12294a" stroke="#ef7070">
+            <circle cx="40" cy="60" r="10"></circle><circle cx="120" cy="30" r="10"></circle><circle cx="120" cy="60" r="10"></circle>
+            <circle cx="120" cy="90" r="10"></circle><circle cx="200" cy="30" r="10"></circle><circle cx="200" cy="60" r="10"></circle>
+            <circle cx="280" cy="60" r="10"></circle><circle cx="280" cy="90" r="10"></circle><circle cx="360" cy="30" r="10"></circle>
+            <circle cx="360" cy="60" r="10"></circle><circle cx="440" cy="60" r="10"></circle><circle cx="440" cy="90" r="10"></circle>
+          </g>
+        </svg>
+      </div>
+      <div class="card" style="border-color:var(--line2)">
+        <h4><span class="tag">실제</span> &nbsp;거래를 블록으로 묶으면</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>일정 시간 동안 거래를 모아 <b>한 번에</b> 검증하고 합의함.</li>
+          <li>노드는 <b>정해진 주기마다</b> 통신하면 되므로 훨씬 효율적임.</li>
+          <li>합의 단위가 블록 하나로 정리되어 기록의 순서도 명확해짐.</li>
+        </ul>
+        <svg viewBox="0 0 480 120" width="100%" style="margin-top:16px">
+          <g fill="#12294a" stroke="#5aa2f0"><circle cx="40" cy="30" r="9"></circle><circle cx="40" cy="60" r="9"></circle><circle cx="40" cy="90" r="9"></circle></g>
+          <g stroke="#375f92" stroke-width="2" fill="none"><path d="M52 30 L150 58"></path><path d="M52 60 L150 60"></path><path d="M52 90 L150 62"></path></g>
+          <rect x="156" y="30" width="86" height="60" rx="8" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></rect>
+          <text x="199" y="66" fill="#8cc0f7" font-size="17" text-anchor="middle">블록</text>
+          <path d="M248 60 L300 60" stroke="#375f92" stroke-width="3"></path><path d="M292 52 L302 60 L292 68" fill="#375f92"></path>
+          <g fill="#12294a" stroke="#5aa2f0"><circle cx="330" cy="30" r="9"></circle><circle cx="330" cy="60" r="9"></circle><circle cx="330" cy="90" r="9"></circle>
+          <circle cx="400" cy="45" r="9"></circle><circle cx="400" cy="75" r="9"></circle><circle cx="450" cy="60" r="9"></circle></g>
+          <text x="390" y="112" fill="#8ba7c8" font-size="15" text-anchor="middle">주기마다 한 번의 합의</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">그렇다면 <b>얼마나 오래 모아서</b> 한 블록으로 만드는지, 대표 체인의 기준을 확인함</div>
+</section>
+
+<!-- 8 ================================================== -->
+<section class="slide" data-sec="1">
+  <div class="s-kicker"><b>01</b> 블록 단위 저장과 노드</div>
+  <h2 class="s-title">거래를 모으는 시간</h2>
+  <p class="s-lead">체인마다 거래를 모아 블록을 만드는 주기가 다르고, 그 주기가 체감 속도를 결정함</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:#6b4a17">
+        <h4><span class="tag a">비트코인</span> &nbsp;평균 약 10분</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>평균 약 <b>10분 동안 거래를 모아</b> 하나의 블록으로 만듦.</li>
+          <li>블록 하나가 만들어질 때까지 기다려야 기록이 확정됨.</li>
+        </ul>
+        <svg viewBox="0 0 460 90" width="100%" style="margin-top:14px">
+          <rect x="10" y="30" width="440" height="30" rx="6" fill="#0d2138" stroke="#27456e"></rect>
+          <rect x="10" y="30" width="440" height="30" rx="6" fill="#6b4a17" opacity=".55"></rect>
+          <text x="230" y="51" fill="#f2a83f" font-size="19" font-weight="700" text-anchor="middle">≈ 10분 수집 → 블록 1개</text>
+        </svg>
+      </div>
+      <div class="card" style="border-color:var(--greend)">
+        <h4><span class="tag g">이더리움</span> &nbsp;12초 슬롯</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li><b>12초마다 열리는 슬롯</b> 단위로 블록 제안과 검증을 진행함.</li>
+          <li>주기가 짧아 기록이 체인에 반영되는 간격도 짧음.</li>
+        </ul>
+        <svg viewBox="0 0 460 90" width="100%" style="margin-top:14px">
+          <g fill="#12503a" stroke="#3fd18b" opacity=".85">
+            <rect x="10" y="30" width="66" height="30" rx="6"></rect><rect x="84" y="30" width="66" height="30" rx="6"></rect>
+            <rect x="158" y="30" width="66" height="30" rx="6"></rect><rect x="232" y="30" width="66" height="30" rx="6"></rect>
+            <rect x="306" y="30" width="66" height="30" rx="6"></rect><rect x="380" y="30" width="66" height="30" rx="6"></rect>
+          </g>
+          <g fill="#3fd18b" font-size="15" text-anchor="middle">
+            <text x="43" y="51">12초</text><text x="117" y="51">12초</text><text x="191" y="51">12초</text>
+            <text x="265" y="51">12초</text><text x="339" y="51">12초</text><text x="413" y="51">12초</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:26px">솔라나 · 앱토스 · 수이의 거래 처리 방식과 속도 차이는 <b>뒤의 체인 비교 부분에서 따로</b> 살펴봄.</div>
+  </div>
+  <div class="s-next">블록으로 묶으면 통신은 효율화되지만, <b>쌓인 과거 기록을 어떻게 확인할지</b>는 또 다른 문제임</div>
+</section>
+
+<!-- 9 ================================================== -->
+<section class="slide cover" data-sec="2">
+  <div class="cover-wrap">
+    <div>
+      <div class="cn">02</div>
+      <div class="cl">SECTION 02</div>
+      <h2>해시 함수와 해시 체인</h2>
+      <p class="cq">왜 과거 데이터를 매번 전부 비교하지 않아도,<br>위변조를 알아챌 수 있는가</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 560 380" width="100%">
+        <g>
+          <rect x="30" y="120" width="120" height="140" rx="12" fill="#12294a" stroke="#27456e" stroke-width="2"></rect>
+          <rect x="190" y="120" width="120" height="140" rx="12" fill="#12294a" stroke="#27456e" stroke-width="2"></rect>
+          <rect x="350" y="120" width="120" height="140" rx="12" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></rect>
+          <rect x="510" y="120" width="40" height="140" rx="12" fill="#0d2138" stroke="#27456e" stroke-width="2"></rect>
+        </g>
+        <g fill="#8ba7c8" font-size="17" text-anchor="middle">
+          <text x="90" y="150">BLOCK n-2</text><text x="250" y="150">BLOCK n-1</text><text x="410" y="150">BLOCK n</text>
+        </g>
+        <g fill="#8cc0f7" font-size="15" text-anchor="middle" font-family="Consolas,monospace">
+          <text x="90" y="200">prev hash</text><text x="250" y="200">prev hash</text><text x="410" y="200">prev hash</text>
+        </g>
+        <g fill="#c6d6e8" font-size="14" text-anchor="middle" font-family="Consolas,monospace">
+          <text x="90" y="228">7a2c…</text><text x="250" y="228">b91f…</text><text x="410" y="228">04e8…</text>
+        </g>
+        <g stroke="#5aa2f0" stroke-width="3" fill="none">
+          <path d="M150 190 L188 190"></path><path d="M310 190 L348 190"></path><path d="M470 190 L508 190"></path>
+        </g>
+        <text x="280" y="320" fill="#8ba7c8" font-size="19" text-anchor="middle">이전 블록의 해시값이 다음 블록 안에 들어감</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 10 ================================================== -->
+<section class="slide" data-sec="2">
+  <div class="s-kicker"><b>02</b> 해시 함수와 해시 체인</div>
+  <h2 class="s-title">블록이 쌓이면 합의가 무거워짐</h2>
+  <p class="s-lead">과거 데이터 전체가 일치하는지 매번 비교하는 방식은 블록이 쌓이면 사실상 불가능해짐</p>
+  <div class="s-body">
+    <div class="g23">
+      <div>
+        <ul class="bl">
+          <li>블록이 <b>1개일 때</b>는 그 하나만 비교해도 같은 데이터를 저장했는지 쉽게 확인 가능함.</li>
+          <li>하지만 블록이 <b>1만 개, 10만 개</b>로 늘어나면 비교해야 할 대상 자체가 계속 커짐.</li>
+          <li>블록이 만들어질 때마다 쌓인 과거 데이터 전체를 대조하면 <b>합의 과정이 기하급수적으로 무거워짐</b>.</li>
+          <li>즉 저장 용량과 비교 비용이 함께 커지므로, <b>전수 비교는 현실적인 방법이 아님</b>.</li>
+        </ul>
+        <div class="callout" style="margin-top:24px">그래서 <b>데이터의 변화만 짧은 값으로 확인하는 암호학적 해법</b>이 필요해짐.</div>
+      </div>
+      <div>
+        <div class="card" style="padding:22px 26px">
+          <h4>규모 감각</h4>
+          <ul class="bl sm">
+            <li>이더리움 블록 1개는 평균 <b>약 100KB~200KB</b> 수준임.</li>
+            <li>이더리움은 12초마다 슬롯이 열리므로 하루 <b>약 7,200회</b>의 블록 제안 기회가 생김.</li>
+            <li>탄생부터 지금까지 모든 과거 상태를 보관하는 <b>Geth의 기존 아카이브 방식</b>은 메인넷에서 <b>20TB를 넘는 저장공간</b>이 필요할 수 있음.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-basis">기준: 이더리움 메인넷 · Geth 기존 아카이브 방식</div>
+  <div class="s-next">과거 데이터를 전부 비교하지 않으려면, <b>데이터의 변화를 짧은 값으로 확인할 방법</b>이 필요함</div>
+</section>
+
+<!-- 11 ================================================== -->
+<section class="slide" data-sec="2">
+  <div class="s-kicker"><b>02</b> 해시 함수와 해시 체인</div>
+  <h2 class="s-title">해시 함수란 무엇인가</h2>
+  <p class="s-lead">데이터의 크기와 상관없이 고정된 길이의 값을 반환하는 함수를 해시 함수라 함</p>
+  <div class="s-body">
+    <div class="flow" style="margin-bottom:26px">
+      <div class="st" style="flex:1.2"><i>INPUT</i><b>어떤 크기의 데이터든</b>한 글자 · 문서 한 장 · 수 GB 파일</div>
+      <div class="ar">›</div>
+      <div class="st" style="flex:.9;border-color:var(--line2)"><i>FUNCTION</i><b>해시 함수</b>비트코인은 SHA-256을 사용함</div>
+      <div class="ar">›</div>
+      <div class="st" style="flex:1.2"><i>OUTPUT</i><b>항상 64자리 해시값</b>입력 크기와 무관하게 길이가 같음</div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <h4>크기를 줄여 비교할 수 있음</h4>
+        <p>아무리 큰 데이터라도 해시 함수를 쓰면 <span class="hl">아주 작은 값</span>으로 줄일 수 있음.</p>
+        <p>따라서 데이터 전체를 대조하지 않고 <span class="hl">해시값만 비교</span>해도 데이터가 바뀌었는지 검증 가능함.</p>
+      </div>
+      <div class="card">
+        <h4>거꾸로 되돌리기는 어려움</h4>
+        <p>매우 큰 데이터를 64자리로 줄이더라도, 그 결과값으로 <span class="hl">원래 입력을 추정하는 것은 어려움</span>.</p>
+        <p>결과만 공개해도 원본이 드러나지 않으므로 보안적으로도 안전한 성질임.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">데이터가 조금만 달라져도 해시값이 크게 바뀌므로, 위변조 사실을 쉽게 발견할 수 있음</div>
+</section>
+
+<!-- 12 ================================================== -->
+<section class="slide" data-sec="2">
+  <div class="s-kicker"><b>02</b> 해시 함수와 해시 체인</div>
+  <h2 class="s-title">한 글자만 달라도 결과가 달라짐</h2>
+  <p class="s-lead">입력값이 조금이라도 달라지면 해시값은 완전히 다른 값이 됨</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card">
+        <h4><span class="tag">원본</span> &nbsp;입력 A</h4>
+        <p class="mono" style="font-size:28px;color:var(--ink)">"A에게 1 ETH 전송"</p>
+        <div style="margin-top:16px;padding:18px 20px;background:var(--navy2);border:1px solid var(--line);border-radius:10px">
+          <div style="font-size:19px;color:var(--ink3);margin-bottom:8px">해시값 (64자리)</div>
+          <div class="mono" style="font-size:23px;color:var(--blue2);line-height:1.5">7a2c 9f01 ····<br>···· ···· 3b8e</div>
+        </div>
+      </div>
+      <div class="card" style="border-color:var(--red)">
+        <h4><span class="tag r">한 글자 수정</span> &nbsp;입력 B</h4>
+        <p class="mono" style="font-size:28px;color:var(--ink)">"A에게 9 ETH 전송"</p>
+        <div style="margin-top:16px;padding:18px 20px;background:#2a1418;border:1px solid #5a1f22;border-radius:10px">
+          <div style="font-size:19px;color:var(--ink3);margin-bottom:8px">해시값 (64자리)</div>
+          <div class="mono" style="font-size:23px;color:#ffb4b4;line-height:1.5">e04b 1d77 ····<br>···· ···· c592</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:26px">
+      길이는 그대로 64자리지만 값은 <b>전혀 다른 값</b>이 됨. 그래서 원본을 직접 보지 않아도 <b>해시값만 비교하면 데이터가 바뀌었는지 알 수 있음</b>.
+    </div>
+    <div class="s-basis">※ 위 해시값은 실제 계산 결과가 아니라 표기 형태를 보여 주는 예시임</div>
+  </div>
+  <div class="s-next">이제 이 성질을 블록에 적용함. <b>해시값이 블록을 잇는 체인</b>이 되는 방식임</div>
+</section>
+
+<!-- 13 ================================================== -->
+<section class="slide" data-sec="2">
+  <div class="s-kicker"><b>02</b> 해시 함수와 해시 체인</div>
+  <h2 class="s-title">해시가 만드는 체인</h2>
+  <p class="s-lead">각 블록의 헤더에 이전 블록의 해시값을 기록하며, 이 해시값이 블록체인에서 말하는 체인임</p>
+  <div class="s-body">
+    <div class="chain">
+      <div class="blk">
+        <div class="bh"><span>BLOCK #101</span><span class="mono">7a2c…</span></div>
+        <div class="bb">
+          <div class="row"><s>이전 블록 해시</s><span class="v">4e1b…</span></div>
+          <div class="row"><s>거래 내역</s><span class="v">TX 1 · TX 2 · TX 3</span></div>
+        </div>
+      </div>
+      <div class="link">─→</div>
+      <div class="blk">
+        <div class="bh"><span>BLOCK #102</span><span class="mono">b91f…</span></div>
+        <div class="bb">
+          <div class="row"><s>이전 블록 해시</s><span class="v" style="color:var(--blue2)">7a2c…</span></div>
+          <div class="row"><s>거래 내역</s><span class="v">TX 4 · TX 5</span></div>
+        </div>
+      </div>
+      <div class="link">─→</div>
+      <div class="blk">
+        <div class="bh"><span>BLOCK #103</span><span class="mono">04e8…</span></div>
+        <div class="bb">
+          <div class="row"><s>이전 블록 해시</s><span class="v" style="color:var(--blue2)">b91f…</span></div>
+          <div class="row"><s>거래 내역</s><span class="v">TX 6 · TX 7 · TX 8</span></div>
+        </div>
+      </div>
+      <div class="link">─→</div>
+      <div class="blk" style="flex:.5;opacity:.6">
+        <div class="bh"><span>NEXT</span></div>
+        <div class="bb"><div class="row"><s>이전 블록 해시</s><span class="v">04e8…</span></div></div>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:28px">
+      <div class="card"><h4>블록 헤더가 연결 지점임</h4><p>블록마다 자신의 헤더에 <span class="hl">직전 블록의 해시값</span>을 담아 순서를 고정함.</p></div>
+      <div class="card"><h4>연결이 곧 순서의 증거임</h4><p>해시값이 맞물려 있으므로 블록을 <span class="hl">중간에 끼워 넣거나 순서를 바꾸기 어려움</span>.</p></div>
+    </div>
+  </div>
+  <div class="s-next">이 구조에서 <b>중간 블록의 데이터가 바뀌면</b> 어떤 일이 벌어지는지 단계별로 확인함</div>
+</section>
+
+<!-- 14 ================================================== -->
+<section class="slide" data-sec="2">
+  <div class="s-kicker"><b>02</b> 해시 함수와 해시 체인</div>
+  <h2 class="s-title">중간 블록을 고치면 드러남</h2>
+  <p class="s-lead">중간 블록의 데이터가 한 글자만 바뀌어도, 그 블록과 뒤따르는 블록들의 연결값이 줄줄이 달라짐</p>
+  <div class="s-body">
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center">
+        <div><span class="tag">STEP 1</span><div style="font-size:22px;color:var(--ink2);margin-top:8px">정상 상태</div></div>
+        <div class="chain">
+          <div class="blk"><div class="bh"><span>#101</span><span class="mono">7a2c…</span></div></div>
+          <div class="link">─→</div>
+          <div class="blk"><div class="bh"><span>#102</span><span class="mono">b91f…</span></div></div>
+          <div class="link">─→</div>
+          <div class="blk"><div class="bh"><span>#103</span><span class="mono">04e8…</span></div></div>
+          <div class="link">─→</div>
+          <div class="blk"><div class="bh"><span>#104</span><span class="mono">c17d…</span></div></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center">
+        <div><span class="tag r">STEP 2</span><div style="font-size:22px;color:var(--ink2);margin-top:8px">#102 거래 1건 수정</div></div>
+        <div class="chain">
+          <div class="blk"><div class="bh"><span>#101</span><span class="mono">7a2c…</span></div></div>
+          <div class="link">─→</div>
+          <div class="blk bad"><div class="bh"><span>#102 수정</span><span class="mono">f3a0…</span></div></div>
+          <div class="link bad">─✕</div>
+          <div class="blk warn"><div class="bh"><span>#103</span><span class="mono">04e8…</span></div></div>
+          <div class="link">─→</div>
+          <div class="blk"><div class="bh"><span>#104</span><span class="mono">c17d…</span></div></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center">
+        <div><span class="tag r">STEP 3</span><div style="font-size:22px;color:var(--ink2);margin-top:8px">뒤의 연결값도 전부 어긋남</div></div>
+        <div class="chain">
+          <div class="blk"><div class="bh"><span>#101</span><span class="mono">7a2c…</span></div></div>
+          <div class="link">─→</div>
+          <div class="blk bad"><div class="bh"><span>#102 수정</span><span class="mono">f3a0…</span></div></div>
+          <div class="link bad">─✕</div>
+          <div class="blk bad"><div class="bh"><span>#103 불일치</span><span class="mono">?</span></div></div>
+          <div class="link bad">─✕</div>
+          <div class="blk bad"><div class="bh"><span>#104 불일치</span><span class="mono">?</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px">
+      그래서 노드는 과거 데이터 전체를 매번 대조하지 않음. <b>새 블록이 이전 블록을 올바르게 참조하는지</b>와 <b>새 거래가 규칙을 지키는지</b>만 검증하면 됨.
+    </div>
+  </div>
+  <div class="s-next">과거 블록을 바꾸면 이후 블록이 참조하던 해시값과 달라져, 기존 체인과의 연결이 끊김</div>
+</section>
+
+<!-- 15 ================================================== -->
+<section class="slide" data-sec="2">
+  <div class="s-kicker"><b>02</b> 해시 함수와 해시 체인 · 정리</div>
+  <h2 class="s-title">블록 + 체인의 결론</h2>
+  <p class="s-lead">데이터 통신의 효율을 위해 블록으로 저장하고, 블록을 해시로 엮어 위변조가 매우 어렵고 흔적이 드러나게 만든 구조임</p>
+  <div class="s-body">
+    <div class="g32">
+      <div class="card" style="border-color:var(--line2)">
+        <h4>무결성이란</h4>
+        <p>데이터가 <span class="hl">허가 없이 변경되지 않았고</span>, 변경이 있었다면 <span class="hl">그 사실을 확인할 수 있는</span> 성질임.</p>
+        <p>해시 함수 같은 암호학적 기법이 거래 내역의 무결성과 체인의 연결성을 지킴.</p>
+        <p style="color:var(--ink3);font-size:24px">블록체인이 암호화폐 개념과 자주 혼동되는 이유도 이처럼 암호학을 기반으로 하기 때문임.</p>
+      </div>
+      <div>
+        <ul class="bl">
+          <li>블록체인은 거래 내역을 담은 블록들을 <b>암호학적 연결고리로 이어 붙인 분산형 데이터베이스</b>임.</li>
+          <li>모든 거래를 실시간으로 기록하는 대신 <b>일정 시간 모아 블록으로 묶고</b>, 노드들이 합의해 효율적으로 저장함.</li>
+          <li>각 블록은 이전 블록의 해시값(SHA-256 등)을 머릿말에 포함하며, 데이터가 한 글자라도 바뀌면 해시값이 완전히 달라짐.</li>
+          <li>따라서 노드는 전체 데이터를 매번 대조하지 않고도 <b>블록의 연결과 새 거래의 유효성</b>을 검증 가능함.</li>
+          <li>이 구조 덕분에 블록체인은 <b>위변조가 매우 어렵고 변경 흔적을 쉽게 발견할 수 있는</b> 분산 기록 체계가 되었음.</li>
+          <li>암호학을 기반으로 <b>신뢰 없는 신뢰(trustless trust)</b>를 구현한 것이 핵심임.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="s-basis">※ 양자컴퓨터 시대의 보안 문제와 양자내성암호(PQC, Post-Quantum Cryptography)는 후반 심화 주제에서 간단히 다룰 예정임</div>
+  </div>
+  <div class="s-next">블록의 연결은 설명했지만, 이제 <b>누가 다음 블록을 만들지</b> 정해야 함</div>
+</section>
+
+<!-- 16 ================================================== -->
+<section class="slide cover" data-sec="3">
+  <div class="cover-wrap">
+    <div>
+      <div class="cn">03</div>
+      <div class="cl">SECTION 03</div>
+      <h2>보상과 블록 생성자 선정</h2>
+      <p class="cq">블록을 만들 사람은 어떻게 정하며, 왜 보상이 필요한가</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 560 380" width="100%">
+        <g fill="#12294a" stroke="#5aa2f0" stroke-width="2">
+          <circle cx="90" cy="80" r="30"></circle><circle cx="90" cy="190" r="30"></circle><circle cx="90" cy="300" r="30"></circle>
+        </g>
+        <g fill="#8cc0f7" font-size="16" text-anchor="middle">
+          <text x="90" y="86">노드 A</text><text x="90" y="196">노드 B</text><text x="90" y="306">노드 C</text>
+        </g>
+        <g stroke="#375f92" stroke-width="2" fill="none">
+          <path d="M124 80 L230 170"></path><path d="M124 190 L230 190"></path><path d="M124 300 L230 210"></path>
+        </g>
+        <rect x="238" y="150" width="150" height="80" rx="10" fill="#0d2138" stroke="#375f92" stroke-width="2" stroke-dasharray="6 6"></rect>
+        <text x="313" y="185" fill="#c6d6e8" font-size="19" text-anchor="middle">후보 블록</text>
+        <text x="313" y="210" fill="#8ba7c8" font-size="16" text-anchor="middle">누구 것을 쓸까?</text>
+        <text x="470" y="176" fill="#5aa2f0" font-size="52" text-anchor="middle" font-weight="700">?</text>
+        <text x="470" y="216" fill="#8ba7c8" font-size="16" text-anchor="middle">중앙 선택자 없음</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 17 ================================================== -->
+<section class="slide" data-sec="3">
+  <div class="s-kicker"><b>03</b> 보상과 블록 생성자 선정</div>
+  <h2 class="s-title">노드 운영에는 비용이 듦</h2>
+  <p class="s-lead">분산 저장을 유지하려면 누군가 컴퓨터와 전력을 부담해야 하므로, 그 대가가 필요함</p>
+  <div class="s-body">
+    <div class="g3">
+      <div class="card"><h4>장비 비용</h4><p>분산 저장을 하려면 실제 컴퓨터가 필요하고, 그 컴퓨터에 투자한 비용이 발생함.</p></div>
+      <div class="card"><h4>전력 · 운영비</h4><p>노드를 계속 켜 두어야 하므로 전력과 관리 비용이 지속적으로 들어감.</p></div>
+      <div class="card"><h4>대가 설계</h4><p>그래서 블록체인은 <span class="hl">블록 생성에 기여한 참여자에게 코인을 보상</span>하도록 설계했음.</p></div>
+    </div>
+    <div class="callout" style="margin-top:28px">
+      정리하면, 앞에서 확인한 내용은 세 가지임. ① 블록과 체인은 해시로 엮여 있어 <b>최신 블록만 잘 검증해도 과거 위변조를 알아챌 수 있음</b>. ② 이 기록을 <b>여러 노드가 분산 저장</b>하므로 조작이 더 어려움. ③ 분산 저장에는 <b>실제 비용이 들기 때문에 보상 구조가 필요함</b>.
+    </div>
+    <div class="callout" style="margin-top:20px;border-color:#5a3a3a">
+      그런데 여기서 새로운 문제가 생김. <b>어느 노드에게 보상을 줄 것인지</b>, 그리고 <b>어떤 기준으로 정해야 가장 공정한지</b>를 정해야 함.
+    </div>
+  </div>
+  <div class="s-next">보상을 줄 대상을 정하는 문제는, 곧 <b>누가 다음 블록을 만들지 정하는 문제</b>임</div>
+</section>
+
+<!-- 18 ================================================== -->
+<section class="slide" data-sec="3">
+  <div class="s-kicker"><b>03</b> 보상과 블록 생성자 선정</div>
+  <h2 class="s-title">예측 가능하면 위험해짐</h2>
+  <p class="s-lead">다음 블록 생성자가 미리 알려지면 그 참여자만 공격하면 되므로, 예측하기 어려운 선정 방식이 필요함</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:#5a3a3a">
+        <h4><span class="tag r">문제</span> &nbsp;생성자가 고정되거나 알려지면</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>매번 특정 노드가 블록을 만든다는 사실이 알려질 수 있음.</li>
+          <li>다음에 선택될 노드가 누구인지도 알 수 있게 됨.</li>
+          <li>그렇다면 <b>그 노드만 공격하면</b> 허위 정보를 기록할 여지가 생기므로 보안적으로 위험함.</li>
+          <li>탈중앙화 원리상 <b>중앙화된 주체가 하나를 골라 줄 수도 없음</b>.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--line2)">
+        <h4><span class="tag">방향</span> &nbsp;그래서 필요한 조건</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>누가 다음 블록을 만들지 <b>미리 예측하기 어려워야</b> 함.</li>
+          <li>선정 과정이 <b>참여자 누구나 확인할 수 있어야</b> 함.</li>
+          <li>특정 참여자가 결과를 <b>자기 마음대로 조작할 수 없어야</b> 함.</li>
+          <li>즉 가장 공정하면서 보안적으로도 우수한 방향은 <b>무작위 선택</b>임.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:26px">
+      참고로 후보 블록들은 사용자가 제출한 같은 거래 요청을 바탕으로 만들어지므로 대부분 비슷한 구성이지만, <b>거래를 기록한 순서 같은 세부 내용이 조금씩 다름</b>. 그래서 하나를 골라야 함.
+    </div>
+  </div>
+  <div class="s-next">그런데 <b>탈중앙 환경에서 진짜 무작위를 만드는 일</b>이 생각보다 어려움</div>
+</section>
+
+<!-- 19 ================================================== -->
+<section class="slide" data-sec="3">
+  <div class="s-kicker"><b>03</b> 보상과 블록 생성자 선정</div>
+  <h2 class="s-title">무작위는 왜 어려운가</h2>
+  <p class="s-lead">탈중앙 환경에서는 누가 난수를 만들었고 조작하지 않았는지를 신뢰하기 어려움</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card">
+        <h4>일반 프로그램의 난수</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>흔히 쓰는 <span class="mono">random()</span> 함수는 완전한 무작위가 아니라, 내부 상태(시드 값)에 따라 정해지는 <b>의사난수</b>임.</li>
+          <li>중앙 서버가 있는 환경에서는 서버가 값을 생성해 주면 되므로 문제되지 않음.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#5a3a3a">
+        <h4>탈중앙 환경에서의 문제</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>누구나 코드와 입력값을 볼 수 있어 <b>결과가 예측될 수 있음</b>.</li>
+          <li>블록 생성자가 <b>원하는 난수가 나올 때까지 블록 생성을 조절</b>할 수도 있음.</li>
+          <li>신뢰할 수 있는 <b>제3의 서버에 맡기는 방법도 쓸 수 없음</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px">
+      결국 블록체인에서는 <b>참가자들이 함께 검증할 수 있는, 조작 불가능한 무작위 값을 만드는 일</b>이 중요한 과제가 됨.
+    </div>
+    <div class="g2" style="margin-top:22px">
+      <div class="card" style="border-color:#6b4a17;padding:20px 26px">
+        <h4 style="margin:0"><span class="tag a">비트코인</span> &nbsp;작업 증명(PoW, Proof of Work)</h4>
+        <p style="margin-top:10px">어려운 해시 퍼즐을 먼저 푼 참여자가 블록을 제안함.</p>
+      </div>
+      <div class="card" style="border-color:var(--greend);padding:20px 26px">
+        <h4 style="margin:0"><span class="tag g">이더리움</span> &nbsp;지분 증명(PoS, Proof of Stake)</h4>
+        <p style="margin-top:10px">ETH를 예치한 검증자 중에서 무작위로 선정함.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">먼저 <b>비트코인의 PoW</b>가 이 문제를 어떻게 풀었는지 살펴봄</div>
+</section>
+
+<!-- 20 ================================================== -->
+<section class="slide cover" data-sec="4" data-c="pow">
+  <div class="cover-wrap">
+    <div>
+      <div class="cn">04</div>
+      <div class="cl">SECTION 04</div>
+      <h2>비트코인과 작업 증명(PoW)</h2>
+      <p class="cq">해시 퍼즐 경쟁은 어떻게 블록 생성자를 정하고, 무엇을 비용으로 삼는가</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 560 380" width="100%">
+        <g stroke="#f2a83f" stroke-width="2" fill="none" opacity=".8">
+          <path d="M60 300 L60 120"></path><path d="M160 300 L160 120"></path><path d="M260 300 L260 120"></path><path d="M360 300 L360 120"></path><path d="M460 300 L460 120"></path>
+        </g>
+        <g fill="#5c3d0e" stroke="#f2a83f" stroke-width="2">
+          <rect x="34" y="250" width="52" height="50" rx="6"></rect>
+          <rect x="134" y="220" width="52" height="80" rx="6"></rect>
+          <rect x="234" y="270" width="52" height="30" rx="6"></rect>
+          <rect x="334" y="200" width="52" height="100" rx="6"></rect>
+          <rect x="434" y="240" width="52" height="60" rx="6"></rect>
+        </g>
+        <g fill="#8ba7c8" font-size="15" text-anchor="middle">
+          <text x="60" y="330">시도</text><text x="160" y="330">시도</text><text x="260" y="330">시도</text><text x="360" y="330">시도</text><text x="460" y="330">시도</text>
+        </g>
+        <circle cx="360" cy="170" r="22" fill="#f2a83f"></circle>
+        <text x="360" y="178" fill="#0a1a2c" font-size="20" font-weight="700" text-anchor="middle">✓</text>
+        <text x="360" y="120" fill="#f2a83f" font-size="18" text-anchor="middle">조건 충족</text>
+        <text x="150" y="80" fill="#c6d6e8" font-size="20">반복 시도 → 우연히 조건을 만족한 참여자가 블록 제안</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 21 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW</div>
+  <h2 class="s-title">후보 블록은 많고, 고를 사람은 없음</h2>
+  <p class="s-lead">수많은 노드가 각자 후보 블록을 만들지만, 그중 하나를 골라 줄 중앙 주체가 없음</p>
+  <div class="s-body">
+    <div class="g32">
+      <div class="card" style="border-color:#6b4a17">
+        <h4>비트코인 노드 규모</h4>
+        <p style="font-size:56px;color:var(--amber);font-weight:800;margin:6px 0 4px">≈ 1만 7천 대</p>
+        <p>인터넷상에서 관측되는 <b>공개 노드</b>의 수임.</p>
+        <p style="color:var(--ink3)">비공개 노드까지 포함한 전체 수는 정확히 알 수 없음.</p>
+      </div>
+      <div>
+        <ul class="bl">
+          <li>블록체인 네트워크는 블록 하나를 완성하면 <b>곧바로 다음 블록을 만드는 절차</b>를 밟음.</li>
+          <li>노드들은 각자 사용자로부터 제출된 <b>거래 요청을 받음</b>.</li>
+          <li>어떤 거래가 <b>유효한지 검증</b>함.</li>
+          <li>어떤 <b>순서로 거래를 기록할지</b>도 판단함.</li>
+          <li>그 거래들을 모아 <b>하나의 후보 블록을 구성</b>함.</li>
+          <li>그런데 이렇게 많은 노드가 모두 자기 블록을 채택해 달라고 하면, <b>누구의 블록을 골라야 하는지</b>가 문제가 됨.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">비트코인은 이 선택을 <b>어려운 해시 퍼즐 경쟁</b>으로 해결함</div>
+</section>
+
+<!-- 22 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW</div>
+  <h2 class="s-title">해시 퍼즐은 계산이 아니라 반복 시도임</h2>
+  <p class="s-lead">정답을 계산해 내는 문제가 아니라, 목표값보다 작은 해시값이 나올 때까지 값을 바꿔 반복 시도하는 과정임</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:#6b4a17">
+        <h4>퍼즐의 내용</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>채굴자는 블록의 요약 정보인 <b>헤더에 여러 값을 넣어</b> SHA-256 해시 함수를 반복 계산함.</li>
+          <li>목표는 해시 결과값이 <b>네트워크가 정한 목표값보다 작게 나오는 입력</b>을 찾는 것임.</li>
+          <li>해시는 예측이 불가능하므로 <b>패턴을 읽거나 요령을 쓸 수 없음</b>.</li>
+          <li>결국 <b>누가 더 많은 연산을 더 빨리 시도하느냐</b>가 경쟁이 됨.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>시도의 형태</h4>
+        <div style="font-size:23px;line-height:2.05;color:var(--ink2)" class="mono">
+          시도 1 &nbsp;→ &nbsp;<span style="color:#ffb4b4">9c4f… 목표값보다 큼 ✕</span><br>
+          시도 2 &nbsp;→ &nbsp;<span style="color:#ffb4b4">b820… 목표값보다 큼 ✕</span><br>
+          시도 3 &nbsp;→ &nbsp;<span style="color:#ffb4b4">7d19… 목표값보다 큼 ✕</span><br>
+          &nbsp;&nbsp;&nbsp;⋮ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--ink3)">수없이 많은 반복</span><br>
+          시도 N &nbsp;→ &nbsp;<span style="color:var(--amber)">0000 03a7… 조건 충족 ✓</span>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px">
+      가장 먼저 조건을 만족한 채굴자가 블록을 발견해 네트워크에 전파하고, <b>다른 노드들이 이를 검증해 체인에 연결</b>함. 퍼즐을 푸는 과정이 일하는 것과 비슷해 <b>Work</b>, 그 답을 근거로 블록을 만들기 때문에 <b>작업 증명</b>이라 부름.
+    </div>
+  </div>
+  <div class="s-next">이 과정을 <b>처음부터 끝까지 한 줄의 순서</b>로 정리함</div>
+</section>
+
+<!-- 23 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW</div>
+  <h2 class="s-title">PoW 전체 순서</h2>
+  <p class="s-lead">거래 수집부터 보상까지, 블록 하나가 확정되는 전 과정임</p>
+  <div class="s-body">
+    <div class="flow pow" style="margin-bottom:20px">
+      <div class="st"><i>01</i><b>거래 수집</b>제출된 거래 요청을 모음</div>
+      <div class="ar">›</div>
+      <div class="st"><i>02</i><b>거래 검증</b>유효한 거래인지 확인함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>03</i><b>후보 블록 구성</b>거래 순서를 정해 블록을 만듦</div>
+      <div class="ar">›</div>
+      <div class="st"><i>04</i><b>해시 반복 계산</b>조건을 만족할 값을 계속 시도함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>05</i><b>조건 충족</b>목표값보다 작은 해시를 발견함</div>
+    </div>
+    <div class="flow pow">
+      <div class="st"><i>06</i><b>블록 전파</b>네트워크에 블록을 알림</div>
+      <div class="ar">›</div>
+      <div class="st"><i>07</i><b>다른 노드의 검증</b>정상 생성된 블록인지 함께 확인함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>08</i><b>체인 연결</b>블록이 최종 승인되어 이어짐</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--amber)"><i>09</i><b>보상</b>퍼즐을 푼 참여자가<br>비트코인을 받음</div>
+    </div>
+    <div class="callout" style="margin-top:26px">
+      핵심은 <b>퍼즐을 푼 참여자가 곧바로 기록을 확정하는 것이 아니라는 점</b>임. 후보 블록은 다른 노드들의 검증을 통과한 뒤에야 체인에 연결되고, 그 대가로 보상이 지급됨.
+    </div>
+  </div>
+  <div class="s-next">이제 이 해시 퍼즐을 푸는 작업이 왜 <b>‘채굴’</b>이라 불리는지, 난이도 조정이 블록 생성 간격을 어떻게 유지하는지 살펴봄</div>
+</section>
+
+<!-- 24 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW</div>
+  <h2 class="s-title">채굴이라 부르는 이유</h2>
+  <p class="s-lead">어디에 금이 있는지 모른 채 곡괭이를 내리치는 광부의 모습과 비슷해서 채굴이라는 표현을 씀</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:#6b4a17">
+        <h4>광부의 비유</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>광부는 <b>광맥의 위치를 모른 채</b> 여기저기를 반복해서 파 봄.</li>
+          <li>요령이 없으므로 <b>많이 시도한 사람이 먼저 발견할 가능성</b>이 커짐.</li>
+          <li>해시 퍼즐도 요령 없이 수없이 연산하다 <b>우연히 조건을 만족</b>하게 설계되어 있음.</li>
+          <li>그래서 이 과정을 <b>채굴(mining)</b>이라 부름.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>난이도 조정</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>채굴 경쟁이 강해져 블록이 <b>너무 빨리</b> 만들어지면, 정답 조건을 <b>더 까다롭게</b> 조정함.</li>
+          <li>반대로 블록 생성이 <b>너무 느려지면</b> 조건을 <b>완화</b>함.</li>
+          <li>이 조정은 <b>약 2주마다</b> 이루어짐.</li>
+          <li>목적은 블록 생성 간격을 <b>평균 약 10분</b>으로 유지하려는 것임.</li>
+        </ul>
+      </div>
+    </div>
+    <svg viewBox="0 0 1100 160" width="100%" style="margin-top:24px">
+      <line x1="40" y1="110" x2="1060" y2="110" stroke="#27456e" stroke-width="2"></line>
+      <g fill="#f2a83f">
+        <rect x="90" y="70" width="26" height="40" rx="4"></rect><rect x="190" y="86" width="26" height="24" rx="4"></rect>
+        <rect x="290" y="60" width="26" height="50" rx="4"></rect><rect x="390" y="80" width="26" height="30" rx="4"></rect>
+        <rect x="490" y="66" width="26" height="44" rx="4"></rect><rect x="590" y="84" width="26" height="26" rx="4"></rect>
+        <rect x="690" y="72" width="26" height="38" rx="4"></rect><rect x="790" y="78" width="26" height="32" rx="4"></rect>
+        <rect x="890" y="68" width="26" height="42" rx="4"></rect><rect x="990" y="82" width="26" height="28" rx="4"></rect>
+      </g>
+      <line x1="40" y1="48" x2="1060" y2="48" stroke="#f2a83f" stroke-width="2" stroke-dasharray="8 8" opacity=".7"></line>
+      <text x="46" y="38" fill="#f2a83f" font-size="19">목표: 평균 약 10분 간격 유지</text>
+      <text x="46" y="142" fill="#8ba7c8" font-size="18">난이도 조정 (약 2주 주기)</text>
+      <text x="1060" y="142" fill="#8ba7c8" font-size="18" text-anchor="end">빠르면 어렵게 · 느리면 완화</text>
+    </svg>
+  </div>
+  <div class="s-next">그렇다면 이 <b>막대한 연산은 낭비인지</b>, 아니면 다른 역할을 하는지 확인함</div>
+</section>
+
+<!-- 25 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW</div>
+  <h2 class="s-title">채굴은 보안 비용임</h2>
+  <p class="s-lead">공격자가 체인을 바꾸려면 정직한 참여자보다 더 큰 장비와 전력 비용을 부담해야 하므로, 연산은 보안 장치로 작동함</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:#5a3a3a">
+        <h4><span class="tag r">비판</span> &nbsp;낭비처럼 보이는 이유</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>비트코인 채굴에 쓰이는 연산력은 얼핏 <b>누가 블록을 쌓을지 정하는 데만 소모</b>되는 것처럼 보임.</li>
+          <li>퍼즐을 풀어낸 채굴자만 보상을 가져가고, 풀지 못한 채굴기의 연산은 <b>쓸모없는 값으로 사라짐</b>.</li>
+          <li>그래서 일각에서는 "그 많은 전기를 들여 쓸모없는 퀴즈 풀기만 하는 것 아닌가"라고 비판함.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--amber)">
+        <h4><span class="tag a">반론</span> &nbsp;그러나 보안을 유지하는 장치임</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>채굴 경쟁에서 이기려면 <b>막대한 장비와 전력을 투입</b>해야 함.</li>
+          <li>누군가 네트워크를 공격하려 한다면 <b>그보다 더 큰 비용</b>을 지불해야 함.</li>
+          <li>따라서 채굴에 소모되는 자원은 단순 낭비가 아니라, 기록을 위변조로부터 지키는 <b>보안 비용</b>으로 볼 수 있음.</li>
+        </ul>
+      </div>
+    </div>
+    <svg viewBox="0 0 1100 130" width="100%" style="margin-top:26px">
+      <rect x="40" y="40" width="420" height="52" rx="8" fill="#5c3d0e" stroke="#f2a83f"></rect>
+      <text x="250" y="73" fill="#f2a83f" font-size="23" font-weight="700" text-anchor="middle">정직한 참여자들이 투입한 누적 작업</text>
+      <text x="510" y="73" fill="#8ba7c8" font-size="26" text-anchor="middle">&lt;</text>
+      <rect x="560" y="26" width="500" height="80" rx="8" fill="#0d2138" stroke="#ef7070" stroke-dasharray="6 6"></rect>
+      <text x="810" y="60" fill="#ffb4b4" font-size="23" font-weight="700" text-anchor="middle">공격자가 체인을 바꾸려면 부담해야 하는 비용</text>
+      <text x="810" y="88" fill="#8ba7c8" font-size="19" text-anchor="middle">더 큰 장비 · 더 많은 전력</text>
+    </svg>
+  </div>
+  <div class="s-next">다만 이 보안 비용에는 <b>전력 소모와 환경 부담</b>이라는 지적이 함께 따라옴</div>
+</section>
+
+<!-- 26 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW</div>
+  <h2 class="s-title">전력과 환경 부담</h2>
+  <p class="s-lead">보안 비용이 환경적 부담을 동반한다는 지적에서는 자유로울 수 없음</p>
+  <div class="s-body">
+    <div class="flow" style="margin-bottom:26px">
+      <div class="st" style="border-color:#6b4a17"><i>01</i><b>해시 퍼즐 반복 계산</b>채굴 경쟁이 전력 소모의 대부분을 차지함</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:#6b4a17"><i>02</i><b>전력 수요 증가</b>경쟁이 커지면 필요한 전력도 늘어남</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:#6b4a17"><i>03</i><b>화석연료 의존</b>석탄·천연가스 발전에 의존하는 경우가 다수임</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:#5a3a3a"><i>04</i><b>탄소 배출 증가</b>그 결과 환경 부담과 파괴로 이어짐</div>
+    </div>
+    <div class="g2">
+      <div class="card"><h4>어디서 전력이 쓰이는가</h4><p>PoW에서는 <span class="hl-a">해시 퍼즐을 반복 계산하는 채굴 경쟁</span>이 전력 소모의 대부분을 차지함.</p></div>
+      <div class="card"><h4>양쪽을 함께 봐야 함</h4><p>연산이 보안 비용이라는 점과, 그 비용이 <span class="hl-a">환경 부담을 동반한다는 비판</span>은 동시에 성립하는 사실임.</p></div>
+    </div>
+  </div>
+  <div class="s-next">전력 문제와 함께 제기되는 또 하나의 문제는 <b>채굴 능력의 집중</b>임</div>
+</section>
+
+<!-- 27 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW</div>
+  <h2 class="s-title">채굴은 왜 집중되는가</h2>
+  <p class="s-lead">채굴 장비가 고도화되면서 일반 참여자의 경쟁력이 낮아지고, 대형 전문 채굴업자로 능력이 쏠릴 수 있음</p>
+  <div class="s-body">
+    <div class="flow">
+      <div class="st"><i>STEP 1</i><b>초기</b>비트코인 초기에는 집에 있는 개인 컴퓨터로 채굴하는 사람이 많았음</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:#6b4a17"><i>STEP 2</i><b>장비 고도화</b>하드웨어가 발전하며 채굴에만 특화된 칩이 등장했음</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:#6b4a17"><i>STEP 3</i><b>효율 격차</b>일반 컴퓨터가 따라올 수 없는 특수 장비를 채굴업자가 운영하기 시작했음</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:#5a3a3a"><i>STEP 4</i><b>일반 참여자 이탈</b>전기세에 비해 보상이 적어 채굴 효율이 나오지 않으므로 개인 채굴기가 줄어듦</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:#5a3a3a"><i>STEP 5</i><b>집중 가속</b>소수 채굴업자에게 채굴이 쏠리는 현상이 가속됨</div>
+    </div>
+    <div class="g2" style="margin-top:26px">
+      <div class="card" style="border-color:#5a3a3a">
+        <h4>현재의 집중도</h4>
+        <p>현재 비트코인 채굴의 <span class="hl-a">약 절반이 몇몇 대형 채굴 업체</span>에 의해 운영됨.</p>
+      </div>
+      <div class="card">
+        <h4>구조적인 문제</h4>
+        <p>이처럼 PoW는 <span class="hl-a">소수 전문 채굴업자의 독점</span> 문제를 겪을 수 있는 구조임.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">채굴 능력이 한쪽으로 쏠리면 <b>51% 공격</b>이라는 위험이 커짐</div>
+</section>
+
+<!-- 28 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW · 51% 공격</div>
+  <h2 class="s-title">채굴 능력의 절반을 넘게 가진 집단이 있다면?</h2>
+  <p class="s-lead">전체 채굴 능력의 과반을 가진 집단은 블록을 더 자주 만들어, 최근 기록의 순서에 영향을 줄 가능성이 커짐</p>
+  <div class="s-body">
+    <div class="g23">
+      <div>
+        <ul class="bl">
+          <li>비트코인은 여러 기록 중에서, <b>채굴 작업이 가장 많이 쌓인 기록</b>을 정상 기록으로 받아들임.</li>
+          <li>한 집단이 전체 채굴 능력의 <b>절반을 넘게 가지면</b>, 자신들이 만든 기록을 다른 참여자들보다 <b>더 빠르게 쌓을 가능성</b>이 커짐.</li>
+          <li>예를 들어 공격자가 비트코인으로 결제한 뒤, 그 <b>결제 기록이 없는 블록</b>을 따로 만들 수 있음.</li>
+          <li>공격자가 만든 기록이 <b>더 많은 채굴 작업을 쌓게 되면</b>, 네트워크는 그 기록을 정상 기록으로 받아들일 수 있음.</li>
+          <li>그러면 공격자가 자신이 보낸 <b>최근 결제를 되돌리는 시도</b>가 가능해짐. 이를 <b>이중 지불 공격</b>이라 부름.</li>
+        </ul>
+        <div class="callout" style="margin-top:20px;font-size:24px;line-height:1.45">
+          단, 다른 사람의 비트코인을 훔치거나 <b>개인키 없이 거래를 위조할 수는 없음</b>.
+        </div>
+      </div>
+      <svg viewBox="0 0 440 340" width="100%">
+        <circle cx="220" cy="150" r="110" fill="#0d2138" stroke="#27456e" stroke-width="2"></circle>
+        <path d="M220 150 L220 40 A110 110 0 0 1 329.6 159.6 A110 110 0 0 1 200.9 258.3 Z" fill="#5c3d0e" stroke="#f2a83f" stroke-width="2"></path>
+        <text x="268" y="146" fill="#f2a83f" font-size="26" font-weight="700" text-anchor="middle">과반</text>
+        <text x="268" y="176" fill="#f2a83f" font-size="18" text-anchor="middle">채굴 능력</text>
+        <text x="164" y="158" fill="#8ba7c8" font-size="20" text-anchor="middle">나머지</text>
+        <text x="220" y="306" fill="#f2a83f" font-size="20" font-weight="700" text-anchor="middle">과반의 채굴 능력</text>
+        <text x="220" y="332" fill="#c6d6e8" font-size="18" text-anchor="middle">→ 최근 기록의 순서를 흔들 가능성 증가</text>
+      </svg>
+    </div>
+  </div>
+  <div class="s-next">여기까지의 내용을 <b>PoW의 장점과 단점</b>으로 정리함</div>
+</section>
+
+<!-- 29 ================================================== -->
+<section class="slide" data-sec="4" data-c="pow">
+  <div class="s-kicker"><b>04</b> 비트코인과 PoW · 정리</div>
+  <h2 class="s-title">PoW의 장점과 단점</h2>
+  <p class="s-lead">요령 없는 경쟁으로 공정한 무작위 선정을 얻는 대신, 전력과 집중화라는 비용을 감수하는 방식임</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:var(--amber)">
+        <h4><span class="tag a">장점</span></h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>그 누구도 요령 없이 퍼즐을 풀어야 하므로, <b>탈중앙 상태에서도 블록 생성자가 무작위로 정해짐</b>.</li>
+          <li>공격에는 더 큰 장비와 전력이 필요하므로, 누적된 작업량 자체가 <b>강한 보안 근거</b>가 됨.</li>
+          <li>선정 과정이 <b>누구나 검증 가능한 계산 결과</b>로 남음.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#5a3a3a">
+        <h4><span class="tag r">단점</span></h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>퍼즐을 푸는 과정에서 <b>전력 소모량이 매우 큼</b>.</li>
+          <li>전력 수요가 화석연료 발전에 의존하는 경우가 많아 <b>탄소 배출과 환경 부담</b> 문제로 이어짐.</li>
+          <li>장비 고도화로 <b>소수 대형 채굴업자에게 채굴이 집중</b>될 수 있음.</li>
+          <li>집중이 심해지면 <b>51% 공격 우려</b>가 커짐.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:26px">이러한 비판 지점에서 <b>이더리움의 지분 증명(PoS, Proof of Stake)</b>이 탄생함.</div>
+  </div>
+  <div class="s-next">이제 <b>PoS가 왜 등장했고 어떻게 작동하는지</b> 살펴봄</div>
+</section>
+
+<!-- 30 ================================================== -->
+<section class="slide cover" data-sec="5" data-c="pos">
+  <div class="cover-wrap">
+    <div>
+      <div class="cn">05</div>
+      <div class="cl">SECTION 05</div>
+      <h2>이더리움과 지분 증명(PoS)</h2>
+      <p class="cq">계산 경쟁이 아니라 예치된 자산으로 보안을 뒷받침하면 무엇이 달라지는가</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 560 380" width="100%">
+        <rect x="60" y="150" width="180" height="120" rx="12" fill="#12503a" stroke="#3fd18b" stroke-width="2"></rect>
+        <text x="150" y="196" fill="#3fd18b" font-size="22" font-weight="700" text-anchor="middle">ETH 스테이킹</text>
+        <text x="150" y="228" fill="#c6d6e8" font-size="17" text-anchor="middle">일정 기간 락업</text>
+        <path d="M248 210 L308 210" stroke="#3fd18b" stroke-width="3"></path>
+        <path d="M300 202 L310 210 L300 218" fill="#3fd18b"></path>
+        <g fill="#0d2138" stroke="#3fd18b" stroke-width="2">
+          <circle cx="360" cy="120" r="24"></circle><circle cx="430" cy="120" r="24"></circle><circle cx="500" cy="120" r="24"></circle>
+          <circle cx="360" cy="210" r="24"></circle><circle cx="500" cy="210" r="24"></circle>
+          <circle cx="360" cy="300" r="24"></circle><circle cx="430" cy="300" r="24"></circle><circle cx="500" cy="300" r="24"></circle>
+        </g>
+        <circle cx="430" cy="210" r="26" fill="#3fd18b"></circle>
+        <text x="430" y="219" fill="#0a1a2c" font-size="20" font-weight="700" text-anchor="middle">✓</text>
+        <text x="430" y="268" fill="#3fd18b" font-size="17" text-anchor="middle">무작위 선정</text>
+        <text x="430" y="352" fill="#8ba7c8" font-size="18" text-anchor="middle">검증자 중에서 블록 제안자를 뽑음</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 31 ================================================== -->
+<section class="slide" data-sec="5" data-c="pos">
+  <div class="s-kicker"><b>05</b> 이더리움과 PoS</div>
+  <h2 class="s-title">PoS는 왜 등장했는가</h2>
+  <p class="s-lead">이더리움은 7년간 PoW로 운영되다가 2022년 9월 PoS로 전환했음</p>
+  <div class="s-body">
+    <svg viewBox="0 0 1700 150" width="100%" style="margin-bottom:26px">
+      <line x1="60" y1="80" x2="1640" y2="80" stroke="#27456e" stroke-width="3"></line>
+      <circle cx="180" cy="80" r="14" fill="#f2a83f"></circle>
+      <text x="180" y="46" fill="#f2a83f" font-size="24" font-weight="700" text-anchor="middle">2015</text>
+      <text x="180" y="122" fill="#c6d6e8" font-size="21" text-anchor="middle">이더리움 탄생 · PoW 운영</text>
+      <rect x="200" y="70" width="800" height="20" fill="#5c3d0e"></rect>
+      <text x="600" y="46" fill="#8ba7c8" font-size="21" text-anchor="middle">약 7년간 비트코인과 동일한 PoW 방식</text>
+      <circle cx="1020" cy="80" r="14" fill="#3fd18b"></circle>
+      <text x="1020" y="46" fill="#3fd18b" font-size="24" font-weight="700" text-anchor="middle">2022. 09</text>
+      <text x="1020" y="122" fill="#c6d6e8" font-size="21" text-anchor="middle">PoW → PoS 전환</text>
+      <rect x="1040" y="70" width="600" height="20" fill="#12503a"></rect>
+      <text x="1340" y="46" fill="#3fd18b" font-size="21" text-anchor="middle">PoS 기반 운영</text>
+    </svg>
+    <div class="g2">
+      <div class="card" style="border-color:var(--greend)">
+        <h4><span class="tag g">이유 1</span> &nbsp;노드를 분산시켜 보안성을 높이려 함</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>PoW에서는 채굴 능력이 소수 대형 업체에 집중될 수 있었음.</li>
+          <li>집중이 커지면 <b>51% 공격 우려</b>도 함께 커짐.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--greend)">
+        <h4><span class="tag g">이유 2</span> &nbsp;불필요한 전력 소모를 줄이려 함</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>해시 퍼즐 경쟁에 들어가는 전력 부담을 줄이려 함.</li>
+          <li>전력 소모로 인한 <b>환경 부담을 감소</b>시키려는 목적임.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">그렇다면 PoS는 <b>계산 경쟁 대신 무엇을 근거로</b> 블록 생성자를 정하는지 확인함</div>
+</section>
+
+<!-- 32 ================================================== -->
+<section class="slide" data-sec="5" data-c="pos">
+  <div class="s-kicker"><b>05</b> 이더리움과 PoS</div>
+  <h2 class="s-title">PoS: ETH를 걸고 블록 생성에 참여함</h2>
+  <p class="s-lead">연산력으로 경쟁하는 대신, ETH를 네트워크에 예치한 참여자 중에서 블록을 기록할 사람을 무작위로 선택함</p>
+  <div class="s-body">
+    <div class="flow" style="margin-bottom:26px">
+      <div class="st" style="border-color:var(--greend)"><i>01</i><b>예치(스테이킹)</b>보유한 ETH를<br>일정 기간 네트워크에 맡김</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--greend)"><i>02</i><b>락업</b>맡긴 자산이 잠기며<br>검증 참여 자격이 생김</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--greend)"><i>03</i><b>무작위 선정</b>검증자 중에서<br>블록 생성자가 정해짐</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--green)"><i>04</i><b>보상 또는 손실</b>규칙을 지키면 보상,<br>어기면 자산 일부를 잃을 위험</div>
+    </div>
+    <div class="g2">
+      <div class="card" style="border-color:var(--greend)">
+        <h4>지분이 곧 참여 근거임</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>코인을 더 많이 맡길수록 <b>선택될 확률이 높아짐</b>.</li>
+          <li>연산력 경쟁이 아니므로 <b>고성능 채굴 장비가 필요하지 않음</b>.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--greend)">
+        <h4>위험 부담이 신뢰를 만드는 구조</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>검증자는 ETH를 락업해, 규칙을 어기면 <b>자산을 잃을 위험</b>을 부담함.(슬래싱)</li>
+          <li>이 위험을 부담했다는 증거로 블록 생성자를 정하므로 <b>Proof of Stake</b>라 부름.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">여기서 <b>노드와 검증자를 정확히 구분</b>해야 함. 둘은 같은 개념이 아님</div>
+</section>
+
+<!-- 33 ================================================== -->
+<section class="slide" data-sec="5" data-c="pos">
+  <div class="s-kicker"><b>05</b> 이더리움과 PoS</div>
+  <h2 class="s-title">노드는 확인하고, 검증자는 서명함</h2>
+  <p class="s-lead">노드는 거래와 블록이 규칙에 맞는지 확인하는 컴퓨터이고, 검증자는 ETH를 맡긴 뒤 블록 제안과 서명에 참여하는 역할임</p>
+  <div class="s-body">
+    <table class="tbl cmp">
+      <thead><tr><th style="width:200px">구분</th><th>노드</th><th>검증자</th></tr></thead>
+      <tbody>
+        <tr>
+          <th>한마디로</th>
+          <td>기록을 확인하고 전달하는 컴퓨터</td>
+          <td class="pos">ETH를 걸고 블록에 서명하는 참여자</td>
+        </tr>
+        <tr>
+          <th>하는 일</th>
+          <td>거래·블록이 규칙에 맞는지 확인하고 네트워크에 전파함</td>
+          <td class="pos">선택되면 블록을 제안하거나, 다른 블록이 맞는지 서명으로 투표함</td>
+        </tr>
+        <tr>
+          <th>ETH 예치</th>
+          <td>필요 없음</td>
+          <td class="pos">필요함</td>
+        </tr>
+        <tr>
+          <th>관계</th>
+          <td>검증자가 아니어도 노드는 될 수 있음</td>
+          <td class="pos">직접 검증자로 참여하려면 노드 소프트웨어 위에서 동작해야 함</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:20px;border-color:var(--green);background:rgba(63,209,139,.08)">
+      검증자는 노드와 완전히 별개의 컴퓨터가 아니라, <b>노드 위에서 ETH를 걸고 추가 책임을 맡는 역할</b>임.
+    </div>
+    <p style="margin:16px 0 0;font-size:24px;line-height:1.5;color:var(--ink3)">
+      따라서 <b style="color:var(--ink2)">노드 수와 검증자 수는 1대 1로 대응하지 않음</b>. 한 운영자가 여러 검증자를 운영할 수도 있음.<br>
+      정리하면 이더리움에서는 노드가 거래와 블록을 독립적으로 검증하고, 검증자는 ETH를 예치한 뒤 블록 제안 또는 블록에 대한 서명에 참여함.
+    </p>
+  </div>
+  <div class="s-next">그렇다면 검증자 중 <b>누가 이번 차례에 블록을 제안하고, 다른 검증자는 어떻게 서명하는지</b> 살펴봄</div>
+</section>
+
+<!-- 34 ================================================== -->
+<section class="slide" data-sec="5" data-c="pos">
+  <div class="s-kicker"><b>05</b> 이더리움과 PoS</div>
+  <h2 class="s-title">블록을 만들 사람은 당번표로 정함</h2>
+  <p class="s-lead">이더리움은 여러 검증자의 서명값을 섞어 만든 추첨값으로, 미래에 블록을 만들 사람과 확인할 사람의 당번표를 정함</p>
+  <div class="s-body">
+    <div class="card" style="border-color:var(--greend)">
+      <h4>먼저, 에포크(epoch)란?</h4>
+      <p>에포크는 이더리움의 시간을 묶어 세는 단위임.</p>
+      <p>12초짜리 블록 생성 차례인 슬롯(slot) 32개가 모이면 에포크 1개이며, 약 6분 24초임.</p>
+      <svg viewBox="0 0 1604 74" width="100%" style="margin-top:12px">
+        <g fill="#12503a" stroke="#3fd18b" stroke-width="1.5">
+          <rect x="2" y="6" width="44" height="28" rx="4"></rect><rect x="52" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="102" y="6" width="44" height="28" rx="4"></rect><rect x="152" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="202" y="6" width="44" height="28" rx="4"></rect><rect x="252" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="302" y="6" width="44" height="28" rx="4"></rect><rect x="352" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="402" y="6" width="44" height="28" rx="4"></rect><rect x="452" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="502" y="6" width="44" height="28" rx="4"></rect><rect x="552" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="602" y="6" width="44" height="28" rx="4"></rect><rect x="652" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="702" y="6" width="44" height="28" rx="4"></rect><rect x="752" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="802" y="6" width="44" height="28" rx="4"></rect><rect x="852" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="902" y="6" width="44" height="28" rx="4"></rect><rect x="952" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="1002" y="6" width="44" height="28" rx="4"></rect><rect x="1052" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="1102" y="6" width="44" height="28" rx="4"></rect><rect x="1152" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="1202" y="6" width="44" height="28" rx="4"></rect><rect x="1252" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="1302" y="6" width="44" height="28" rx="4"></rect><rect x="1352" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="1402" y="6" width="44" height="28" rx="4"></rect><rect x="1452" y="6" width="44" height="28" rx="4"></rect>
+          <rect x="1502" y="6" width="44" height="28" rx="4"></rect><rect x="1552" y="6" width="44" height="28" rx="4"></rect>
+        </g>
+        <text x="800" y="64" fill="#3fd18b" font-size="20" text-anchor="middle">슬롯 32개 · 각 12초 → 에포크 1개 = 약 6분 24초</text>
+      </svg>
+    </div>
+    <div class="flow" style="margin-top:20px">
+      <div class="st" style="border-color:var(--greend)"><i>01</i><b>서명값을 더함</b>블록을 제안한 검증자는 정해진 내용에 서명하고, 그 서명값을 블록에 넣음</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--greend)"><i>02</i><b>이전 값과 섞음</b>네트워크는 새 서명값을 이전까지 쌓인 값과 섞어, 공동 추첨값인 RANDAO를 갱신함</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--greend)"><i>03</i><b>미래의 당번표를 만듦</b>RANDAO를 바탕으로 약 두 에포크 뒤, 즉 약 13분 뒤에 누가 블록을 만들지와 누가 확인할지를 미리 정함</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--green)"><i>04</i><b>당번표대로 블록을 만들고 확인함</b>실제 차례가 오면 한 검증자가 블록을 만들고, 여러 검증자가 그 블록이 맞는지 확인한 뒤 서명으로 동의함</div>
+    </div>
+  </div>
+  <div class="s-basis">기준: 이더리움 공식 문서(지분 증명 · 블록 제안) · 슬롯 32개 = 에포크 1개 ≈ 6분 24초</div>
+  <div class="s-next">그렇다면 이 추첨값은 <b>어떻게 만들어지고, 왜 당번표를 미리 정하는지</b> 확인함</div>
+</section>
+
+<!-- 34-2 ================================================== -->
+<section class="slide" data-sec="5" data-c="pos">
+  <div class="s-kicker"><b>05</b> 이더리움과 PoS</div>
+  <h2 class="s-title">당번표는 어떻게 조작을 막는가</h2>
+  <p class="s-lead">추첨값은 검증자가 임의로 고른 숫자가 아니며, 당번표를 미리 정해 두어 자기 차례를 스스로 만들 수 없게 함</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:var(--greend)">
+        <h4>RANDAO란?</h4>
+        <p>여러 검증자가 차례대로 남긴 서명값을 섞어 만든 <span class="hl-g">공동 추첨값</span>임.</p>
+        <ul class="bl sm" style="margin-top:14px">
+          <li>검증자가 자기 마음대로 숫자를 골라 내는 방식이 아님.</li>
+          <li>정해진 내용에 서명해 나온 값을 사용함.</li>
+          <li>한 검증자가 다음 당번을 <b>자기에게 유리하게 정하기 어렵게</b> 설계됨.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--greend)">
+        <h4>왜 당번표를 미리 정할까</h4>
+        <p>중앙 운영자 없이도 <span class="hl-g">다음 블록은 누가 만들지</span>를 정해야 하기 때문임.</p>
+        <ul class="bl sm" style="margin-top:14px">
+          <li>한 명이 자기 자신을 다음 블록 생성자로 직접 고를 수 없음.</li>
+          <li>정해진 당번 외의 검증자가 블록을 만들면, 다른 검증자들이 정상 블록으로 받아들이지 않음.</li>
+          <li>블록을 만든 사람 외에도 여러 검증자가 확인·서명하므로, <b>한 사람의 판단만으로 기록이 확정되지 않음</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:22px;border-color:var(--green);background:rgba(63,209,139,.08)">
+      정리하면 추첨값은 <b>여러 검증자의 서명에서 나오고</b>, 당번표는 <b>미리 정해지므로</b> 한 참여자가 자기 차례를 만들어 낼 수 없음.
+    </div>
+  </div>
+  <div class="s-next">이제 블록 생성 당번과 확인 당번이 각각 <b>어떤 일을 하고, 어떻게 보상을 받는지</b> 살펴봄</div>
+</section>
+
+<!-- 35 ================================================== -->
+<section class="slide" data-sec="5" data-c="pos">
+  <div class="s-kicker"><b>05</b> 이더리움과 PoS</div>
+  <h2 class="s-title">검증자의 일과 보상</h2>
+  <p class="s-lead">더 많은 ETH를 락업하면 블록 생성자로 결정될 가능성이 높아지고, 제안·검증 참여에 대한 보상이 발생함</p>
+  <div class="s-body">
+    <div class="g23">
+      <div>
+        <ul class="bl">
+          <li>이더리움은 12초마다 슬롯이 열리므로 하루 <b>약 7,200회</b>의 블록 제안 기회가 생김.</li>
+          <li>검증자는 <b>블록을 제안하거나 다른 블록을 검증하는 역할</b>에 참여하며 그 대가로 보상을 받음.</li>
+          <li>블록 생성에 성공하면 인센티브를 받는 구조는 <b>PoW와 동일함</b>.</li>
+          <li>더 많은 ETH를 락업하면 <b>블록 생성자로 결정될 가능성이 높아짐</b>.</li>
+          <li>반대로 규칙을 어기면 <b>맡긴 자산의 일부를 잃을 위험</b>을 부담함.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card" style="border-color:var(--green)">
+          <h4>검증자 보상률</h4>
+          <p style="font-size:56px;color:var(--green);font-weight:800;margin:4px 0 6px">연 약 2.6% APR</p>
+          <p>2026년 7월 기준 <b>평균적인 수준</b>임.</p>
+          <p style="color:var(--ink3);font-size:24px">수수료 · MEV · 가동률 · 운영 수수료에 따라 <b>실제 수익률은 달라짐</b>. 확정된 이자율이 아님.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-basis">기준: 2026년 7월 · 평균 수준이며 조건에 따라 변동함</div>
+  <div class="s-next">PoS의 <b>장점과 비판</b>을 정리하면 PoW와의 차이가 분명해짐</div>
+</section>
+
+<!-- 36 ================================================== -->
+<section class="slide" data-sec="5" data-c="pos">
+  <div class="s-kicker"><b>05</b> 이더리움과 PoS · 정리</div>
+  <h2 class="s-title">PoS의 장점과 비판</h2>
+  <p class="s-lead">전력과 장비 부담은 크게 줄었지만, 자본의 영향력이라는 새로운 질문이 생김</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:var(--green)">
+        <h4><span class="tag g">장점</span></h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>해시 퍼즐 경쟁이 없으므로 <b>전력 소모량을 비약적으로 줄일 수 있음</b>.</li>
+          <li>이더리움의 PoS 전환은 PoW 대비 <b>에너지 소비를 약 99.95% 줄였음</b>.</li>
+          <li>고가의 채굴 장비 의존이 줄어 <b>참여 장벽이 낮아짐</b>.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#5a3a3a">
+        <h4><span class="tag r">비판</span></h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>맡긴 코인 수에 따라 선택 확률이 올라가므로, <b>코인을 많이 가진 참여자의 영향력이 커질 수 있음</b>.</li>
+          <li>많은 자본을 동원한 공격이 가능한 구조가 아닌지에 대한 의구심 존재.</li>
+          <li>비싼 장비가 필요하지 않다는 점이 <b>오히려 보안적으로 취약한 것 아닌가</b>라는 반론도 존재함.</li>
+          <li>결과적으로 <b>자본 집중과 중앙화 위험</b>이 지적됨.</li>
+        </ul>
+      </div>
+    </div>
+    <svg viewBox="0 0 1100 110" width="100%" style="margin-top:24px">
+      <text x="20" y="34" fill="#8ba7c8" font-size="20">PoW 대비 에너지 소비</text>
+      <rect x="20" y="46" width="1000" height="34" rx="6" fill="#5c3d0e" stroke="#f2a83f"></rect>
+      <rect x="20" y="46" width="8" height="34" rx="4" fill="#3fd18b"></rect>
+      <text x="1010" y="70" fill="#f2a83f" font-size="21" text-anchor="end" font-weight="700">PoW 기준 100%</text>
+      <text x="44" y="70" fill="#3fd18b" font-size="21" font-weight="700">약 99.95% 감소</text>
+    </svg>
+  </div>
+  <div class="s-next">두 방식을 <b>같은 기준으로 나란히 비교</b>하면 차이가 더 분명해짐</div>
+</section>
+
+<!-- 37 ================================================== -->
+<section class="slide" data-sec="5" data-c="pos">
+  <div class="s-kicker"><b>05</b> 이더리움과 PoS · 비교</div>
+  <h2 class="s-title">PoW와 PoS 비교</h2>
+  <p class="s-lead">PoW는 물리적 자원으로, PoS는 경제적 담보로 보안을 뒷받침하는 서로 다른 합의 메커니즘임</p>
+  <div class="s-body">
+    <table class="tbl">
+      <thead><tr><th style="width:230px">비교 기준</th><th style="width:36%"><span class="tag a">PoW</span> &nbsp;작업 증명</th><th><span class="tag g">PoS</span> &nbsp;지분 증명</th></tr></thead>
+      <tbody>
+        <tr><th>블록 생성자 선정</th><td class="pow">해시 퍼즐 경쟁</td><td class="pos">스테이킹 참여자 중 선정</td></tr>
+        <tr><th>보안의 기반</th><td class="pow">장비 · 전력 · 누적 작업</td><td class="pos">락업 자산과 손실 위험</td></tr>
+        <tr><th>주요 비용</th><td class="pow">전력 · 장비</td><td class="pos">자산 예치와 운영</td></tr>
+        <tr><th>주요 비판</th><td class="pow">에너지 사용 · 채굴 집중</td><td class="pos">자본 집중 · 경제적 영향력</td></tr>
+        <tr><th>대표 사례</th><td class="pow">비트코인</td><td class="pos">이더리움</td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top:24px">
+      결국 <b>PoW는 물리적 자원(장비와 전력)으로 보안을 확보</b>하고, <b>PoS는 경제적 담보(락업된 자산과 손실 위험)로 신뢰를 유지</b>함. 어느 쪽도 공짜로 보안을 얻지 않으며, <b>서로 다른 종류의 비용</b>을 지불함.
+    </div>
+  </div>
+  <div class="s-next">노드가 하는 일도 한 종류가 아님. <b>풀 노드와 아카이브 노드</b>의 차이를 확인함</div>
+</section>
+
+<!-- 38 ================================================== -->
+<section class="slide cover" data-sec="6">
+  <div class="cover-wrap">
+    <div>
+      <div class="cn">06</div>
+      <div class="cl">SECTION 06</div>
+      <h2>노드의 종류와 속도 문제</h2>
+      <p class="cq">노드는 어디까지 보관하며, 블록체인은 왜 기존 시스템보다 느린가</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 560 380" width="100%">
+        <rect x="40" y="70" width="220" height="240" rx="12" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></rect>
+        <text x="150" y="112" fill="#8cc0f7" font-size="22" font-weight="700" text-anchor="middle">풀 노드</text>
+        <g fill="#16325a" stroke="#27456e"><rect x="70" y="140" width="160" height="26" rx="4"></rect><rect x="70" y="176" width="160" height="26" rx="4"></rect></g>
+        <g fill="#0d2138" stroke="#27456e" stroke-dasharray="4 4"><rect x="70" y="212" width="160" height="26" rx="4"></rect><rect x="70" y="248" width="160" height="26" rx="4"></rect></g>
+        <text x="150" y="296" fill="#8ba7c8" font-size="16" text-anchor="middle">과거 상태 일부는 정리 가능</text>
+        <rect x="300" y="70" width="220" height="240" rx="12" fill="#12294a" stroke="#a58bf5" stroke-width="2"></rect>
+        <text x="410" y="112" fill="#c3b3fb" font-size="22" font-weight="700" text-anchor="middle">아카이브 노드</text>
+        <g fill="#2a2450" stroke="#a58bf5">
+          <rect x="330" y="140" width="160" height="26" rx="4"></rect><rect x="330" y="176" width="160" height="26" rx="4"></rect>
+          <rect x="330" y="212" width="160" height="26" rx="4"></rect><rect x="330" y="248" width="160" height="26" rx="4"></rect>
+        </g>
+        <text x="410" y="296" fill="#8ba7c8" font-size="16" text-anchor="middle">모든 과거 시점 상태 보관</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 39 ================================================== -->
+<section class="slide" data-sec="6">
+  <div class="s-kicker"><b>06</b> 노드의 종류와 속도 문제</div>
+  <h2 class="s-title">풀 노드와 아카이브 노드</h2>
+  <p class="s-lead">둘 다 블록과 거래를 검증하지만, 과거 상태를 어디까지 보관하는지가 다름</p>
+  <div class="s-body">
+    <table class="tbl cmp">
+      <thead><tr><th style="width:210px">구분</th><th>풀 노드</th><th>아카이브 노드</th></tr></thead>
+      <tbody>
+        <tr><th>기본 역할</th><td>블록과 거래를 검증해 최신 상태를 유지함</td><td>풀 노드의 역할을 모두 수행함</td></tr>
+        <tr><th>과거 상태</th><td>오래된 과거 상태 데이터는 저장공간을 아끼기 위해 정리할 수 있음</td><td>과거 모든 시점의 상태까지 보관함</td></tr>
+        <tr><th>조회 범위</th><td>최신 상태 중심으로 조회 가능함</td><td>특정 과거 블록 시점의 잔액이나 스마트 컨트랙트 상태를 바로 조회 가능함</td></tr>
+      </tbody>
+    </table>
+    <div class="g23" style="margin-top:18px">
+      <div class="card">
+        <h4>아카이브 노드가 필요한 곳</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li><b>블록 탐색기</b>는 과거 블록과 거래를 그대로 보여 줘야 함.</li>
+          <li><b>지갑 서비스</b>는 과거 시점의 잔액 조회 요청을 처리해야 함.</li>
+          <li><b>온체인 분석 서비스</b>는 과거 데이터를 대량으로 조회함.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#4a3f7a">
+        <h4>저장 부담</h4>
+        <p>이더리움의 기존 Geth 아카이브 방식은 메인넷의 모든 과거 상태를 보관할 경우 <span style="color:#c3b3fb;font-weight:700">20TB를 넘는 저장공간</span>이 필요할 수 있으므로, 모든 노드가 아카이브 노드일 필요는 없음.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-basis">기준: 이더리움 메인넷 · Geth 기존 아카이브 방식</div>
+  <div class="s-next">노드가 이렇게까지 검증하고 보관한다면, <b>속도는 어떻게 되는지</b> 살펴봄</div>
+</section>
+
+<!-- 40 ================================================== -->
+<section class="slide" data-sec="6">
+  <div class="s-kicker"><b>06</b> 노드의 종류와 속도 문제</div>
+  <h2 class="s-title">왜 블록체인은 느린가</h2>
+  <p class="s-lead">클라우드에는 큰 파일도 몇 초면 저장되는데, 블록체인은 작은 정보를 기록하는 데도 시간과 수수료가 필요함</p>
+  <div class="s-body">
+    <div class="bars">
+      <div class="bar">
+        <div class="nm">비트코인<s>기본 레이어 · 평균 약 10분마다 블록</s></div>
+        <div class="tr"><div class="fl a min" style="width:1%"><span>약 3~7 TPS</span></div></div>
+      </div>
+      <div class="bar">
+        <div class="nm">이더리움 메인넷<s>12초 슬롯 단위 운영</s></div>
+        <div class="tr"><div class="fl g min" style="width:1.6%"><span>약 15~20 TPS</span></div></div>
+      </div>
+      <div class="bar">
+        <div class="nm">VISA<s>2025 회계연도 처리 거래량 기준</s></div>
+        <div class="tr"><div class="fl v" style="width:100%"><span>연평균 약 8,200 TPS</span></div></div>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:30px">
+      <div class="card"><h4>초당 처리 건수(TPS, Transactions Per Second)</h4><p>1초에 처리할 수 있는 거래 건수를 뜻하는 지표임. 위 막대는 같은 기준으로 비교한 <span class="hl">선형 비율</span>임.</p></div>
+      <div class="card"><h4>격차의 의미</h4><p>블록체인에 무엇인가를 기록하려면 <span class="hl">블록 생성 시간만큼 기다려야 함</span>. 이 대기 시간이 곧 속도 차이로 나타남.</p></div>
+    </div>
+  </div>
+  <div class="s-basis">기준: VISA는 2025 회계연도 처리 거래량 기준 연평균 수치임</div>
+  <div class="s-next">이 차이가 <b>기술력 부족 때문인지</b>, 아니면 구조 때문인지 확인함</div>
+</section>
+
+<!-- 41 ================================================== -->
+<section class="slide" data-sec="6">
+  <div class="s-kicker"><b>06</b> 노드의 종류와 속도 문제</div>
+  <h2 class="s-title">느린 이유는 합의임</h2>
+  <p class="s-lead">기술력이 부족해서가 아니라, 분산된 참여자가 거래를 검증하고 하나의 정식 기록에 합의하기 때문에 느림</p>
+  <div class="s-body">
+    <div class="flow" style="margin-bottom:26px">
+      <div class="st"><i>01</i><b>거래 정보 수집</b>노드가 거래 정보를 모음</div>
+      <div class="ar">›</div>
+      <div class="st"><i>02</i><b>유효성 검증</b>실제로 유효한 거래인지 확인함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>03</i><b>우선순위 결정</b>거래가 많으면 무엇을 먼저 처리할지 정함</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--line2)"><i>04</i><b>합의</b>모든 노드가 같은 정보를 기록하도록 맞춤</div>
+      <div class="ar">›</div>
+      <div class="st"><i>05</i><b>네트워크 전파</b>합의된 블록이 전체로 퍼지는 데도 시간이 걸림</div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <h4>핵심은 분산 저장과 무결성임</h4>
+        <p>블록체인의 핵심은 데이터를 분산해서 저장하고, 저장된 정보가 <span class="hl">무결함을 보장하는 것</span>임.</p>
+        <p>바로 이 과정에서 <span class="hl">필연적인 비효율</span>이 발생함.</p>
+      </div>
+      <div class="card">
+        <h4>검증이 끝나도 끝이 아님</h4>
+        <p>검증이 끝난 정보도 곧바로 기록되지 않고, 모든 노드가 동기화해 <span class="hl">동일한 정보를 기록하기 위한 합의</span>를 거침.</p>
+        <p>최종 합의된 블록이 네트워크 전체로 전파되는 데에도 상당한 시간이 걸림.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">그렇다면 <b>합의는 왜 반드시 필요한지</b>, 두 가지 문제로 확인함</div>
+</section>
+
+<!-- 42 ================================================== -->
+<section class="slide cover" data-sec="7">
+  <div class="cn">07</div>
+  <div class="cl">SECTION 07</div>
+  <h2>이중지불과 비잔틴 장군 문제</h2>
+  <p class="cq">분산 저장은 안전성을 높이는 대신 어떤 새로운 문제를 만드는가</p>
+</section>
+
+<!-- 43 ================================================== -->
+<section class="slide" data-sec="7">
+  <div class="s-kicker"><b>07</b> 이중지불과 비잔틴 장군 문제</div>
+  <h2 class="s-title">이중지불 문제</h2>
+  <p class="s-lead">잔액은 1 ETH인데 두 개의 거래를 서로 다른 노드에 동시에 보내면, 두 노드 모두 처음에는 가능한 거래로 받아들일 수 있음</p>
+  <div class="s-body">
+    <svg viewBox="0 0 1700 300" width="100%">
+      <rect x="700" y="10" width="300" height="66" rx="10" fill="#12294a" stroke="#5aa2f0" stroke-width="2"></rect>
+      <text x="850" y="52" fill="#8cc0f7" font-size="26" font-weight="700" text-anchor="middle">지갑 잔액 1 ETH</text>
+      <g stroke="#ef7070" stroke-width="3" fill="none">
+        <path d="M760 80 L420 130"></path><path d="M940 80 L1280 130"></path>
+      </g>
+      <rect x="200" y="136" width="440" height="66" rx="10" fill="#0d2138" stroke="#ef7070" stroke-width="2"></rect>
+      <text x="420" y="178" fill="#ffb4b4" font-size="25" text-anchor="middle">거래 ① A에게 1 ETH 전송</text>
+      <rect x="1060" y="136" width="440" height="66" rx="10" fill="#0d2138" stroke="#ef7070" stroke-width="2"></rect>
+      <text x="1280" y="178" fill="#ffb4b4" font-size="25" text-anchor="middle">거래 ② B에게 1 ETH 전송</text>
+      <path d="M420 206 L420 236" stroke="#375f92" stroke-width="3"></path><path d="M412 228 L420 238 L428 228" fill="#375f92"></path>
+      <path d="M1280 206 L1280 236" stroke="#375f92" stroke-width="3"></path><path d="M1272 228 L1280 238 L1288 228" fill="#375f92"></path>
+      <rect x="240" y="240" width="360" height="56" rx="10" fill="#12294a" stroke="#5aa2f0"></rect>
+      <text x="420" y="276" fill="#c6d6e8" font-size="24" text-anchor="middle">X 노드 · 먼저 받은 ①을 수용</text>
+      <rect x="1100" y="240" width="360" height="56" rx="10" fill="#12294a" stroke="#5aa2f0"></rect>
+      <text x="1280" y="276" fill="#c6d6e8" font-size="24" text-anchor="middle">Y 노드 · 먼저 받은 ②를 수용</text>
+      <text x="850" y="252" fill="#8ba7c8" font-size="22" text-anchor="middle">서로 떨어져 있어</text>
+      <text x="850" y="282" fill="#8ba7c8" font-size="22" text-anchor="middle">상대의 거래를 아직 모름</text>
+    </svg>
+    <div class="callout" style="margin-top:22px">
+      두 노드는 각자 받은 거래를 주변 노드에게 전파함. 그런데 지갑에는 <b>1 ETH밖에 없으므로 두 거래가 모두 유효할 수는 없음</b>. 이런 상황이 <b>이중지불 문제</b>임. 결국 둘 중 하나만 정식 기록이 되어야 하므로, <b>거래의 순서와 하나의 정식 체인을 정하는 합의</b>가 필요함.
+    </div>
+  </div>
+  <div class="s-next">두 번째 문제는 <b>서로 신뢰할 수 없는 참여자들이 같은 결정을 내리는 문제</b>임</div>
+</section>
+
+<!-- 44 ================================================== -->
+<section class="slide" data-sec="7">
+  <div class="s-kicker"><b>07</b> 이중지불과 비잔틴 장군 문제</div>
+  <h2 class="s-title">비잔틴 장군 문제</h2>
+  <p class="s-lead">서로 신뢰할 수 없는 사람들이 멀리 떨어져 있을 때, 어떻게 똑같은 결정을 내릴 수 있는가</p>
+  <div class="s-body">
+    <div class="g32">
+      <svg viewBox="0 0 500 330" width="100%">
+        <g fill="#12294a" stroke="#5aa2f0" stroke-width="2">
+          <circle cx="80" cy="70" r="34"></circle><circle cx="420" cy="70" r="34"></circle><circle cx="80" cy="250" r="34"></circle>
+        </g>
+        <circle cx="420" cy="250" r="34" fill="#2a1418" stroke="#ef7070" stroke-width="2"></circle>
+        <g fill="#8cc0f7" font-size="17" text-anchor="middle">
+          <text x="80" y="76">장군 A</text><text x="420" y="76">장군 B</text><text x="80" y="256">장군 C</text>
+        </g>
+        <text x="420" y="256" fill="#ffb4b4" font-size="17" text-anchor="middle">배신자</text>
+        <g stroke="#27456e" stroke-width="2" fill="none">
+          <path d="M114 70 L386 70"></path><path d="M80 104 L80 216"></path><path d="M114 250 L386 250"></path><path d="M420 104 L420 216"></path>
+        </g>
+        <g fill="#8ba7c8" font-size="15" text-anchor="middle">
+          <text x="250" y="58">전령</text><text x="250" y="240">전령</text>
+        </g>
+        <text x="250" y="160" fill="#c6d6e8" font-size="19" text-anchor="middle">직접 대화 불가</text>
+        <text x="250" y="186" fill="#8ba7c8" font-size="17" text-anchor="middle">전령을 통해서만 소통</text>
+        <text x="250" y="316" fill="#ffb4b4" font-size="17" text-anchor="middle">전령이 붙잡히거나 메시지가 바뀔 수 있음</text>
+      </svg>
+      <div>
+        <ul class="bl sm">
+          <li>여러 명의 장군이 각각 군대를 데리고 있음.</li>
+          <li>적군을 무찌르려면 장군들이 <b>모두 동시에 공격</b>해야 함.</li>
+          <li>문제는 장군들이 멀리 떨어져 있어 <b>직접 대화가 불가능</b>함.</li>
+          <li>오직 명령이나 문서 전달을 맡은 병사인 <b>전령</b>을 통해서만 소통 가능함.</li>
+          <li>전령이 가는 길에 죽거나 붙잡혀 <b>메시지가 바뀔 수도 있음</b>.</li>
+          <li>심지어 장군 중 일부가 <b>배신자</b>라서 의도적으로 서로 다른 명령을 내릴 가능성도 존재함.</li>
+          <li>예를 들어 어떤 장군은 "새벽에 공격하라"는 메시지를, 다른 장군은 "지금은 후퇴하라"는 메시지를 받을 수 있음.</li>
+          <li>장군들이 같은 결정을 내리지 못하고 제각각 움직이면 <b>작전은 실패함</b>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">이 비유를 <b>블록체인 네트워크 상황</b>으로 다시 옮겨 보면 문제가 분명해짐</div>
+</section>
+
+<!-- 45 ================================================== -->
+<section class="slide" data-sec="7">
+  <div class="s-kicker"><b>07</b> 이중지불과 비잔틴 장군 문제</div>
+  <h2 class="s-title">블록체인에서의 같은 상황</h2>
+  <p class="s-lead">전 세계에 분산된 노드들이 정보를 주고받는 과정에서도 잘못된 정보와 거짓 정보가 섞일 수 있음</p>
+  <div class="s-body">
+    <div class="g4">
+      <div class="card"><h4><span class="n">1</span>분산</h4><p>네트워크는 전 세계에 분산된 수많은 노드가 서로 정보를 주고받으며 유지됨.</p></div>
+      <div class="card"><h4><span class="n">2</span>장애</h4><p>일부 노드는 단순한 <span class="hl">네트워크 연결 불안정</span>으로 잘못된 데이터를 전달할 수 있음.</p></div>
+      <div class="card" style="border-color:#5a3a3a"><h4><span class="n">3</span>악의</h4><p>악의적인 노드가 <span style="color:#ffb4b4;font-weight:700">의도적으로 거짓 정보</span>를 흘릴 수도 있음.</p></div>
+      <div class="card" style="border-color:var(--line2)"><h4><span class="n">4</span>합의</h4><p>그럼에도 네트워크 전체는 <span class="hl">하나의 기록을 선택</span>해야 함.</p></div>
+    </div>
+    <div class="g2" style="margin-top:26px">
+      <div class="card">
+        <h4>이중지불 문제가 걸리는 지점</h4>
+        <p>거래의 <span class="hl">유효성을 검증할 때</span> 필수적으로 확인해야 하는 문제임.</p>
+      </div>
+      <div class="card">
+        <h4>비잔틴 장군 문제가 걸리는 지점</h4>
+        <p>노드들이 <span class="hl">동일한 데이터를 저장했는지 합의하는 과정</span>에서 필수적으로 확인해야 하는 문제임.</p>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">이 두 문제를 실제로 해결하는 장치가 <b>합의 알고리즘</b>임</div>
+</section>
+
+<!-- 46 ================================================== -->
+<section class="slide cover" data-sec="8">
+  <div class="cover-wrap">
+    <div>
+      <div class="cn">08</div>
+      <div class="cl">SECTION 08</div>
+      <h2>합의 알고리즘과 확장성</h2>
+      <p class="cq">갈라진 체인 중 하나를 어떻게 고르며, 속도를 높이면 무엇을 감수해야 하는가</p>
+    </div>
+    <div>
+      <svg viewBox="0 0 560 380" width="100%">
+        <g fill="#12294a" stroke="#27456e" stroke-width="2">
+          <rect x="30" y="160" width="70" height="60" rx="8"></rect><rect x="120" y="160" width="70" height="60" rx="8"></rect>
+        </g>
+        <g stroke="#27456e" stroke-width="3" fill="none"><path d="M100 190 L118 190"></path><path d="M190 190 L210 160"></path><path d="M190 190 L210 240"></path></g>
+        <g fill="#12294a" stroke="#5aa2f0" stroke-width="2">
+          <rect x="212" y="100" width="70" height="60" rx="8"></rect><rect x="302" y="100" width="70" height="60" rx="8"></rect><rect x="392" y="100" width="70" height="60" rx="8"></rect>
+        </g>
+        <g stroke="#5aa2f0" stroke-width="3" fill="none"><path d="M282 130 L300 130"></path><path d="M372 130 L390 130"></path></g>
+        <g fill="#0d2138" stroke="#375f92" stroke-width="2" opacity=".6">
+          <rect x="212" y="240" width="70" height="60" rx="8"></rect><rect x="302" y="240" width="70" height="60" rx="8"></rect>
+        </g>
+        <path d="M282 270 L300 270" stroke="#375f92" stroke-width="3"></path>
+        <text x="470" y="136" fill="#5aa2f0" font-size="20" font-weight="700">채택</text>
+        <text x="392" y="276" fill="#8ba7c8" font-size="20">폐기</text>
+        <text x="280" y="352" fill="#c6d6e8" font-size="19" text-anchor="middle">누적 작업이 더 많이 투입된 체인이 정식 체인이 됨</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- 47 ================================================== -->
+<section class="slide" data-sec="8">
+  <div class="s-kicker"><b>08</b> 합의 알고리즘과 확장성</div>
+  <h2 class="s-title">포크와 누적 작업</h2>
+  <p class="s-lead">두 채굴자가 같은 부모 블록을 기준으로 블록을 거의 동시에 만들면, 네트워크는 잠시 두 갈래의 체인을 보게 됨. PoW에서는 누적 작업이 더 많은 체인이 정상 체인으로 선택됨</p>
+  <div class="s-body">
+    <div class="callout" style="border-color:var(--blue);background:rgba(90,162,240,.09)">
+      <span class="tag">정의</span> <b>포크</b>란 같은 부모 블록 위에 유효한 블록이 거의 동시에 두 개 이상 만들어져, 네트워크의 체인이 잠시 여러 갈래로 나뉘는 현상임
+    </div>
+    <svg viewBox="0 0 1700 300" width="100%" style="max-width:1500px;margin-top:18px">
+      <g fill="#12294a" stroke="#27456e" stroke-width="2">
+        <rect x="40" y="120" width="120" height="70" rx="10"></rect><rect x="180" y="120" width="120" height="70" rx="10"></rect>
+      </g>
+      <g fill="#8ba7c8" font-size="20" text-anchor="middle"><text x="100" y="162">공통</text><text x="240" y="162">공통</text></g>
+      <g stroke="#27456e" stroke-width="3" fill="none"><path d="M160 155 L178 155"></path><path d="M300 155 L330 80"></path><path d="M300 155 L330 230"></path></g>
+      <g fill="#5c3d0e" stroke="#f2a83f" stroke-width="2">
+        <rect x="332" y="40" width="120" height="70" rx="10"></rect><rect x="472" y="40" width="120" height="70" rx="10"></rect><rect x="612" y="40" width="120" height="70" rx="10"></rect>
+      </g>
+      <g stroke="#f2a83f" stroke-width="3" fill="none"><path d="M452 75 L470 75"></path><path d="M592 75 L610 75"></path></g>
+      <g fill="#f2a83f" font-size="20" text-anchor="middle"><text x="392" y="82">X 체인</text><text x="532" y="82">X 체인</text><text x="672" y="82">X 체인</text></g>
+      <g fill="#0d2138" stroke="#375f92" stroke-width="2">
+        <rect x="332" y="196" width="120" height="70" rx="10"></rect><rect x="472" y="196" width="120" height="70" rx="10"></rect>
+      </g>
+      <path d="M452 231 L470 231" stroke="#375f92" stroke-width="3"></path>
+      <g fill="#8ba7c8" font-size="20" text-anchor="middle"><text x="392" y="238">Y 체인</text><text x="532" y="238">Y 체인</text></g>
+      <text x="332" y="300" fill="#8ba7c8" font-size="19">같은 부모 블록에서 갈라짐</text>
+      <rect x="800" y="34" width="500" height="34" rx="6" fill="#5c3d0e" stroke="#f2a83f"></rect>
+      <text x="1050" y="59" fill="#f2a83f" font-size="21" font-weight="700" text-anchor="middle">누적 작업량 더 많음 → 정식 체인</text>
+      <rect x="800" y="196" width="300" height="34" rx="6" fill="#16325a" stroke="#375f92"></rect>
+      <text x="950" y="221" fill="#8ba7c8" font-size="21" text-anchor="middle">누적 작업량 적음 → 폐기</text>
+      <text x="800" y="120" fill="#c6d6e8" font-size="22">“더 긴 체인”은 단순히 블록 개수가 많은 체인이 아님</text>
+      <text x="800" y="156" fill="#c6d6e8" font-size="22">PoW에서는 <tspan fill="#f2a83f" font-weight="700">더 많은 계산 작업이 투입된 체인</tspan>을 뜻함</text>
+    </svg>
+    <ul class="bl sm" style="margin-top:16px">
+      <li>원인은 <b>서로 다른 거래가 담겨서</b>가 아니라, 같은 부모 블록 위에 유효한 블록이 <b>거의 동시에 만들어졌기</b> 때문임</li>
+      <li>두 갈래 블록은 거래나 거래 순서가 다를 수 있지만, 그것은 포크 정의의 <b>필수 조건이 아님</b></li>
+      <li>규칙을 바꾸는 <b>업그레이드 포크(소프트포크·하드포크)</b>가 아니라, 블록 전파 시간 때문에 생기는 <b>일시적 체인 분기</b>를 뜻함</li>
+    </ul>
+  </div>
+  <div class="s-basis">기준: Bitcoin 개발자 가이드(Block Chain) · Bitcoin 용어집 · Ethereum 공식 문서(Forks)</div>
+  <div class="s-next">이 규칙을 앞의 <b>이중지불 사례</b>에 적용하면 결과가 정리됨</div>
+</section>
+
+<!-- 48 ================================================== -->
+<section class="slide" data-sec="8">
+  <div class="s-kicker"><b>08</b> 합의 알고리즘과 확장성</div>
+  <h2 class="s-title">이중지불은 이렇게 정리됨</h2>
+  <p class="s-lead">A에게 보낸 거래가 포함된 체인이 정식으로 선택되면, B에게 보낸 거래는 버려짐</p>
+  <div class="s-body">
+    <svg viewBox="0 0 1700 300" width="100%">
+      <g fill="#12294a" stroke="#27456e" stroke-width="2"><rect x="40" y="120" width="130" height="70" rx="10"></rect></g>
+      <text x="105" y="162" fill="#8ba7c8" font-size="20" text-anchor="middle">공통 블록</text>
+      <g stroke="#27456e" stroke-width="3" fill="none"><path d="M170 155 L200 80"></path><path d="M170 155 L200 230"></path></g>
+      <rect x="202" y="40" width="230" height="70" rx="10" fill="#5c3d0e" stroke="#f2a83f" stroke-width="2"></rect>
+      <text x="317" y="72" fill="#f2a83f" font-size="21" text-anchor="middle" font-weight="700">거래 ① 포함</text>
+      <text x="317" y="96" fill="#c6d6e8" font-size="18" text-anchor="middle">A에게 1 ETH</text>
+      <g fill="#5c3d0e" stroke="#f2a83f" stroke-width="2"><rect x="452" y="40" width="130" height="70" rx="10"></rect><rect x="602" y="40" width="130" height="70" rx="10"></rect></g>
+      <g stroke="#f2a83f" stroke-width="3" fill="none"><path d="M432 75 L450 75"></path><path d="M582 75 L600 75"></path></g>
+      <text x="517" y="82" fill="#f2a83f" font-size="19" text-anchor="middle">+ 작업</text>
+      <text x="667" y="82" fill="#f2a83f" font-size="19" text-anchor="middle">+ 작업</text>
+      <text x="770" y="82" fill="#f2a83f" font-size="22" font-weight="700">정식 체인으로 인정</text>
+      <rect x="202" y="196" width="230" height="70" rx="10" fill="#0d2138" stroke="#ef7070" stroke-width="2" opacity=".8"></rect>
+      <text x="317" y="228" fill="#ffb4b4" font-size="21" text-anchor="middle" font-weight="700">거래 ② 포함</text>
+      <text x="317" y="252" fill="#8ba7c8" font-size="18" text-anchor="middle">B에게 1 ETH</text>
+      <path d="M432 231 L470 231" stroke="#ef7070" stroke-width="3" stroke-dasharray="6 6"></path>
+      <text x="500" y="238" fill="#ffb4b4" font-size="22" font-weight="700">체인에서 버려짐</text>
+      <line x1="202" y1="266" x2="432" y2="196" stroke="#ef7070" stroke-width="2"></line>
+    </svg>
+    <div class="g2" style="margin-top:22px">
+      <div class="card"><h4>결과</h4><p>두 거래 중 <span class="hl">정식 체인에 포함된 하나만 기록으로 남음</span>. 지갑의 1 ETH가 두 번 쓰이는 일은 성립하지 않음.</p></div>
+      <div class="card"><h4>합의의 역할</h4><p>합의는 <span class="hl">거래의 순서와 하나의 정식 기록</span>을 정하는 장치임. 그래서 이중지불 문제를 다룰 수 있음.</p></div>
+    </div>
+  </div>
+  <div class="s-next">그렇다면 <b>악의적인 노드가 거짓 정보를 담은 블록</b>을 만들면 어떻게 되는지 확인함</div>
+</section>
+
+<!-- 49 ================================================== -->
+<section class="slide" data-sec="8">
+  <div class="s-kicker"><b>08</b> 합의 알고리즘과 확장성</div>
+  <h2 class="s-title">거짓 정보는 왜 살아남기 어려운가</h2>
+  <p class="s-lead">거짓 블록을 지지하는 쪽이 과반이 아니라면, 과반의 정직한 참여자가 지지하는 체인이 더 많은 작업을 축적할 가능성이 높음</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card">
+        <h4>비잔틴 장군 문제의 처리 방식</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>두 체인 중 <b>누적 작업이 더 많은 쪽을 참으로 선택</b>하고, 다른 쪽은 버림.</li>
+          <li>일부 노드가 거짓 정보를 담은 블록을 만들어도, <b>그 블록을 믿어 주는 노드가 전체의 과반을 넘지 않는다면</b> 그 체인은 계속 이어지기 어려움.</li>
+          <li>확률적으로 다음 블록을 더 많이 이어 붙일 수 있는 쪽은 <b>과반의 참여자가 지지하는 쪽</b>임.</li>
+          <li>따라서 일부 노드가 배신하거나 실수해도 <b>그 결정을 배제하는 방식</b>으로 작동함.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--greend)">
+        <h4>이더리움 PoS의 경우</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>하나의 정식 기록을 선택한다는 <b>목적은 동일함</b>.</li>
+          <li>다만 합의에 참여하는 방식이 <b>지분과 검증 참여에 기반</b>한다는 점이 다름.</li>
+          <li>검증자는 스테이킹한 자산을 근거로 블록 제안과 검증에 참여하며, <b>규칙 위반 시 손실 위험</b>을 부담함.</li>
+          <li>즉 <span class="hl-a">PoW는 누적 작업</span>, <span class="hl-g">PoS는 지분과 검증 참여</span>를 근거로 같은 문제를 해결함.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px">이렇게 블록체인은 합의 과정을 통해 <b>이중지불 문제와 비잔틴 장군 문제를 해결</b>함.</div>
+  </div>
+  <div class="s-next">그러나 <b>합의는 신뢰를 만드는 대신, 그 대가로 처리 속도를 느리게 만듦</b></div>
+</section>
+
+<!-- 50 ================================================== -->
+<section class="slide" data-sec="8">
+  <div class="s-kicker"><b>08</b> 합의 알고리즘과 확장성</div>
+  <h2 class="s-title">합의가 느리게 만드는 이유</h2>
+  <p class="s-lead">검증·전파·선택이라는 합의 과정 자체가 블록체인의 속도 비용임</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:var(--line2)">
+        <h4>합의가 주는 것</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>중앙기관 없이도 <b>하나의 정식 기록</b>을 만들 수 있음.</li>
+          <li><b>이중지불</b>을 걸러낼 수 있음.</li>
+          <li>일부 노드의 <b>장애나 거짓 정보</b>를 배제할 수 있음.</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:#5a3a3a">
+        <h4>합의가 가져가는 것</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>모든 노드가 <b>같은 데이터를 갖고 있는지 확인</b>하는 시간이 필요함.</li>
+          <li>새 거래마다 <b>여러 노드의 검증</b>을 거쳐야 함.</li>
+          <li>합의된 블록이 <b>네트워크 전체로 전파</b>되는 시간도 필요함.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:26px">
+      그래서 블록체인은 기존 중앙화 시스템보다 처리 속도가 현저히 느림. 이는 기술이 부족한 결과가 아니라, <b>안전성을 확보하기 위해 속도를 일부 내놓은 설계의 결과</b>임.
+    </div>
+    <div class="callout" style="margin-top:18px">
+      이러한 속도 문제를 개선하기 위해 <b>합의 알고리즘을 변형하는 다양한 시도</b>가 이어지고 있음.
+    </div>
+  </div>
+  <div class="s-next">대표적인 시도인 <b>솔라나</b>부터 살펴봄</div>
+</section>
+
+<!-- 51 ================================================== -->
+<section class="slide" data-sec="8">
+  <div class="s-kicker"><b>08</b> 합의 알고리즘과 확장성</div>
+  <h2 class="s-title">솔라나의 속도 개선</h2>
+  <p class="s-lead">거래 순서를 미리 정리하고 여러 거래를 동시에 처리하는 방식으로 속도를 높임</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card" style="border-color:var(--line2)">
+        <h4><span class="tag">방식</span></h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>거래의 <b>순서를 미리 정리</b>해 두고 처리함.</li>
+          <li><b>여러 거래를 동시에 처리</b>하는 방식으로 처리량을 끌어올림.</li>
+        </ul>
+        <svg viewBox="0 0 480 120" width="100%" style="margin-top:14px">
+          <text x="10" y="30" fill="#8ba7c8" font-size="17">순차 처리</text>
+          <g fill="#16325a" stroke="#375f92"><rect x="120" y="14" width="60" height="22" rx="4"></rect><rect x="190" y="14" width="60" height="22" rx="4"></rect><rect x="260" y="14" width="60" height="22" rx="4"></rect><rect x="330" y="14" width="60" height="22" rx="4"></rect></g>
+          <text x="10" y="86" fill="#8cc0f7" font-size="17">동시 처리</text>
+          <g fill="#1e4a7d" stroke="#5aa2f0">
+            <rect x="120" y="56" width="60" height="22" rx="4"></rect><rect x="190" y="56" width="60" height="22" rx="4"></rect>
+            <rect x="120" y="84" width="60" height="22" rx="4"></rect><rect x="190" y="84" width="60" height="22" rx="4"></rect>
+            <rect x="260" y="56" width="60" height="22" rx="4"></rect><rect x="260" y="84" width="60" height="22" rx="4"></rect>
+          </g>
+        </svg>
+      </div>
+      <div class="card" style="border-color:#5a3a3a">
+        <h4><span class="tag r">함께 제기되는 우려</span></h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>빠른 처리를 위해 <b>높은 장비 성능</b>이 요구됨.</li>
+          <li><b>운영비 부담</b>도 함께 커짐.</li>
+          <li>그 결과 검증자가 <b>일부 대형 운영자에 집중될 수 있다는 우려</b>가 있음.</li>
+          <li>즉 속도를 얻는 대신 <b>탈중앙성 측면의 질문</b>이 생김.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">앱토스·수이와 레이어2는 <b>다른 방향의 개선</b>을 시도함</div>
+</section>
+
+<!-- 52 ================================================== -->
+<section class="slide" data-sec="8">
+  <div class="s-kicker"><b>08</b> 합의 알고리즘과 확장성</div>
+  <h2 class="s-title">병렬 처리와 레이어2</h2>
+  <p class="s-lead">블록 생성 절차를 병렬로 처리하거나, 거래를 별도 체인에서 먼저 처리하는 방식으로 속도를 높임</p>
+  <div class="s-body">
+    <div class="g2">
+      <div class="card">
+        <h4>앱토스 · 수이</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>블록 생성 절차를 <b>병렬로 처리</b>해 속도를 높이고 있음.</li>
+          <li>다만 병렬 처리를 위해 <b>복잡한 프로그램 구조</b>가 필요함.</li>
+          <li>그 결과 <b>개발자의 부담이 늘어난다는 단점</b>이 있음.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>레이어2</h4>
+        <ul class="bl sm" style="margin-top:6px">
+          <li>거래를 <b>별도의 체인에서 먼저 처리</b>함.</li>
+          <li>그 <b>결과만 메인넷에 기록</b>하는 방식임.</li>
+          <li>메인넷의 합의 부담을 줄이는 방향으로 활발히 개발되고 있음.</li>
+        </ul>
+        <svg viewBox="0 0 480 90" width="100%" style="margin-top:10px">
+          <rect x="10" y="10" width="290" height="34" rx="6" fill="#16325a" stroke="#5aa2f0"></rect>
+          <text x="155" y="34" fill="#8cc0f7" font-size="18" text-anchor="middle">레이어2에서 거래 처리</text>
+          <path d="M306 27 L340 27" stroke="#375f92" stroke-width="3"></path><path d="M332 20 L342 27 L332 34" fill="#375f92"></path>
+          <rect x="10" y="52" width="460" height="30" rx="6" fill="#0d2138" stroke="#27456e"></rect>
+          <text x="240" y="73" fill="#8ba7c8" font-size="17" text-anchor="middle">메인넷에는 결과만 기록</text>
+          <rect x="348" y="10" width="122" height="34" rx="6" fill="#1e4a7d" stroke="#5aa2f0"></rect>
+          <text x="409" y="34" fill="#f3f7fc" font-size="17" text-anchor="middle">결과 요약</text>
+        </svg>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px">
+      이더리움 역시 속도 개선을 위해 <b>다양한 로드맵을 제시하고 있음</b>. 최종적으로는 <b>초당 수만에서 수십만 건의 거래를 처리할 수 있는 상태</b>를 목표로 하고 있음.
+    </div>
+  </div>
+  <div class="s-next">그렇다면 속도를 높이는 시도들은 <b>무엇을 감수하고 있는지</b> 정리함</div>
+</section>
+
+<!-- 53 ================================================== -->
+<section class="slide" data-sec="8">
+  <div class="s-kicker"><b>08</b> 합의 알고리즘과 확장성</div>
+  <h2 class="s-title">블록체인 트릴레마</h2>
+  <p class="s-lead">확장성·보안성·탈중앙성 세 요소를 동시에 최대로 가져가기는 어려움</p>
+  <div class="s-body">
+    <div class="g32">
+      <svg viewBox="0 0 460 340" width="100%">
+        <polygon points="230,40 410,290 50,290" fill="none" stroke="#375f92" stroke-width="3"></polygon>
+        <circle cx="230" cy="40" r="16" fill="#5aa2f0"></circle><circle cx="410" cy="290" r="16" fill="#5aa2f0"></circle><circle cx="50" cy="290" r="16" fill="#5aa2f0"></circle>
+        <text x="230" y="22" fill="#8cc0f7" font-size="22" font-weight="700" text-anchor="middle">확장성</text>
+        <text x="410" y="326" fill="#8cc0f7" font-size="22" font-weight="700" text-anchor="middle">보안성</text>
+        <text x="50" y="326" fill="#8cc0f7" font-size="22" font-weight="700" text-anchor="middle">탈중앙성</text>
+        <text x="230" y="180" fill="#c6d6e8" font-size="20" text-anchor="middle">세 가지를 동시에</text>
+        <text x="230" y="208" fill="#c6d6e8" font-size="20" text-anchor="middle">최대로 만족시키기 어려움</text>
+      </svg>
+      <div>
+        <ul class="bl">
+          <li><b>확장성</b>은 더 많은 거래를 더 빠르게 처리하는 능력임.</li>
+          <li><b>보안성</b>은 기록을 위변조나 공격으로부터 지키는 능력임.</li>
+          <li><b>탈중앙성</b>은 소수에게 권한이 집중되지 않는 성질임.</li>
+          <li>모든 기술이 반드시 같은 것을 희생한다고 단정할 필요는 없음.</li>
+          <li>대신 각 설계가 <b>어떤 비용, 어떤 복잡성, 어떤 중앙화 우려를 감수하는지</b> 항목별로 살펴봐야 함.</li>
+        </ul>
+        <div class="callout" style="margin-top:22px">
+          예를 들어 솔라나는 <b>장비 성능과 운영비 부담</b>을, 앱토스·수이는 <b>프로그램 구조의 복잡성과 개발자 부담</b>을, 레이어2는 <b>별도 체인 처리와 메인넷 기록의 분리</b>를 감수하는 선택임.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="s-next">마지막으로 <b>오늘 배운 내용을 하나의 흐름</b>으로 정리함</div>
+</section>
+
+<!-- 54 ================================================== -->
+<section class="slide" data-sec="9">
+  <div class="s-kicker"><b>END</b> 2주차 온보딩 1교시 총정리</div>
+  <h2 class="s-title">오늘의 흐름 한 장 정리</h2>
+  <p class="s-lead">효율화 → 무결성 → 분산 → 생성자 선정 → 보안 근거 → 합의 → trade-off 순서로 이어짐</p>
+  <div class="s-body">
+    <div class="flow" style="margin-bottom:10px">
+      <div class="st"><i>01</i><b>블록 단위 저장</b>거래를 모아 처리해 통신과 기록을 효율화함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>02</i><b>해시 체인 연결</b>과거 데이터의 변경 흔적을 쉽게 확인함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>03</i><b>분산 저장</b>수많은 노드가 기록을 나눠 보관함</div>
+      <div class="ar">›</div>
+      <div class="st"><i>04</i><b>생성자와 보상</b>블록 생성자를 정하려 PoW와 PoS가 등장함</div>
+    </div>
+    <div class="flow">
+      <div class="st" style="border-color:var(--line2)"><i>05</i><b>보안의 근거</b><span class="hl-a">PoW는 채굴 경쟁</span>, <span class="hl-g">PoS는 스테이킹과 검증 참여</span>로 보안을 뒷받침함</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:var(--line2)"><i>06</i><b>합의의 역할</b>이중지불 문제와 비잔틴 장군 문제를 해결함</div>
+      <div class="ar">›</div>
+      <div class="st" style="border-color:#5a3a3a"><i>07</i><b>남는 과제</b>합의는 속도 비용을 만들고, 확장성·보안성·탈중앙성 사이의 trade-off가 계속 발생함</div>
+    </div>
+    <div class="callout" style="margin-top:12px;font-size:24px;line-height:1.45">
+      어떤 노드도 기록을 독점하지 못하게 서로 경쟁하도록 설계했고, 그 경쟁을 <b>작업 증명에서는 채굴, 지분 증명에서는 검증</b>이라 부름. 경쟁 과정에서 보안이 강화됨.<br>
+      결론적으로 블록체인은 모든 데이터를 담는 시스템이라기보다, <b>높은 신뢰가 필요한 핵심 정보를 기록하는 보완적 기술</b>로 발전할 가능성이 큼. <span style="color:var(--ink3)">(저자 의견)</span>
+    </div>
+  </div>
+  <div class="s-next">마지막으로 오늘 수업을 <b>한 문장</b>으로 남김</div>
+</section>
+
+<!-- 55 ================================================== -->
+<section class="slide title" data-sec="9">
+  <div class="tk">2주차 온보딩 1교시 · 합의 알고리즘</div>
+  <h1 style="font-size:62px;line-height:1.35;margin-top:40px;max-width:1560px">블록체인은 신뢰가 없는 환경에서<br>하나의 기록을 함께 만들기 위해,<br><span style="color:var(--blue2)">효율 일부를 보안과 합의에 사용하는 기술임</span></h1>
+  <div class="tf" style="margin-top:56px">다음 시간에는 DEX/브릿지/오라클에 대해서 알아보자</div>
+</section>
+
+</div>
+
+<div id="bar">
+  <div id="secs"></div>
+  <div id="pg"></div>
+</div>
+<div id="prog"></div>
+
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var secs=document.getElementById('secs');
+  var pg=document.getElementById('pg');
+  var prog=document.getElementById('prog');
+  var NAMES=['시작','블록·노드','해시 체인','보상·선정','PoW','PoS','노드·속도','이중지불·비잔틴','합의·확장성','총정리'];
+  secs.innerHTML='';
+  NAMES.forEach(function(n,i){
+    var d=document.createElement('div');
+    d.className='sc'+(i===4?' pow':(i===5?' pos':''));
+    d.textContent=n;
+    d.addEventListener('click',function(e){
+      e.stopPropagation();
+      for(var k=0;k<slides.length;k++){if(+slides[k].getAttribute('data-sec')===i){go(k);break;}}
+    });
+    secs.appendChild(d);
+  });
+  var cur=0;
+  function render(){
+    for(var i=0;i<slides.length;i++){
+      if(i===cur){slides[i].classList.add('on');}else{slides[i].classList.remove('on');}
+    }
+    var sec=+slides[cur].getAttribute('data-sec');
+    var chips=secs.children;
+    for(var j=0;j<chips.length;j++){
+      if(j===sec){chips[j].classList.add('on');}else{chips[j].classList.remove('on');}
+    }
+    pg.innerHTML='<b>'+(cur+1)+'</b> &nbsp;/ &nbsp;'+slides.length+' &nbsp;&nbsp;·&nbsp;&nbsp; '+NAMES[sec];
+    prog.style.width=((cur+1)/slides.length*100)+'%';
+    if(history.replaceState){history.replaceState(null,'','#'+(cur+1));}
+  }
+  function go(n){
+    if(n<0){n=0;}
+    if(n>slides.length-1){n=slides.length-1;}
+    if(n===cur){return;}
+    cur=n;render();
+  }
+  function next(){go(cur+1);}
+  function prev(){go(cur-1);}
+  document.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(k==='ArrowRight'||k==='ArrowDown'||k===' '||k==='PageDown'||k==='Enter'){next();e.preventDefault();}
+    else if(k==='ArrowLeft'||k==='ArrowUp'||k==='PageUp'||k==='Backspace'){prev();e.preventDefault();}
+    else if(k==='Home'){go(0);e.preventDefault();}
+    else if(k==='End'){go(slides.length-1);e.preventDefault();}
+  });
+  document.addEventListener('click',function(e){
+    if(e.target.closest&&e.target.closest('#bar')){return;}
+    next();
+  });
+  document.addEventListener('contextmenu',function(e){e.preventDefault();prev();});
+  function fit(){
+    var s=Math.min(window.innerWidth/1920,window.innerHeight/1080);
+    stage.style.transform='translate(-50%,-50%) scale('+s+')';
+  }
+  /* 폰트 환경이 달라 본문이 살짝 넘칠 경우에도 슬라이드 안에 들어오도록 보정함 */
+  function fitBodies(){
+    slides.forEach(function(el){
+      var b=el.querySelector('.s-body');
+      if(!b){return;}
+      b.style.transform='';b.style.width='';
+      var over=b.scrollHeight-b.clientHeight;
+      if(over>1&&b.scrollHeight>0){
+        var k=b.clientHeight/b.scrollHeight;
+        if(k<0.84){k=0.84;}
+        b.style.transformOrigin='top left';
+        b.style.transform='scale('+k+')';
+        b.style.width=(100/k)+'%';
+      }
+    });
+  }
+  window.addEventListener('resize',fit);
+  window.addEventListener('load',fitBodies);
+  fit();
+  fitBodies();
+  var h=parseInt((location.hash||'').replace('#',''),10);
+  if(h>0&&h<=slides.length){cur=h-1;}
+  render();
+})();
+</script>
+
+
+</body></html>
