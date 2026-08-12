@@ -119,7 +119,8 @@
     transition:transform var(--dur) var(--ease);
     will-change:transform}
   .sp-js .sp-scene{flex:0 0 calc(100% / var(--n));min-width:0;height:100%;
-    padding:0;border:0;display:flex;align-items:center;overflow:hidden}
+    padding:0;border:0;display:flex;align-items:center;overflow:hidden;
+    position:relative}   /* 꼬리말을 화면 맨 아래에 붙이는 기준이 됩니다 */
   /* 모바일·태블릿은 세로로 넘깁니다.
      ★ 방향 전환은 자바스크립트 클래스가 아니라 이 미디어쿼리가 결정합니다.
        (resize 이벤트를 놓쳐도 배치가 어긋나지 않게 하기 위해서입니다.
@@ -291,10 +292,14 @@
     text-transform:uppercase;color:var(--ink-40)}
   .sp-chain b{font-weight:700;color:var(--rust)}
 
-  /* ---- 마지막 장면 꼬리말 ---- */
-  .sp-tail{margin-top:26px;padding-top:16px;border-top:1px solid var(--ink-14);
+  /* ---- 사이트 꼬리말 ----
+     구분선 없이 글자만 둡니다. 자바스크립트가 살아 있으면 마지막 장면의
+     화면 맨 아래에 붙고(아래 .sp-js 규칙), 없으면 문서 끝에 그대로 놓입니다. */
+  .sp-tail{margin-top:26px;
     display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;
     font-size:12.5px;color:var(--ink-40)}
+  .sp-js .sp-scene > .sp-tail{position:absolute;left:0;right:0;
+    bottom:clamp(18px,2.6vw,30px);margin:0;padding:0 clamp(16px,2.2vw,30px)}
   .sp-tail a{font-weight:600;color:var(--ink-60);transition:color .2s ease}
   .sp-tail a:hover,.sp-tail a:focus-visible{color:var(--orange)}
 
@@ -359,7 +364,7 @@
     .sp-quote{margin-top:16px;padding-left:14px}
     .sp-quote p{font-size:13.5px;line-height:1.65}
     .sp-chain{margin-top:14px;letter-spacing:.1em}
-    .sp-tail{margin-top:18px;padding-top:12px}
+    .sp-tail{margin-top:18px}
   }
 
   .sp :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
@@ -518,13 +523,14 @@
           <a class="sp-go sp-primary m" style="--o:4" data-link="studyFirst">첫 번째 버튼 <i aria-hidden="true">→</i></a>
           <a class="sp-go m" style="--o:5.2" data-link="studySecond">두 번째 버튼 <i aria-hidden="true">→</i></a>
         </div>
-        <!-- 사이트 꼬리말 — 마지막 장면에만 둡니다 -->
-        <footer class="sp-tail m" style="--o:6.4;--m-dx:0;--m-dy:10px">
-          <span>© 2026 배예림 · Yerim Bae</span>
-          <a href="archive.html">Study Log</a>
-          <a data-link="github">GitHub</a>
-        </footer>
       </div>
+      <!-- 사이트 꼬리말 — 마지막 장면에만 두고, 화면 맨 아래에 붙입니다.
+           그래서 .sp-inner 안이 아니라 장면 바로 아래에 있습니다. -->
+      <footer class="sp-tail m" style="--o:6.4;--m-dx:0;--m-dy:10px">
+        <span>© 2026 배예림 · Yerim Bae</span>
+        <a href="archive.html">Study Log</a>
+        <a data-link="github">GitHub</a>
+      </footer>
     </section>
 
   </div><!-- /track -->
