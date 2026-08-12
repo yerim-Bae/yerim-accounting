@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RWA Study · 실물자산 토큰화 스터디 — Yerim Bae</title>
+<meta name="description" content="실물자산 토큰화(RWA) 스터디 9회차 과정을 설계해 운영하고 있습니다. 커리큘럼과 운영 방식, 직접 맡은 발제 기록." />
+
+<meta property="og:type" content="article" />
+<meta property="og:title" content="RWA Study · 실물자산 토큰화 스터디 — Yerim Bae" />
+<meta property="og:description" content="9회차 스터디를 설계해 운영하고, 직접 발제합니다." />
+<meta property="og:url" content="https://yerim-accounting.vercel.app/rwa-study.html" />
+<meta property="og:image" content="https://yerim-accounting.vercel.app/assets/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://yerim-accounting.vercel.app/assets/og-image.png" />
+
+<link rel="icon" href="favicon.ico?v=8" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=8" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png?v=8" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+
+<style>
+  /* =====================================================================
+     RWA Study — 운영한 것.
+     onboarding.html 과 같은 뼈대를 씁니다 (클래스는 전부 tc-).
+     ===================================================================== */
+  :root{
+    --ivory:#F5F1EB; --ivory-2:#EFEAE2; --ink:#1C1A19;
+    --ink-60:rgba(28,26,25,.60); --ink-40:rgba(28,26,25,.40);
+    --ink-14:rgba(28,26,25,.14); --ink-08:rgba(28,26,25,.08);
+    --orange:#D8662F; --rust:#9F3F2F; --peach:#F0D8CB;
+    --serif:"Noto Serif KR",serif;
+    --sans:"Pretendard Variable",Pretendard,system-ui,-apple-system,sans-serif;
+    --ease:cubic-bezier(.22,.7,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{background:var(--ivory);color:var(--ink);font-family:var(--sans);
+    font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%;height:auto}
+  .tc-wrap{max-width:1080px;margin:0 auto;padding:0 clamp(20px,3vw,36px)}
+
+  .tc-top{padding:26px 0 0}
+  .tc-back{display:inline-block;transition:transform .2s var(--ease),opacity .2s ease}
+  .tc-back img{height:26px;width:auto}
+  .tc-back:hover,.tc-back:focus-visible{transform:translateX(-3px);opacity:.8}
+
+  .tc-head{padding:clamp(40px,6vw,72px) 0 clamp(20px,2.4vw,30px)}
+  .tc-kicker{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-40)}
+  .tc-title{margin-top:12px;font-family:var(--sans);font-weight:900;text-transform:uppercase;
+    font-size:clamp(34px,6.4vw,86px);line-height:.92;letter-spacing:-.038em}
+  .tc-title em{font-style:normal;color:var(--orange)}
+  .tc-lede{margin-top:18px;font-family:var(--serif);font-size:clamp(14px,1.4vw,16.5px);
+    line-height:1.8;color:var(--ink-60);max-width:46em}
+
+  .tc-stats{display:flex;flex-wrap:wrap;gap:0;margin-top:clamp(24px,3vw,34px);
+    border-top:1px solid var(--ink);border-bottom:1px solid var(--ink-14)}
+  .tc-stat{flex:1 1 130px;padding:14px 18px 15px;border-right:1px solid var(--ink-08)}
+  .tc-stat:last-child{border-right:0}
+  .tc-stat b{display:block;font-size:clamp(20px,2.4vw,30px);font-weight:800;
+    letter-spacing:-.02em;line-height:1.1}
+  .tc-stat span{display:block;margin-top:3px;font-size:11.5px;font-weight:600;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--ink-40)}
+
+  .tc-h2{margin-top:clamp(38px,4.6vw,60px);font-size:11px;font-weight:700;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--ink-40)}
+
+  /* 진행 방식 */
+  .tc-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:1px;margin-top:14px;background:var(--ink-14);border:1px solid var(--ink-14)}
+  .tc-step{background:var(--ivory);padding:16px 18px}
+  .tc-step b{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--orange)}
+  .tc-step span{display:block;margin-top:7px;font-size:13.5px;line-height:1.6;color:var(--ink-60)}
+
+  .tc-list{margin-top:14px;border-top:1px solid var(--ink)}
+  .tc-row{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:8px 18px;
+    align-items:baseline;padding:16px 0;border-bottom:1px solid var(--ink-08)}
+  .tc-no{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--ink-40);
+    font-variant-numeric:tabular-nums}
+  .tc-name{font-size:clamp(15px,1.5vw,17px);font-weight:600;letter-spacing:-.01em}
+  .tc-note{display:block;margin-top:4px;font-size:13px;font-weight:400;color:var(--ink-40)}
+  .tc-when{font-size:12.5px;color:var(--ink-40);font-variant-numeric:tabular-nums;
+    white-space:nowrap}
+  .tc-done{color:var(--rust);font-weight:700}
+
+  /* 직접 맡은 발제 */
+  .tc-mine{margin-top:14px;padding-left:18px;position:relative;max-width:48em}
+  .tc-mine::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--orange)}
+  .tc-mine p{font-family:var(--serif);font-size:14.5px;line-height:1.8}
+  .tc-mine p + p{margin-top:8px}
+  .tc-mine b{font-weight:600}
+
+  .tc-next{display:block;margin-top:clamp(44px,5vw,68px);padding:22px 0 24px;
+    border-top:1px solid var(--ink);transition:padding-left .22s var(--ease)}
+  .tc-next:hover,.tc-next:focus-visible{padding-left:8px}
+  .tc-next span{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-40)}
+  .tc-next b{display:block;margin-top:8px;font-family:var(--sans);font-weight:900;
+    text-transform:uppercase;font-size:clamp(22px,3vw,38px);line-height:1;letter-spacing:-.03em}
+  .tc-next:hover b,.tc-next:focus-visible b{color:var(--orange)}
+  .tc-next i{font-style:normal;color:var(--orange)}
+
+  .tc-foot{margin:clamp(30px,4vw,48px) 0 42px;padding-top:18px;border-top:1px solid var(--ink-14);
+    display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:flex-end;
+    font-size:12.5px;color:var(--ink-40)}
+  .tc-foot a{font-weight:600;color:var(--ink-60);transition:color .2s ease}
+  .tc-foot a:hover,.tc-foot a:focus-visible{color:var(--orange)}
+  :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+
+  @media(max-width:560px){
+    .tc-row{grid-template-columns:44px minmax(0,1fr)}
+    .tc-when{grid-column:2;margin-top:2px}
+  }
+
+  /* 커서 — 사이트 다른 페이지와 같습니다 */
+  @media (hover:hover) and (pointer:fine){
+    body,body *{cursor:none!important}
+    body input,body textarea,body [contenteditable],body select,body iframe{cursor:auto!important}
+    #cur{position:fixed;top:0;left:0;z-index:2147483000;pointer-events:none;
+      transform:translate3d(-100px,-100px,0);will-change:transform}
+    #cur i{display:block;box-sizing:border-box;width:10px;height:10px;margin:-5px 0 0 -5px;
+      border-radius:50%;background:var(--orange);border:1.5px solid transparent;opacity:0;
+      transition:width .24s var(--ease),height .24s var(--ease),margin .24s var(--ease),
+                 background-color .24s ease,border-color .24s ease,transform .16s ease,opacity .18s ease}
+    #cur.on i{opacity:1}
+    #cur.ring i{width:32px;height:32px;margin:-16px 0 0 -16px;background:transparent;
+      border-color:var(--orange)}
+    #cur.press i{transform:scale(.78)}
+    @media (prefers-reduced-motion:reduce){ #cur i{transition:opacity .18s ease} }
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{transition:none!important;animation:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header class="tc-wrap tc-top">
+  <a class="tc-back" href="index.html#study" aria-label="Study 장면으로 돌아가기">
+    <img src="assets/wordmark.png?v=1" alt="Yerim" width="220" height="96" />
+  </a>
+</header>
+
+<main class="tc-wrap">
+
+  <div class="tc-head">
+    <p class="tc-kicker">운영한 것</p>
+    <h1 class="tc-title"><em>RWA</em> Study</h1>
+    <p class="tc-lede">
+      블록체인 학회 리서치팀에서 운영하는 실물자산 토큰화(RWA) 스터디입니다.
+      리서치 아티클 시리즈를 9회차에 걸쳐 완독하는 과정을 직접 설계했고,
+      회차별 담당 배분·사전 준비·진행표를 만들어 운영하고 있습니다.
+    </p>
+  </div>
+
+  <div class="tc-stats">
+    <div class="tc-stat"><b>9</b><span>회차</span></div>
+    <div class="tc-stat"><b>6</b><span>명 · 회차당</span></div>
+    <div class="tc-stat"><b>150</b><span>분 · 회차당</span></div>
+    <div class="tc-stat"><b>25</b><span>분 · 인당</span></div>
+  </div>
+
+  <h2 class="tc-h2">운영 방식</h2>
+  <div class="tc-flow">
+    <div class="tc-step"><b>D-7 · 운영자</b><span>아티클과 담당 배분표를 배포하고 공용 기록 페이지를 엽니다</span></div>
+    <div class="tc-step"><b>D-7 ~ D-2 · 전원</b><span>아티클 전체를 한 번 통독합니다</span></div>
+    <div class="tc-step"><b>D-1 · 전원</b><span>담당 구간을 다시 읽고, 막힌 문장을 따로 공부해 문서로 남깁니다</span></div>
+    <div class="tc-step"><b>당일 · 인당 25분</b><span>담당 설명 10분 + 막혔던 부분 10분 + 즉석 질문 5분</span></div>
+  </div>
+
+  <h2 class="tc-h2">9회차 커리큘럼</h2>
+  <div class="tc-list">
+    <div class="tc-row"><span class="tc-no tc-done">01</span><span class="tc-name">RWA 토큰화 생태계 분류</span><span class="tc-when">2026.08.04</span></div>
+    <div class="tc-row"><span class="tc-no tc-done">02</span><span class="tc-name">디파이 · 렌딩</span><span class="tc-when">2026.08.11</span></div>
+    <div class="tc-row"><span class="tc-no">03</span><span class="tc-name">토큰화 주식</span><span class="tc-when">2026.08.18</span></div>
+    <div class="tc-row"><span class="tc-no">04</span><span class="tc-name">커스터디 · KMS</span><span class="tc-when">2026.08.25</span></div>
+    <div class="tc-row"><span class="tc-no">05</span><span class="tc-name">토큰화 채권</span><span class="tc-when">2026.09.01</span></div>
+    <div class="tc-row"><span class="tc-no">06</span><span class="tc-name">컴플라이언스</span><span class="tc-when">2026.09.08</span></div>
+    <div class="tc-row"><span class="tc-no">07</span><span class="tc-name">토큰화 대체자산</span><span class="tc-when">2026.09.15</span></div>
+    <div class="tc-row"><span class="tc-no">08</span><span class="tc-name">지갑 인프라</span><span class="tc-when">2026.09.22</span></div>
+    <div class="tc-row"><span class="tc-no">09</span><span class="tc-name">솔라나 RWA 주요 플레이어</span><span class="tc-when">2026.09.29</span></div>
+  </div>
+  <p class="tc-aside" style="margin-top:14px;font-size:12.5px;color:var(--ink-40)">
+    주황색 번호는 진행을 마친 회차입니다.
+  </p>
+
+  <h2 class="tc-h2">직접 맡은 발제</h2>
+  <div class="tc-mine">
+    <p><b>전통자산 토큰화 생태계 개요</b> — 발행·수탁·유통까지 9개 레이어로 나누어 정리하고, BUIDL을 사례로 짚었습니다.</p>
+    <p><b>사모신용 펀드 지분형 토큰화</b> — Apollo ACRED를 중심으로, 심화 자료 5편을 따로 붙였습니다.</p>
+  </div>
+
+  <a class="tc-next" href="onboarding.html">
+    <span>이전 · 가르친 것</span>
+    <b>Onboarding Sessions <i aria-hidden="true">→</i></b>
+  </a>
+
+</main>
+
+<footer class="tc-wrap tc-foot">
+  <span>© 2026 배예림 · Yerim Bae</span>
+  <a href="index.html#study">← Study 로 돌아가기</a>
+  <a href="archive.html">Study Log</a>
+</footer>
+
+<script>
+/* ---- 커서 (주황 점 → 링) ---- 다른 페이지와 같은 커서입니다. */
+(function(){
+  if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  var el=document.createElement("div");
+  el.id="cur"; el.setAttribute("aria-hidden","true"); el.innerHTML="<i></i>";
+  document.body.appendChild(el);
+  var HIT='a[href],button:not([disabled]),[role="button"],label,summary';
+  var x=0,y=0,raf=0;
+  function draw(){ raf=0; el.style.transform="translate3d("+x+"px,"+y+"px,0)"; }
+  addEventListener("mousemove",function(e){
+    x=e.clientX; y=e.clientY;
+    if(!raf) raf=requestAnimationFrame(draw);
+    var t=e.target;
+    el.classList.add("on");
+    el.classList.toggle("ring", !!(t.closest && t.closest(HIT)));
+  },{passive:true});
+  addEventListener("mousedown",function(){ el.classList.add("press"); },{passive:true});
+  addEventListener("mouseup",function(){ el.classList.remove("press"); },{passive:true});
+  document.addEventListener("mouseleave",function(){ el.classList.remove("on"); });
+  addEventListener("blur",function(){ el.classList.remove("on","press"); });
+})();
+</script>
+</body>
+</html>
