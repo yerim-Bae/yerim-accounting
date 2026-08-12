@@ -811,7 +811,7 @@ const SAMPLE = [
    summary:"결산서상 당기순이익에서 각 사업연도 소득금액으로 가는 세무조정 흐름과, 조정 항목별 소득처분(유보·상여·기타사외유출)의 판단 기준을 표로 정리했다.",
    insight:"소득처분은 결국 그 돈이 회사 안에 남았는지, 밖으로 나갔다면 누구에게 갔는지를 묻는 것. 이 질문 하나로 유보/사외유출 판단이 거의 갈린다.",source:"https://example.com/corporate-tax"},
   {id:4,topics:["회계감사"],title:"감사위험모형과 중요성 — 왜 표본을 뽑는가",author:"배예림",week:1,tags:["회계감사"],date:"2026-07-11",
-   cover:"assets/crystal.png",
+   cover:"assets/og-archive.png",
    summary:"감사위험 = 고유위험 × 통제위험 × 적발위험 구조와, 중요성 금액을 설정해 감사 절차의 범위를 정하는 논리를 정리했다.",
    insight:"감사는 전수조사가 아니라 위험 기반 배분이라는 점이 출발점. 적발위험만 감사인이 통제할 수 있다는 사실이 실무 절차 설계의 이유를 설명해준다.",source:"https://example.com/audit-risk"},
   {id:5,topics:["재무회계"],title:"수익인식 5단계 모형 — 기업회계기준서 제1115호",author:"배예림",week:1,tags:["K-IFRS","재무회계"],date:"2026-07-10",
@@ -935,7 +935,7 @@ function mastheadHtml(){
   const weeks = new Set(POSTS.map(p=>deriveWeek(p.date).start)).size;
   const banner = USING_SAMPLE ? `<div class="banner" style="margin-top:16px">⚙️ 지금은 샘플 데이터로 보이는 중이에요. 노션 연결·배포가 끝나면 실제 데이터가 표시됩니다.</div>`:"";
   return `<section class="masthead">
-    <a class="mh-brand" href="index.html" aria-label="포트폴리오로 돌아가기"><img src="assets/wordmark.png?v=1" alt="Yerim" width="220" height="96" /></a>
+    <a class="mh-brand" href="index.html" aria-label="홈으로 돌아가기"><img src="assets/wordmark.png?v=1" alt="Yerim" width="220" height="96" /></a>
     <div class="mh-l">${todayLabel()}</div>
     <div class="mh-c">
       <div class="mh-tag">블록체인·디지털자산을 회계의 눈으로</div>

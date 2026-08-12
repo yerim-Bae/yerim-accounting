@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>배예림 · Portfolio 2026</title>
-<meta name="description" content="배예림 — 산업을 이해하고 회계의 언어로 설명합니다. 블록체인과 디지털자산을 배우고 기록하며, 이를 회계와 감사의 관점으로 연결합니다." />
+<title>배예림 · Yerim's Daily Life</title>
+<meta name="description" content="배예림 — 산업을 이해하고 회계의 언어로 설명합니다. 감사·블록체인·운동·기록, 하루를 이루는 다섯 장면." />
 
 <meta property="og:type" content="website" />
-<meta property="og:title" content="배예림 · Portfolio 2026" />
+<meta property="og:title" content="배예림 · Yerim's Daily Life" />
 <meta property="og:description" content="산업을 이해하고 회계의 언어로 설명합니다." />
 <meta property="og:url" content="https://yerim-accounting.vercel.app/" />
 <meta property="og:image" content="https://yerim-accounting.vercel.app/assets/og-image.png" />
@@ -23,496 +23,789 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 
-<!-- 자바스크립트가 살아 있을 때만 등장 효과를 켭니다. 이 한 줄이 없으면 글이 처음부터 그냥 보입니다. -->
-<script>document.documentElement.classList.add("js-anim");</script>
-
 <style>
   /* =====================================================================
-     팔레트 — PwC의 따뜻한 컬러 스펙트럼에서 영감을 받은 개인 팔레트입니다.
-     (공식 브랜드 색상값을 그대로 쓴 것이 아닙니다)
-     사용 비율: 아이보리·화이트 80% / 잉크·브라운 15% / 오렌지 계열 5%
-     색은 배경이 아니라 "hover · 번호 · 밑줄 · 태그"에만 씁니다.
+     Yerim's House — 풀페이지 전환 프로토타입
+
+     ■ 왜 스크롤이 아니라 화면을 직접 옮기는가
+       "한 번 입력 = 정확히 한 장면"을 어기지 않는 것이 이 작업의 핵심입니다.
+       브라우저 스크롤 위에 scroll-snap 을 얹는 방식은 관성 스크롤·트랙패드
+       가속 때문에 두 장면 사이에 걸치는 순간이 반드시 생깁니다.
+       그래서 문서를 아예 스크롤하지 않게 두고(.sp-deck 을 화면에 고정),
+       장면 띠를 transform 으로 한 칸씩 옮깁니다.
+       스크롤 위치라는 개념이 없으므로 "애매하게 걸친 상태"가 존재할 수 없습니다.
+
+     ■ 자바스크립트가 없으면
+       아래 기본 CSS 는 다섯 장면이 위에서 아래로 쌓인 평범한 문서입니다.
+       자바스크립트가 살아 있을 때만 <html> 에 .sp-js 가 붙어 고정 무대로
+       바뀝니다. 스크립트가 막히면 모든 글과 링크를 그대로 읽을 수 있습니다.
+
+     ■ 다른 페이지와의 격리
+       이 파일 하나로 끝납니다. 새 클래스는 전부 sp- 로 시작하고 <body> 에
+       .sp 를 걸어 두었습니다. portfolio.html · archive.html 의 CSS 와 섞이지 않습니다.
      ===================================================================== */
+
+  /* ---- 기존 사이트와 같은 값 (이 파일에 다시 적어둔 것입니다) ---- */
   :root{
-    --ivory:#F5F1EB;          /* 기본 배경 */
-    --ivory-2:#EFEAE2;        /* 살짝 눌린 배경 */
-    --ink:#1C1A19;            /* 본문 글자 */
+    --ivory:#F5F1EB;
+    --ivory-2:#EFEAE2;
+    --ink:#1C1A19;
     --ink-60:rgba(28,26,25,.60);
     --ink-40:rgba(28,26,25,.40);
     --ink-14:rgba(28,26,25,.14);
     --ink-08:rgba(28,26,25,.08);
-    --orange:#D8662F;         /* 주 강조 */
-    --rust:#9F3F2F;           /* 보조 강조 */
-    --amber:#E4A23A;          /* 밝은 강조 */
-    --peach:#F0D8CB;          /* 부드러운 배경 */
-    --maxw:1080px;
+    --orange:#D8662F;
+    --rust:#9F3F2F;
+    --amber:#E4A23A;
+    --peach:#F0D8CB;
     --serif:"Noto Serif KR",serif;
     --sans:"Pretendard Variable",Pretendard,system-ui,-apple-system,sans-serif;
+    --bar:0px;                  /* 상단 줄 없음 — 무대가 화면 전체를 씁니다 */
+    --dur:720ms;                /* 장면 전환 시간 — 기존 값 그대로 둡니다 */
+    --ease:cubic-bezier(.72,0,.24,1);
+
+    /* ---- 장면 안쪽 모션 값 (장면 전환용 --dur·--ease 는 손대지 않습니다) ----
+       장면이 옮겨지는 720ms 도중부터 콘텐츠가 조립되도록 등장을 170ms 뒤에 시작합니다. */
+    --m-in:170ms;               /* 전환 시작 후 콘텐츠 등장이 시작되는 시점 */
+    --m-fast:200ms;             /* 퇴장 */
+    --m-mid:400ms;              /* 일반 등장 */
+    --m-reveal:560ms;           /* 제목 마스크 리빌 */
+    --m-stagger:56ms;           /* 요소 사이 시차 */
+    --m-sm:12px;                /* 짧은 이동 */
+    --m-md:28px;                /* 보통 이동 */
+    --m-ease:cubic-bezier(.22,1,.36,1);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
-  body{
+  body.sp{
     background:var(--ivory);color:var(--ink);
     font-family:var(--sans);font-size:16px;line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    word-break:keep-all;overflow-wrap:break-word;   /* 한글이 단어 중간에서 안 끊기게 */
   }
-  a{color:inherit;text-decoration:none}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
-  @media(max-width:640px){.wrap{padding:0 20px}}
+  .sp a{color:inherit;text-decoration:none}
+  .sp img{max-width:100%}
+  .sp-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  /* 글은 가운데 상자에 넣지 않고 화면 왼쪽에 붙입니다.
+     오른쪽은 비워두고, 긴 줄은 오른쪽으로 뻗어나가게 둡니다. */
+  .sp-inner{width:100%;max-width:none;margin:0;padding:0 clamp(16px,2.2vw,30px)}
 
   /* =====================================================================
-     등장 효과 — 아래에서 8~10px 올라오며 선명해지는 정도만.
-     날아오거나 회전하지 않고, 스크롤을 강제로 움직이지도 않습니다.
-
-     ★ 원칙: "효과가 실패해도 글은 반드시 보인다"
-     기본 상태는 '보임'이고, 자바스크립트가 살아 있을 때만 <html>에 클래스를
-     붙여서 숨깁니다. 스크립트가 막히거나 옛 브라우저면 그냥 전부 보입니다.
+     상단 줄은 없앴습니다. 브랜드와 나가는 길은 01 장면 오른쪽 위 작은 워드마크와
+     05 장면 바닥글이 대신합니다.
      ===================================================================== */
-  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .rise{opacity:1}
-  .js-anim .rise{opacity:0;animation:rise .55s cubic-bezier(.22,.7,.3,1) forwards}
-  .d1{animation-delay:.05s}.d2{animation-delay:.17s}.d3{animation-delay:.29s}
-  .d4{animation-delay:.41s}.d5{animation-delay:.53s}.d6{animation-delay:.65s}
-  /* 첫 화면 등장은 1.2초면 끝납니다. 1.5초 뒤에도 안 끝났다면 애니메이션이 동작하지
-     않는 환경이므로 즉시 보이게 못박습니다. 정상이면 이미 보이는 상태라 변화가 없습니다. */
-  .anim-off .rise{animation:none!important;opacity:1!important;transform:none!important}
-
-  .reveal{transition:opacity .5s ease,transform .5s cubic-bezier(.22,.7,.3,1)}
-  .js-anim .reveal{opacity:0;transform:translateY(10px)}
-  .js-anim .reveal.in{opacity:1;transform:none}
+  .sp-logo{display:inline-flex;align-items:center;
+    transition:transform .18s var(--ease),opacity .18s ease}
+  .sp-logo img{display:block;height:20px;width:auto}
+  .sp-logo:hover,.sp-logo:focus-visible{transform:translateY(-1px);opacity:.78}
 
   /* =====================================================================
-     첫 화면 — 포털처럼 단순하게. 아래로 스크롤하면 바로 Selected Work.
+     장면 — 기본(자바스크립트 없을 때)은 위아래로 쌓인 평범한 문서
      ===================================================================== */
-  .hero{min-height:100svh;display:flex;flex-direction:column;padding:34px 0 26px}
-  .eyebrow{font-size:12px;font-weight:600;letter-spacing:.16em;color:var(--ink-40);text-transform:uppercase}
-  .hero-mid{flex:1;display:flex;flex-direction:column;justify-content:center;padding:56px 0}
-  .statement{
-    font-family:var(--serif);font-weight:600;
-    font-size:clamp(34px,6.2vw,62px);line-height:1.34;letter-spacing:-.02em;
-    text-wrap:balance;
-  }
-  .lede{margin-top:26px;max-width:34em;font-size:clamp(14.5px,1.5vw,16.5px);line-height:1.85;color:var(--ink-60)}
+  .sp-deck{padding-top:var(--bar)}
+  .sp-scene{padding:clamp(48px,8vw,86px) 0;border-top:1px solid var(--ink-14)}
+  .sp-scene:first-child{border-top:0}
 
-  /* ---- 메뉴 링크 ---- */
-  .menu{margin-top:44px;display:flex;flex-wrap:wrap;gap:8px 6px;margin-left:-14px}
-  .mlink{
-    position:relative;display:inline-flex;align-items:baseline;gap:7px;
-    padding:11px 14px;border-radius:10px;
-    font-size:clamp(15px,1.7vw,18px);font-weight:600;letter-spacing:-.01em;
-    transition:background-color .22s ease,color .22s ease;
-  }
-  /* 밑줄이 왼쪽에서 오른쪽으로 그어집니다 */
-  .mlink::after{
-    content:"";position:absolute;left:14px;right:14px;bottom:7px;height:1.5px;
-    background:currentColor;transform:scaleX(0);transform-origin:left;
-    transition:transform .3s cubic-bezier(.22,.7,.3,1);
-  }
-  .mlink:hover::after,.mlink:focus-visible::after{transform:scaleX(1)}
-  .mlink .arw{font-size:.8em;opacity:0;transform:translateX(-3px);transition:opacity .22s ease,transform .22s ease}
-  .mlink:hover .arw,.mlink:focus-visible .arw{opacity:1;transform:none}
-  /* 링크마다 스며드는 색이 다릅니다 — 원색이 아니라 10~15% 농도 */
-  .mlink[data-k="work"]:hover  {background:rgba(228,162,58,.16);color:var(--rust)}
-  .mlink[data-k="news"]:hover  {background:rgba(216,102,47,.13);color:var(--orange)}
-  .mlink[data-k="about"]:hover {background:rgba(240,216,203,.62);color:var(--rust)}
-  .mlink[data-k="github"]:hover{background:rgba(28,26,25,.90);color:var(--ivory)}
-  .mlink:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
-
-  /* 마우스를 올린 링크의 보조 문구가 여기 나타납니다 */
-  .mhint{margin-top:14px;min-height:1.5em;padding-left:14px;font-size:13.5px;color:var(--ink-40);
-    transition:opacity .2s ease}
-  @media(max-width:640px){.mhint{display:none}}
-
-  .hero-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap}
-  .exploring{font-size:12.5px;color:var(--ink-40);letter-spacing:.01em}
-  .exploring b{font-weight:600;color:var(--ink-60)}
-  .scroll-cue{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.1em;
-    color:var(--ink-40);text-transform:uppercase}
-  .scroll-cue i{font-style:normal;animation:nudge 2.4s ease-in-out infinite}
-  @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
-
-  /* =========================================================================
-     커서 — 주황 점, 누를 수 있는 것 위에서는 링으로 벌어집니다.
-     · 마우스가 있는 기기에서만 나타납니다 (터치 기기는 그대로)
-     · 점은 마우스를 정확히 따라가고, 모양이 바뀔 때만 부드럽게 움직입니다
-     · 본문에 끼워 넣은 HTML(iframe) 위에서는 기본 커서로 돌아갑니다
-     ========================================================================= */
-  @media (hover:hover) and (pointer:fine){
-    body{cursor:none}
-    /* 글자를 고르거나 입력하는 곳은 기본 커서를 그대로 둡니다 */
-    input,textarea,[contenteditable],iframe{cursor:auto}
-    #cur{position:fixed;top:0;left:0;z-index:2147483000;pointer-events:none;
-      transform:translate3d(-100px,-100px,0);will-change:transform}
-    #cur i{display:block;box-sizing:border-box;width:10px;height:10px;margin:-5px 0 0 -5px;
-      border-radius:50%;background:var(--orange);border:1.5px solid transparent;opacity:0;
-      transition:width .24s cubic-bezier(.22,.7,.3,1),height .24s cubic-bezier(.22,.7,.3,1),
-                 margin .24s cubic-bezier(.22,.7,.3,1),background-color .24s ease,
-                 border-color .24s ease,transform .16s ease,opacity .18s ease}
-    #cur.on i{opacity:1}
-    /* 누를 수 있는 것 위 — 속이 빈 링 */
-    #cur.ring i{width:32px;height:32px;margin:-16px 0 0 -16px;background:transparent;border-color:var(--orange)}
-    /* 누르는 동안 살짝 오므라듭니다 */
-    #cur.press i{transform:scale(.78)}
-    @media (prefers-reduced-motion:reduce){ #cur i{transition:opacity .18s ease} }
-  }
   /* =====================================================================
-     섹션 공통
+     ★ 자바스크립트가 살아 있을 때 — 화면에 고정된 무대
      ===================================================================== */
-
-  section{padding:96px 0}
-  @media(max-width:640px){section{padding:68px 0}}
-  .shead{display:flex;align-items:baseline;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--ink-14)}
-  .snum{font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--orange)}
-  .shead h2{font-family:var(--serif);font-size:clamp(21px,2.6vw,27px);font-weight:600;letter-spacing:-.02em}
-  .shead .snote{margin-left:auto;font-size:13px;color:var(--ink-40)}
-  @media(max-width:640px){.shead .snote{display:none}}
-
-  /* ---- 01 Selected Work ---- */
-  .works{display:flex;flex-direction:column}
-  .work{
-    display:grid;grid-template-columns:52px 1fr auto;gap:6px 20px;align-items:baseline;
-    padding:26px 14px 24px;margin:0 -14px;border-bottom:1px solid var(--ink-08);border-radius:12px;
-    transition:background-color .22s ease;
+  .sp-js body.sp{overflow:hidden;height:100%}
+  .sp-js .sp-deck{position:fixed;top:var(--bar);left:0;right:0;bottom:0;
+    padding:0;overflow:hidden}
+  /* ★ 어느 장면을 보여줄지는 --i 하나로 정해집니다. 자바스크립트는 --i 만 바꾸고,
+       어느 축으로 옮길지는 아래 CSS 가 결정합니다. 그래서 창 크기가 바뀌어
+       가로↔세로가 뒤바뀌어도 자바스크립트가 개입할 필요 없이 같은 장면에
+       그대로 맞춰집니다. (resize 이벤트를 놓쳐도 어긋나지 않습니다) */
+  .sp-js .sp-track{display:flex;height:100%;
+    width:calc(var(--n) * 100%);
+    transform:translate3d(calc(var(--i,0) * -100% / var(--n)),0,0);
+    transition:transform var(--dur) var(--ease);
+    will-change:transform}
+  .sp-js .sp-scene{flex:0 0 calc(100% / var(--n));min-width:0;height:100%;
+    padding:0;border:0;display:flex;align-items:center;overflow:hidden}
+  /* 모바일·태블릿은 세로로 넘깁니다.
+     ★ 방향 전환은 자바스크립트 클래스가 아니라 이 미디어쿼리가 결정합니다.
+       (resize 이벤트를 놓쳐도 배치가 어긋나지 않게 하기 위해서입니다.
+        자바스크립트는 어느 축으로 옮길지만 고르고, 그 판단도 같은 900px 기준입니다) */
+  @media(max-width:900px){
+    .sp-js .sp-track{flex-direction:column;width:100%;height:calc(var(--n) * 100%);
+      transform:translate3d(0,calc(var(--i,0) * -100% / var(--n)),0)}
+    .sp-js .sp-scene{flex:0 0 calc(100% / var(--n));height:auto}
   }
-  .work[href]:hover{background:rgba(228,162,58,.13)}
-  .work .wn{font-size:12.5px;font-weight:700;color:var(--orange);letter-spacing:.06em}
-  .work .wt{font-family:var(--serif);font-size:clamp(17px,2.1vw,21px);font-weight:600;letter-spacing:-.015em;line-height:1.45}
-  .work .wgo{font-size:13px;font-weight:600;color:var(--ink-40);white-space:nowrap;
-    transition:color .22s ease,transform .22s ease}
-  .work[href]:hover .wgo{color:var(--orange);transform:translateX(2px)}
-  .work .wd{grid-column:2;font-size:14.5px;line-height:1.75;color:var(--ink-60);max-width:44em;margin-top:8px}
-  .work .wtags{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-  .wtag{font-size:11px;font-weight:600;letter-spacing:.02em;padding:3px 9px;border-radius:999px;
-    background:var(--ink-08);color:var(--ink-60)}
-  /* 아직 링크가 없는 작업 — 자리는 잡되 눌리지 않습니다 */
-  .work.soon{opacity:.62}
-  .work.soon .wgo{color:var(--ink-40);font-weight:500}
+
+  /* =====================================================================
+     장면 안쪽 등장·퇴장 (공통)
+
+     .m      모션을 받는 요소. --o 로 몇 번째에 나타날지 정합니다.
+     .is-active   지금 보고 있는 장면 → 안쪽 요소가 제자리로 조립됩니다
+     .is-leaving  방금 떠난 장면 → 안쪽 요소가 짧게 빠집니다
+     그 외        비활성 → 안쪽 요소는 초기 상태로 되돌아가 있습니다
+                  (다시 들어오면 모션이 처음부터 다시 실행됩니다)
+
+     ★ 자바스크립트가 없으면 .sp-js 가 붙지 않아 이 규칙 전체가 적용되지 않고
+       모든 글이 처음부터 제자리에 보입니다.
+     ★ 움직이는 것은 transform 과 opacity 뿐입니다.
+     ===================================================================== */
+  .sp-js .m{
+    opacity:0;
+    transform:translate3d(var(--m-dx,0),var(--m-dy,0),0);
+    transition:opacity var(--m-mid) var(--m-ease), transform var(--m-mid) var(--m-ease);
+    transition-delay:calc(var(--m-in) + var(--o,0) * var(--m-stagger));
+  }
+  .sp-js .sp-scene.is-active .m{opacity:1;transform:none}
+  .sp-js .sp-scene.is-leaving .m{
+    opacity:0;transform:translate3d(var(--m-lx,0),var(--m-ly,0),0);
+    transition-duration:var(--m-fast);transition-delay:0s;
+  }
+
+  /* 진입 방향 — 다음 장면은 오른쪽에서, 이전 장면은 왼쪽에서 들어옵니다.
+     장면 자체가 크게 움직이므로 안쪽 이동은 짧게 둡니다. */
+  .sp-js .sp-deck[data-dir="next"]{--m-dx:var(--m-md);--m-lx:calc(-1 * var(--m-sm))}
+  .sp-js .sp-deck[data-dir="prev"]{--m-dx:calc(-1 * var(--m-md));--m-lx:var(--m-sm)}
+  /* 세로로 넘기는 화면에서는 위아래로. 이동 거리는 20% 줄입니다. */
+  @media(max-width:900px){
+    .sp-js .sp-deck[data-dir="next"]{--m-dx:0;--m-dy:calc(.8 * var(--m-md));--m-lx:0;--m-ly:calc(-.8 * var(--m-sm))}
+    .sp-js .sp-deck[data-dir="prev"]{--m-dx:0;--m-dy:calc(-.8 * var(--m-md));--m-lx:0;--m-ly:calc(.8 * var(--m-sm))}
+    .sp-js{--m-stagger:50ms}      /* 전체 시간을 조금 줄입니다 */
+  }
+
+  /* ---------------------------------------------------------------------
+     제목 마스크 리빌
+
+     .mline 이 한 줄, 그 안의 .mr 이 창, .mr > i 가 올라오는 글자입니다.
+     창에 글자가 잘리지 않도록 line-height 를 1.08 로 넓히고, 넓힌 만큼
+     음수 여백으로 되돌려 ★줄 간격과 최종 위치는 그대로 유지합니다★.
+     --------------------------------------------------------------------- */
+  .sp-js .mline{line-height:1.08;margin-block:-.09em}
+  .sp-js .mr{display:inline-block;overflow:hidden;vertical-align:top;line-height:1.08;
+    transform:translate3d(var(--r-dx,0),0,0);
+    transition:transform var(--m-reveal) var(--m-ease);
+    transition-delay:calc(var(--m-in) + var(--o,0) * var(--m-stagger))}
+  .sp-js .mr > .mi{display:block;transform:translateY(106%);
+    transition:transform var(--m-reveal) var(--m-ease);
+    transition-delay:calc(var(--m-in) + var(--o,0) * var(--m-stagger))}
+  .sp-js .sp-scene.is-active .mr{transform:none}
+  .sp-js .sp-scene.is-active .mr > .mi{transform:none}
+  .sp-js .sp-scene.is-leaving .mr > .mi{transform:translateY(-106%);
+    transition-duration:var(--m-fast);transition-delay:0s}
+  .sp-js .sp-scene.is-leaving .mr{transform:none;transition-duration:var(--m-fast);transition-delay:0s}
+
+  /* 엔진이 어떤 이유로든 뜨지 못하면 1.2초 뒤 전부 제자리에 못박습니다 */
+  .sp-nomotion .m,.sp-nomotion .mr,.sp-nomotion .mr > .mi{
+    opacity:1!important;transform:none!important;transition:none!important}
+
+  /* =====================================================================
+     장면 공통 활자
+     ===================================================================== */
+  /* 02~05 — 장면 이름이 화면을 이끕니다. 설명 문장은 두지 않습니다.
+     오른쪽은 비워두고, 긴 줄은 오른쪽으로 뻗어나가게 둡니다. */
+  .sp-title2{font-family:var(--sans);font-weight:900;text-transform:uppercase;
+    font-size:clamp(34px,7.2vw,104px);line-height:.9;letter-spacing:-.038em}
+  .sp-title2 em{font-style:normal;color:var(--orange)}
+  .sp-title2 > span{display:block}
+  @media(min-width:641px){ .sp-title2 > span{white-space:nowrap} }
+  .sp-p{margin-top:clamp(20px,2.6vw,34px);font-size:clamp(13.5px,1.35vw,15.5px);
+    line-height:1.85;color:var(--ink-60);max-width:38em}
+  .sp-acts{margin-top:clamp(20px,2.4vw,30px);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center}
+  .sp-meta{margin-top:18px;font-size:11px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-40);font-variant-numeric:tabular-nums}
+  .sp-meta b{color:var(--ink-60)}
+
+  /* ---- 링크 ---- */
+  .sp-go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;
+    color:var(--ink);transition:color 200ms ease}
+  .sp-go i{font-style:normal;display:inline-block;transition:transform 200ms var(--m-ease)}
+  .sp-go:hover,.sp-go:focus-visible{color:var(--orange)}
+  .sp-go:hover i,.sp-go:focus-visible i{transform:translateX(4px)}
+  .sp-go.sp-ext:hover i,.sp-go.sp-ext:focus-visible i{transform:translate(4px,-3px)}
+  /* 밑줄 — 테두리 대신 가상요소를 써서 왼쪽에서 오른쪽으로 그어지게 합니다.
+     자리(안여백 5px + 두께 2px)는 예전과 같아 글자가 움직이지 않습니다. */
+  .sp-go.sp-primary{position:relative;padding-bottom:7px}
+  .sp-go.sp-primary::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:var(--orange);transform-origin:left}
+  .sp-js .sp-go.sp-primary::after{transform:scaleX(0);
+    transition:transform 260ms var(--m-ease);
+    transition-delay:calc(var(--m-in) + var(--o,0) * var(--m-stagger) + 120ms)}
+  .sp-js .sp-scene.is-active .sp-go.sp-primary::after{transform:none}
+  .sp-js .sp-scene.is-leaving .sp-go.sp-primary::after{transform:scaleX(0);
+    transition-duration:var(--m-fast);transition-delay:0s}
+  /* 이미 그어진 뒤 hover 하면 살짝 두꺼워지며 반응합니다 (위치는 그대로) */
+  .sp-go.sp-primary::after{transition-property:transform,height}
+  .sp-go.sp-primary:hover::after,.sp-go.sp-primary:focus-visible::after{height:3px}
+  .sp-go.sp-pending{color:var(--ink-40);cursor:default}
+  .sp-go.sp-pending i{opacity:.45}
+
+  /* =====================================================================
+     01 WELCOME — 위에는 큰 산세리프 제호, 아래에는 세리프 한 줄 목록.
+     그 사이는 비워둡니다. 여백이 이 화면의 내용입니다.
+     ===================================================================== */
+  .sp-scene--home{align-items:stretch}
+  .sp-js .sp-scene--home > .sp-inner{height:100%;display:flex;flex-direction:column;
+    justify-content:space-between;padding-top:clamp(26px,4vw,54px);padding-bottom:clamp(26px,4vw,54px)}
+  .sp-scene--home > .sp-inner{padding-top:clamp(26px,4vw,54px);padding-bottom:clamp(26px,4vw,54px)}
+
+  .sp-head{display:flex;align-items:flex-start;gap:24px}
+  .sp-title{flex:1;min-width:0;
+    font-family:var(--sans);font-weight:900;text-transform:uppercase;
+    font-size:clamp(32px,7.4vw,110px);line-height:.9;letter-spacing:-.038em}
+  .sp-title > span{display:block}
+  /* 넓은 화면에서는 YERIM'S DAILY LIFE 를 한 줄로 붙여 둡니다 */
+  @media(min-width:641px){ .sp-title > span{white-space:nowrap} }
+  .sp-title em{font-style:normal;color:var(--orange)}
+  .sp-head .sp-logo{flex:none;margin-top:6px}
+
+  .sp-foot-row{display:flex;align-items:flex-end;justify-content:space-between;gap:28px}
+  .sp-list{list-style:none;font-family:var(--serif);font-weight:400;
+    font-size:clamp(19px,2.9vw,38px);line-height:1.34;letter-spacing:-.02em}
+  .sp-list li{white-space:nowrap}
+  .sp-cue{flex:none;display:inline-flex;align-items:center;gap:9px;padding-bottom:6px;
+    font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-40)}
+  /* 화살표 반복 모션 — 4px, 2.8초 주기. 등장 모션이 끝난 뒤에 시작합니다. */
+  .sp-cue i{font-style:normal;color:var(--orange);font-size:1.3em}
+  .sp-js .sp-scene.is-active .sp-cue i{animation:sp-slide 2.8s ease-in-out 1.1s infinite}
+  @keyframes sp-slide{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+  .sp-js.sp-vert .sp-scene.is-active .sp-cue i{animation-name:sp-drop}
+  @keyframes sp-drop{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
   @media(max-width:640px){
-    .work{grid-template-columns:38px 1fr;gap:4px 12px}
-    .work .wgo{grid-column:2;margin-top:10px}
-    .work .wd,.work .wtags{grid-column:2}
+    .sp-foot-row{flex-direction:column;align-items:flex-start;gap:20px}
+    .sp-list li{white-space:normal}
   }
 
-  /* ---- 02 Study Log ---- */
-  .track{display:block;margin-top:26px;padding:34px 30px;border-radius:16px;
-    background:var(--ivory-2);border:1px solid var(--ink-08);
-    transition:background-color .24s ease,border-color .24s ease,transform .24s cubic-bezier(.22,.7,.3,1)}
-  .track:hover{background:rgba(216,102,47,.10);border-color:rgba(216,102,47,.28);transform:translateY(-2px)}
-  .track .tnum{font-family:var(--serif);font-size:clamp(38px,6vw,58px);font-weight:600;line-height:1;letter-spacing:-.03em}
-  .track .tlabel{margin-top:10px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--ink-40);text-transform:uppercase}
-  .track #trackStat:not([hidden]) + .tdesc{margin-top:18px}
-  .track .tdesc{margin-top:0;font-size:14.5px;line-height:1.8;color:var(--ink-60);max-width:40em}
-  .track .tgo{margin-top:20px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;
-    transition:color .22s ease,gap .22s ease}
-  .track:hover .tgo{color:var(--orange);gap:11px}
-  .tcats{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+  /* ---- 04 의 문제의식 한 단락 (상자 없이 글자만) ----
+     주황 세로선은 위에서 아래로 그어질 수 있도록 테두리 대신 가상요소로 두었습니다.
+     테두리 2px + 안여백 16px = 18px 이던 글자 위치를 그대로 유지하려고
+     안여백을 18px 로 올렸습니다. */
+  .sp-quote{position:relative;margin-top:clamp(20px,2.6vw,32px);padding-left:18px;max-width:34em}
+  .sp-quote::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+    background:var(--orange)}
+  .sp-js .sp-quote::before{transform:scaleY(0);transform-origin:top;
+    transition:transform var(--m-mid) var(--m-ease);
+    transition-delay:calc(var(--m-in) + 90ms)}
+  .sp-js .sp-scene.is-active .sp-quote::before{transform:none}
+  .sp-js .sp-scene.is-leaving .sp-quote::before{transform:scaleY(0);
+    transition-duration:var(--m-fast);transition-delay:0s}
 
-  /* ---- 03 About ---- */
-  .about{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:32px}
-  @media(max-width:840px){.about{grid-template-columns:1fr;gap:40px}}
-  .arc{list-style:none;display:flex;flex-direction:column;gap:0}
-  .arc li{position:relative;padding:0 0 26px 26px;border-left:1px solid var(--ink-14)}
-  .arc li:last-child{border-left-color:transparent;padding-bottom:0}
-  .arc li::before{content:"";position:absolute;left:-4.5px;top:7px;width:8px;height:8px;border-radius:50%;
-    background:var(--ivory);border:1.5px solid var(--ink-14)}
-  .arc li:last-child::before{background:var(--orange);border-color:var(--orange)}
-  .arc .at{font-size:15.5px;font-weight:600;letter-spacing:-.01em}
-  .arc .ad{margin-top:5px;font-size:14px;line-height:1.75;color:var(--ink-60)}
-  /* 성장은 문장으로 말하지 않고 번호가 붙은 흐름으로 보여줍니다 */
-  .steps{list-style:none;display:flex;flex-direction:column;gap:18px}
-  .steps li{display:flex;gap:14px;align-items:baseline}
-  .steps .sn{font-size:12px;font-weight:700;color:var(--orange);letter-spacing:.06em;flex:none}
-  .steps .sx{font-family:var(--serif);font-size:16.5px;font-weight:500;letter-spacing:-.01em}
-  .aintro{font-family:var(--serif);font-size:clamp(18px,2.3vw,22px);font-weight:500;line-height:1.6;letter-spacing:-.02em;margin-bottom:26px}
+  /* 인용문·진행 순서의 낱말은 inline 이라 opacity 만 바꿉니다.
+     transform 을 쓰지 않으므로 줄바꿈이 절대 달라지지 않습니다. */
+  .sp-js .mq{opacity:0;transition:opacity var(--m-mid) var(--m-ease);
+    transition-delay:calc(var(--m-in) + var(--d,0ms))}
+  .sp-js .sp-scene.is-active .mq{opacity:1}
+  .sp-js .sp-scene.is-leaving .mq{opacity:0;transition-duration:var(--m-fast);transition-delay:0s}
+  .sp-nomotion .mq{opacity:1!important;transition:none!important}
+  .sp-quote p{font-family:var(--serif);font-size:clamp(14px,1.5vw,17px);line-height:1.72;
+    letter-spacing:-.01em}
+  /* ---- 04 의 준비 순서 (테두리 없이 한 줄로) ---- */
+  .sp-chain{margin-top:20px;font-size:10.5px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-40)}
+  .sp-chain b{font-weight:700;color:var(--rust)}
 
-  /* ---- footer ---- */
-  footer{padding:44px 0 56px;border-top:1px solid var(--ink-14);
-    display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  /* ---- 05 의 목록 ---- */
+  .sp-shelf{margin-top:clamp(22px,2.6vw,32px);display:flex;flex-direction:column;
+    max-width:44em;border-top:1px solid var(--ink)}
+  .sp-row{display:grid;grid-template-columns:30px 1fr auto;gap:14px;align-items:baseline;
+    padding:14px 0;border-bottom:1px solid var(--ink-08);
+    font-size:14.5px;transition:color .18s ease,padding-left .18s var(--ease)}
+  .sp-row .sp-rn{font-size:11px;font-weight:700;color:var(--ink-40);letter-spacing:.06em}
+  .sp-row .sp-rt{font-weight:600;letter-spacing:-.01em}
+  .sp-row .sp-rs{display:block;margin-top:3px;font-weight:400;font-size:12.5px;color:var(--ink-40)}
+  .sp-row .sp-ra{font-size:12px;color:var(--ink-40);transition:transform .18s var(--ease),color .18s ease}
+  a.sp-row:hover,a.sp-row:focus-visible{color:var(--orange);padding-left:6px}
+  a.sp-row:hover .sp-ra,a.sp-row:focus-visible .sp-ra{color:var(--orange);transform:translateX(3px)}
+  span.sp-row{color:var(--ink-40)}
+  .sp-tail{margin-top:26px;padding-top:16px;border-top:1px solid var(--ink-14);
+    display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;
     font-size:12.5px;color:var(--ink-40)}
-  footer a{font-weight:600;color:var(--ink-60);transition:color .2s ease}
-  footer a:hover{color:var(--orange)}
+  .sp-tail a{font-weight:600;color:var(--ink-60);transition:color .2s ease}
+  .sp-tail a:hover,.sp-tail a:focus-visible{color:var(--orange)}
 
-  /* 움직임을 줄여달라고 설정한 분에게는 애니메이션을 끕니다 */
+  /* =====================================================================
+     진행 상태 — 01 / 05 와 장면 이름. 눌러서 바로 이동합니다.
+     자바스크립트가 없으면 그냥 앵커 목록으로 남습니다.
+     ===================================================================== */
+  .sp-nav{position:fixed;right:clamp(14px,2.4vw,30px);top:50%;transform:translateY(-50%);
+    z-index:55;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+  .sp-nav .sp-tally{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink-40);
+    font-variant-numeric:tabular-nums}
+  .sp-nav .sp-tally b{color:var(--orange);display:inline-block}
+  /* 숫자가 바뀔 때만 짧게 갈아탑니다 */
+  .sp-nav .sp-tally b.is-flip{animation:sp-flip 240ms var(--m-ease)}
+  @keyframes sp-flip{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .sp-nav ul{list-style:none;display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+  .sp-nav button{appearance:none;background:none;border:0;font:inherit;cursor:pointer;
+    display:flex;align-items:center;gap:9px;padding:5px 0 5px 10px;
+    font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-40);transition:color .2s ease}
+  /* tick — 폭을 30px 로 고정해 두고 scaleX 로 늘립니다. 자리가 밀리지 않습니다. */
+  .sp-nav button .sp-tick{display:block;width:30px;height:2px;background:var(--ink-14);
+    transform:scaleX(.53);transform-origin:left;
+    transition:transform 260ms var(--m-ease),background-color 200ms ease}
+  .sp-nav button:hover{color:var(--ink-60)}
+  .sp-nav button:hover .sp-tick{background:var(--ink-40)}
+  .sp-nav button[aria-current="true"]{color:var(--orange)}
+  .sp-nav button[aria-current="true"] .sp-tick{transform:none;background:var(--orange)}
+  /* 자바스크립트 없을 때는 화면 흐름을 막지 않게 접어둡니다 */
+  .sp-nav{display:none}
+  .sp-js .sp-nav{display:flex}
+  @media(max-width:900px){
+    .sp-js .sp-nav{right:auto;left:0;top:auto;bottom:0;transform:none;
+      width:100%;flex-direction:row;align-items:center;gap:0;
+      background:var(--ivory);border-top:1px solid var(--ink-14);padding:0 12px}
+    .sp-js .sp-nav .sp-tally{display:none}
+    .sp-js .sp-nav ul{flex-direction:row;width:100%;gap:0}
+    .sp-js .sp-nav li{flex:1}
+    .sp-js .sp-nav button{width:100%;flex-direction:column;gap:5px;padding:9px 0 11px;
+      font-size:9.5px;letter-spacing:.1em}
+    .sp-js .sp-nav button .sp-tick{width:100%;height:2px;transform:scaleX(.3)}
+    .sp-js .sp-nav button[aria-current="true"] .sp-tick{transform:none}
+    /* 아래쪽 막대만큼 무대를 줄여 글자가 가려지지 않게 합니다 */
+    .sp-js .sp-deck{bottom:56px}
+  }
+  /* =====================================================================
+     작은 화면 — 한 장면이 화면 안에 들어가도록 활자와 간격을 조입니다.
+     (요구사항 7: 넘치면 폰트·간격을 반응형으로 조정하고, 그래도 안 되는
+      상세 내용은 Audit Prep 링크로 넘깁니다)
+     ===================================================================== */
+  @media(max-width:900px){
+    .sp-js .sp-scene{align-items:flex-start}
+    .sp-js .sp-scene > .sp-inner{padding-top:clamp(16px,4vw,28px)}
+    .sp-p{margin-top:16px;font-size:13.5px;line-height:1.75}
+    .sp-acts{margin-top:18px}
+    .sp-quote{margin-top:16px;padding-left:14px}
+    .sp-quote p{font-size:13.5px;line-height:1.65}
+    .sp-chain{margin-top:14px;letter-spacing:.1em}
+    .sp-shelf{margin-top:18px}
+    .sp-shelf .sp-row{padding:11px 0;font-size:13.5px}
+    .sp-tail{margin-top:18px;padding-top:12px}
+  }
+
+  .sp :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+
+  /* =====================================================================
+     움직임을 줄여달라고 설정한 분에게는 전환을 즉시 처리합니다
+     ===================================================================== */
   @media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation:none!important;transition:none!important}
-    .rise,.reveal,.js-anim .rise,.js-anim .reveal{opacity:1!important;transform:none!important}
+    .sp-js .sp-track{transition:none}
+    .sp *,.sp *::before,.sp *::after{animation:none!important}
+    .sp-go i,.sp-row,.sp-nav button .sp-tick{transition:none!important}
+    /* 장면 안쪽 모션을 전부 걷어내고 글은 즉시 제자리에 둡니다.
+       (opacity 때문에 안 보이는 일이 생기지 않게 1 로 못박습니다) */
+    .sp-js .m,.sp-js .mr,.sp-js .mr > .mi,.sp-js .mq{
+      opacity:1!important;transform:none!important;transition:none!important}
+    .sp-js .mline{line-height:.9!important;margin-block:0!important}   /* 마스크용 보정도 되돌립니다 */
+    .sp-js .mr{overflow:visible!important}
+    .sp-js .sp-quote::before,.sp-js .sp-go.sp-primary::after{
+      transform:none!important;transition:none!important}
   }
 </style>
 </head>
-<body>
+<body class="sp">
 
 <!-- =====================================================================
-     첫 화면
+     다섯 장면 (상단 줄 없음 — 화면 전체를 씁니다)
      ===================================================================== -->
-<header class="hero">
-  <div class="wrap" style="width:100%">
-    <div class="eyebrow rise d1">Yerim Bae · Portfolio 2026</div>
-  </div>
+<div class="sp-deck" id="spDeck">
+  <div class="sp-track" id="spTrack" style="--n:5; --i:0">
 
-  <div class="wrap hero-mid" style="width:100%">
-    <h1 class="statement rise d2">배예림,<br>산업을 이해하고<br>회계의 언어로 설명합니다.</h1>
+    <!-- 01 WELCOME ---------------------------------------------------- -->
+    <section class="sp-scene sp-scene--home" id="home" aria-labelledby="spH1">
+      <div class="sp-inner">
 
-    <p class="lede rise d3">
-      블록체인과 디지털자산을 배우고 기록하며,<br>
-      이를 회계와 감사의 관점으로 연결하고 있습니다.
-    </p>
+        <div class="sp-head">
+          <h1 class="sp-title" id="spH1">
+            <span class="mline"><span class="mr" style="--o:1"><span class="mi">Welcome to</span></span></span>
+            <span class="mline"><span class="mr" style="--o:2"><span class="mi">Yerim's Daily</span></span> <span class="mr" style="--o:3.5"><span class="mi"><em>Life</em></span></span></span>
+          </h1>
+          <a class="sp-logo m" style="--o:0;--m-dy:-8px;--m-dx:0" href="portfolio.html" aria-label="배예림 포트폴리오로">
+            <img src="assets/wordmark-mark.png?v=1" alt="Yerim" width="167" height="96" />
+          </a>
+        </div>
 
-    <nav class="menu rise d4" id="menu">
-      <a class="mlink" data-k="work"   href="#work"   data-hint="공부를 결과물로 만든 기록">Selected Work<span class="arw">→</span></a>
-      <a class="mlink" data-k="news"   href="#log"    data-hint="산업의 변화를 꾸준히 따라 읽은 기록">Study Log<span class="arw">→</span></a>
-      <a class="mlink" data-k="about"  href="#about"  data-hint="어떤 경험이 지금의 관심으로 이어졌는지">About Yerim<span class="arw">→</span></a>
-      <a class="mlink" data-k="github" href="https://github.com/yerim-Bae" target="_blank" rel="noopener"
-         data-hint="생각을 실제 도구로 구현한 과정">GitHub<span class="arw">↗</span></a>
-    </nav>
-    <div class="mhint rise d5" id="mhint">&nbsp;</div>
-  </div>
+        <div class="sp-foot-row">
+          <ul class="sp-list">
+            <li class="m" style="--o:4.2;--m-dx:0;--m-dy:12px">Assurance</li>
+            <li class="m" style="--o:4.9;--m-dx:0;--m-dy:12px">Blockchain &amp; Digital Assets</li>
+            <li class="m" style="--o:5.6;--m-dx:0;--m-dy:12px">Workout</li>
+            <li class="m" style="--o:6.3;--m-dx:0;--m-dy:12px">Archiving</li>
+          </ul>
+          <p class="sp-cue m" style="--o:7">Scroll to explore <i aria-hidden="true">→</i></p>
+        </div>
 
-  <div class="wrap hero-foot rise d6" style="width:100%">
-    <span class="exploring">Currently exploring — <b>Digital Assets × Accounting × Audit</b></span>
-    <span class="scroll-cue">Scroll to explore <i>↓</i></span>
-  </div>
-</header>
-
-<!-- =====================================================================
-     01 Selected Work
-     아래 WORKS 배열만 고치면 이 목록이 바뀝니다. (맨 아래 스크립트)
-     ===================================================================== -->
-<section id="work">
-  <div class="wrap">
-    <div class="shead reveal">
-      <span class="snum">01</span>
-      <h2>Selected Work</h2>
-      <span class="snote">직접 골라 담은 작업</span>
-    </div>
-    <div class="works" id="works"></div>
-  </div>
-</section>
-
-<!-- =====================================================================
-     02 Study Log
-     ===================================================================== -->
-<section id="log">
-  <div class="wrap">
-    <div class="shead reveal">
-      <span class="snum">02</span>
-      <h2>Study Log</h2>
-      <span class="snote">매주 쌓는 공부 기록</span>
-    </div>
-    <a class="track reveal" href="archive.html">
-      <div id="trackStat" hidden>
-        <div class="tnum" id="trackCount"></div>
-        <div class="tlabel">notes</div>
       </div>
-      <p class="tdesc">
-        블록체인·디지털자산 업계에서 실제로 무슨 일이 일어나는지 매주 따라 읽고,
-        요약과 제 해석을 함께 남깁니다. 산업을 알아야 회계 판단이 선다고 생각해서 시작한 기록입니다.
-      </p>
-      <div class="tcats" id="trackCats"></div>
-      <span class="tgo">Study Log 열기 <span aria-hidden="true">→</span></span>
-    </a>
-  </div>
-</section>
+    </section>
+
+    <!-- 02 MORNING ---------------------------------------------------- -->
+    <section class="sp-scene" id="morning" aria-labelledby="spH2">
+      <div class="sp-inner">
+        <h2 class="sp-title2" id="spH2"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>02</em></span></span> <span class="mr" style="--o:1"><span class="mi">Morning</span></span></span></h2>
+        <p class="sp-meta m" style="--o:2;--m-dx:0;--m-dy:10px" id="spStat" hidden>Study Log <b id="spCount"></b> Notes</p>
+        <div class="sp-acts">
+          <a class="sp-go sp-primary m" style="--o:3" data-link="newsTracking">뉴스 트래킹 보기 <i aria-hidden="true">→</i></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 MOVE ------------------------------------------------------- -->
+    <section class="sp-scene" id="move" aria-labelledby="spH3">
+      <div class="sp-inner">
+        <!-- 03 은 숫자와 이름이 양쪽에서 들어와 가운데에서 맞춰집니다 -->
+        <h2 class="sp-title2" id="spH3"><span class="mline"><span class="mr" style="--o:0;--r-dx:-26px"><span class="mi"><em>03</em></span></span> <span class="mr" style="--o:1;--r-dx:26px"><span class="mi">Move</span></span></span></h2>
+        <p class="sp-meta m" style="--o:2;--m-dx:0;--m-dy:10px">5K · 10K · Tennis</p>
+
+        <div class="sp-acts">
+          <a class="sp-go sp-primary m" style="--o:3" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 WORKROOM --------------------------------------------------- -->
+    <section class="sp-scene" id="workroom" aria-labelledby="spH4">
+      <div class="sp-inner">
+        <h2 class="sp-title2" id="spH4"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>04</em></span></span> <span class="mr" style="--o:1"><span class="mi">Workroom</span></span></span></h2>
+        <!-- 주황 세로선이 위에서 아래로 그어진 뒤 문장이 차례로 들어옵니다.
+             문장은 inline 이라 opacity 만 바꿉니다 — 줄바꿈이 달라지지 않습니다. -->
+        <blockquote class="sp-quote m" style="--o:2;--m-dx:0;--m-dy:10px">
+          <p>
+            <span class="mq" style="--d:130ms">신입회계사는 충분한 회사와 산업 이해 없이 필드에 투입되기도 합니다.</span>
+            <span class="mq" style="--d:225ms">감사는 회사가 속한 산업, 비즈니스 모델과 거래구조를 이해하는 데서 시작해야 한다고 생각합니다.</span>
+          </p>
+        </blockquote>
+        <p class="sp-chain m" style="--o:3;--m-dx:0;--m-dy:8px">
+          <span class="mq" style="--d:200ms">Company</span> →
+          <span class="mq" style="--d:262ms">Industry</span> →
+          <span class="mq" style="--d:324ms">Business Model</span> →
+          <b class="mq" style="--d:396ms">Accounts &amp; Risks</b>
+        </p>
+        <div class="sp-acts">
+          <a class="sp-go sp-primary m" style="--o:4" data-link="auditPrep">Audit Prep 사용해보기 <i aria-hidden="true">↗</i></a>
+          <a class="sp-go m" style="--o:5.2" data-link="github">만든 과정 보기 <i aria-hidden="true">↗</i></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 STUDY ------------------------------------------------------ -->
+    <section class="sp-scene" id="study" aria-labelledby="spH5">
+      <div class="sp-inner">
+        <h2 class="sp-title2" id="spH5"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>05</em></span></span> <span class="mr" style="--o:1"><span class="mi">Study</span></span></span></h2>
+        <!-- 위 구분선이 먼저 뜨고 그 아래 항목이 차례로 쌓입니다 (행은 스크립트가 만듭니다) -->
+        <div class="sp-shelf m" style="--o:2;--m-dx:0;--m-dy:8px" id="spShelf"></div>
+        <footer class="sp-tail m" style="--o:7.1;--m-dx:0;--m-dy:10px">
+          <span>© 2026 배예림 · Yerim Bae</span>
+          <a href="portfolio.html">Portfolio</a>
+          <a href="archive.html">Study Log</a>
+          <a data-link="github">GitHub</a>
+        </footer>
+      </div>
+    </section>
+
+  </div><!-- /track -->
+</div><!-- /deck -->
 
 <!-- =====================================================================
-     03 About Yerim
+     진행 상태
      ===================================================================== -->
-<section id="about">
-  <div class="wrap">
-    <div class="shead reveal">
-      <span class="snum">03</span>
-      <h2>About Yerim</h2>
-      <span class="snote">지금의 관심에 이르기까지</span>
-    </div>
-    <div class="about">
-      <div class="reveal">
-        <p class="aintro">배우고, 기록하고, 연결합니다.</p>
-        <ol class="steps">
-          <li><span class="sn">01</span><span class="sx">관심을 발견하고</span></li>
-          <li><span class="sn">02</span><span class="sx">구조를 공부하고</span></li>
-          <li><span class="sn">03</span><span class="sx">기록으로 남기고</span></li>
-          <li><span class="sn">04</span><span class="sx">회계와 감사로 연결합니다</span></li>
-        </ol>
-      </div>
-      <ul class="arc reveal">
-        <li>
-          <div class="at">공인회계사 합격</div>
-          <div class="ad">회계·감사의 기본 언어를 갖췄습니다.</div>
-        </li>
-        <li>
-          <div class="at">감사 현장 경험</div>
-          <div class="ad">기준서를 아는 것과 그 산업을 아는 것은 다른 문제라는 걸 현장에서 배웠습니다.</div>
-        </li>
-        <li>
-          <div class="at">산업 이해의 필요성 발견</div>
-          <div class="ad">숫자가 왜 그렇게 찍혔는지는 결국 그 회사가 어떻게 돈을 버는지에서 나온다고 봤습니다.</div>
-        </li>
-        <li>
-          <div class="at">블록체인·디지털자산 탐구</div>
-          <div class="ad">회계 기준이 아직 따라잡는 중인 영역이라, 산업을 먼저 이해해야 판단이 가능한 곳입니다.</div>
-        </li>
-        <li>
-          <div class="at">산업을 이해하는 감사인</div>
-          <div class="ad">낯선 산업에 들어가도 무엇을 물어야 할지 아는 감사인이 되는 것이 목표입니다.</div>
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
+<nav class="sp-nav" id="spNav" aria-label="장면 이동">
+  <p class="sp-tally"><b id="spNow">01</b> / 05</p>
+  <ul>
+    <li><button type="button" data-go="0" aria-current="true"><span>Home</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="1" aria-current="false"><span>Morning</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="2" aria-current="false"><span>Move</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="3" aria-current="false"><span>Workroom</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="4" aria-current="false"><span>Study</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+  </ul>
+</nav>
 
-<footer>
-  <div class="wrap" style="width:100%;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
-    <span>© 2026 배예림 · Yerim Bae</span>
-    <span>
-      <a href="archive.html">Study Log</a> &nbsp;·&nbsp;
-      <a href="https://github.com/yerim-Bae" target="_blank" rel="noopener">GitHub ↗</a>
-    </span>
-  </div>
-</footer>
+<p class="sp-sr" id="spSay" aria-live="polite"></p>
 
 <script>
-/* =======================================================================
-   Selected Work 목록 — 여기만 고치면 됩니다.
-     title : 제목
-     desc  : 한 줄 설명
-     tags  : 작은 분류 태그
-     href  : 열리는 주소. "" 로 두면 "준비 중"으로 흐리게 표시되고 눌리지 않습니다.
-     ext   : true 면 새 탭에서 열립니다
-   링크가 생기면 href 에 주소만 넣어주세요. 나머지는 자동입니다.
-   ======================================================================= */
-const WORKS = [
-  {
-    title:"감사 사전준비 AI — 낯선 산업에 들어가기 전 무엇을 물을지 정하는 도구",
-    desc:"산업 카드덱 위에 DART 공시로 만든 회사 층을 얹어, 산업 일반론과 회사의 실제 사실이 갈라지는 지점을 찾습니다. 감사 계획 단계에서 질문 목록을 만드는 데 쓰려고 직접 만들었습니다.",
-    tags:["회계감사","DART 공시","직접 개발"],
-    href:"https://yerim-bae.github.io/audit-context-ai/", ext:true
-  },
-  {
-    title:"Study Log — 블록체인·디지털자산 주간 공부 기록",
-    desc:"업계 뉴스를 매주 골라 읽고 요약과 인사이트를 남기는 공부 기록입니다. 노션에 쌓은 기록이 사이트로 자동 반영되도록 만들었습니다.",
-    tags:["블록체인","디지털자산","직접 개발"],
-    href:"archive.html"
-  },
-  {
-    title:"가상자산 회계처리 공부",
-    desc:"가상자산을 무엇으로 볼 것인가에 따라 재무제표가 어떻게 달라지는지, 기준서와 실제 사례를 함께 정리하고 있습니다.",
-    tags:["K-IFRS","디지털자산"],
-    href:""
-  },
-  {
-    title:"BAY 리서치 아티클",
-    desc:"블록체인 리서치 팀에서 작성한 산업 분석 아티클입니다.",
-    tags:["리서치","산업 분석"],
-    href:""
-  },
-  {
-    title:"블록체인 교육자료",
-    desc:"회계를 배운 사람의 언어로 블록체인 구조를 설명하기 위해 만든 자료입니다.",
-    tags:["교육자료","블록체인"],
-    href:""
-  },
-  {
-    title:"산업·기업 분석",
-    desc:"관심 있는 기업의 사업 구조와 재무제표를 함께 읽고, 숫자가 그렇게 나온 이유를 산업에서 찾아본 기록입니다.",
-    tags:["재무제표분석","산업 이해"],
-    href:""
-  }
+/* =========================================================================
+   ▼▼▼ 여기만 고치면 됩니다 ▼▼▼
+
+   LINKS — 화면에 걸리는 모든 주소. href 를 채우면 눌리는 링크가 되고,
+           "" 로 비워두면 자리는 지키되 조용히 눌리지 않는 상태가 됩니다.
+   SHELF — 05 STUDY 의 목록. LINKS 의 어느 항목을 쓸지 key 로 가리킵니다.
+   ========================================================================= */
+const LINKS = {
+  // 기존 사이트에 이미 있는 주소를 그대로 가져왔습니다
+  newsTracking: { href:"archive.html",                                  ext:false, label:"Study Log 뉴스 트래킹" },
+  auditPrep:    { href:"https://yerim-bae.github.io/audit-context-ai/", ext:true,  label:"Audit Prep 감사 사전준비 도구" },
+  github:       { href:"https://github.com/yerim-Bae",                  ext:true,  label:"GitHub 저장소" },
+  // 아직 주소가 없는 곳 — 생기면 href 만 채워주세요
+  workoutLog:   { href:"move.html",                                     ext:false, label:"운동 기록 — 5KM·10KM 마라톤과 테니스" },
+  rwaStudy:     { href:"", ext:false, label:"RWA 스터디" },
+  bayResearch:  { href:"", ext:false, label:"BAY 리서치" },
+  articles:     { href:"", ext:false, label:"아티클" },
+  onboarding:   { href:"", ext:false, label:"블록체인 온보딩 자료" }
+};
+
+const SHELF = [
+  { key:"rwaStudy",    title:"RWA Study",    note:"실물자산 토큰화 스터디" },
+  { key:"bayResearch", title:"BAY Research", note:"리서치팀 운영" },
+  { key:"articles",    title:"Articles",     note:"산업 분석 아티클" },
+  { key:"onboarding",  title:"Onboarding",   note:"블록체인 교육자료" }
 ];
+/* ▲▲▲ 여기까지 ▲▲▲ */
 
 const esc = (s)=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const n2 = (i)=>String(i+1).padStart(2,"0");
 
-document.getElementById("works").innerHTML = WORKS.map((w,i)=>{
-  const tags = (w.tags||[]).map(t=>`<span class="wtag">${esc(t)}</span>`).join("");
-  const inner =
-    `<span class="wn">${n2(i)}</span>` +
-    `<span class="wt">${esc(w.title)}</span>` +
-    `<span class="wgo">${w.href ? (w.ext?"열기 ↗":"열기 →") : "준비 중"}</span>` +
-    `<p class="wd">${esc(w.desc)}</p>` +
-    (tags?`<div class="wtags">${tags}</div>`:"");
-  return w.href
-    ? `<a class="work reveal" href="${esc(w.href)}"${w.ext?' target="_blank" rel="noopener"':""}>${inner}</a>`
-    : `<div class="work soon reveal">${inner}</div>`;
+/* ---- 주소를 [data-link] 자리에 연결 ------------------------------------ */
+document.querySelectorAll("[data-link]").forEach(el=>{
+  const cfg = LINKS[el.dataset.link], arrow = el.querySelector("i");
+  if(!cfg || !cfg.href){
+    el.removeAttribute("href");
+    el.classList.add("sp-pending");
+    el.setAttribute("aria-disabled","true");
+    el.setAttribute("title",(cfg&&cfg.label?cfg.label:"이 항목")+" — 준비 중");
+    return;
+  }
+  el.href = cfg.href;
+  el.setAttribute("aria-label", cfg.label);
+  if(cfg.ext){
+    el.target="_blank"; el.rel="noopener"; el.classList.add("sp-ext");
+    if(arrow) arrow.textContent="↗";
+  }else if(arrow){ arrow.textContent="→"; }
+});
+
+/* ---- 05 STUDY 서재 인덱스 ---------------------------------------------- */
+document.getElementById("spShelf").innerHTML = SHELF.map((it,i)=>{
+  const cfg = LINKS[it.key] || {};
+  const n = String(i+1).padStart(2,"0");
+  // 행은 항상 같은 방향(오른쪽에서)에서 들어옵니다. 이동 거리 24px.
+  const mo = ` style="--o:${(2.6 + i * 1.15).toFixed(2)};--m-dx:24px;--m-dy:0"`;
+  const body =
+    `<span class="sp-rn">${n}</span>` +
+    `<span class="sp-rt">${esc(it.title)}<span class="sp-rs">${esc(it.note)}</span></span>` +
+    `<span class="sp-ra" aria-hidden="true">${cfg.href ? (cfg.ext?"↗":"→") : "·"}</span>`;
+  return cfg.href
+    ? `<a class="sp-row m"${mo} href="${esc(cfg.href)}"${cfg.ext?' target="_blank" rel="noopener"':""} aria-label="${esc(it.title)} — ${esc(it.note)}">${body}</a>`
+    : `<span class="sp-row m"${mo} aria-disabled="true" title="${esc(it.title)} — 준비 중">${body}</span>`;
 }).join("");
 
-/* 메뉴에 마우스를 올리면 보조 문구가 바뀝니다 */
-(function(){
-  const hint=document.getElementById("mhint");
-  document.querySelectorAll(".mlink").forEach(a=>{
-    const show=()=>{ hint.textContent=a.dataset.hint||" "; };
-    const hide=()=>{ hint.innerHTML="&nbsp;"; };
-    a.addEventListener("mouseenter",show);
-    a.addEventListener("focus",show);
-    a.addEventListener("mouseleave",hide);
-    a.addEventListener("blur",hide);
-  });
-})();
+/* =========================================================================
+   풀페이지 전환 엔진
 
-/* 스크롤해서 화면에 들어오면 한 번만 나타납니다. (강제 스크롤 이동은 하지 않습니다)
-   scroll 이벤트만 씁니다 — 어느 브라우저에서든 확실히 동작하고,
-   다 나타나면 이벤트를 스스로 떼기 때문에 부담도 없습니다. */
+   문서는 스크롤하지 않습니다. 무대(.sp-deck)를 화면에 고정해 두고 장면 띠를
+   transform 으로 한 칸씩 옮깁니다. 스크롤 위치가 없으니 두 장면 사이에
+   걸치는 상태가 애초에 만들어지지 않습니다.
+
+   한 번의 제스처 = 한 칸
+     · 휠 델타를 STEP 까지 모은 뒤 한 번만 움직입니다
+     · 움직인 뒤에는 "제스처가 끝났다"고 볼 때까지(QUIET) 다시 받지 않습니다
+       → 트랙패드가 작은 이벤트를 수십 번 흘려도 한 칸입니다
+       → 휠을 세게 돌려 큰 델타가 한꺼번에 와도 한 칸입니다
+     · 전환 애니메이션이 끝날 때까지도 잠가둡니다
+   ========================================================================= */
 (function(){
-  const items=[...document.querySelectorAll(".reveal")];
-  const sweep=()=>{
-    let left=false;
-    for(const el of items){
-      if(el.classList.contains("in")) continue;
-      const r=el.getBoundingClientRect();
-      if(r.top < window.innerHeight*0.92 && r.bottom > 0) el.classList.add("in");
-      else left=true;
+  const html  = document.documentElement;
+  const deck  = document.getElementById("spDeck");
+  const track = document.getElementById("spTrack");
+  const scenes= [...track.querySelectorAll(".sp-scene")];
+  const btns  = [...document.querySelectorAll(".sp-nav button")];
+  const nowEl = document.getElementById("spNow");
+  const sayEl = document.getElementById("spSay");
+  const N = scenes.length;
+  const IDS = scenes.map(s=>s.id);
+  const NAMES = ["Home","Morning","Move","Workroom","Study"];
+
+  const STEP  = 42;    // 이만큼 델타가 모이면 한 칸
+  const QUIET = 240;   // 이만큼 조용하면 "제스처가 끝났다"고 봅니다
+  const vertQ = matchMedia("(max-width:900px)");
+  const softQ = matchMedia("(prefers-reduced-motion:reduce)");
+
+  let index = 0, animating = false, accum = 0, armed = true;
+  let quietTimer = 0, safety = 0;
+  let placed = -1;                 // 방금 어느 장면에 있었는지 (안쪽 모션 방향·퇴장 판단용)
+
+  // 자바스크립트가 살아 있으니 고정 무대로 바꿉니다 (없으면 위 CSS 그대로 세로 문서)
+  html.classList.add("sp-js");
+  setVert();
+
+  function setVert(){ html.classList.toggle("sp-vert", vertQ.matches); }
+
+  function place(animate){
+    setVert();                       // 화살표 방향 표시용 (배치는 CSS 가 알아서 합니다)
+    const soft = softQ.matches;
+    track.style.transition = (animate && !soft)
+      ? "transform var(--dur) var(--ease)" : "none";
+    // 위치는 이 한 줄이 전부입니다. 가로냐 세로냐는 CSS 가 판단합니다.
+    track.style.setProperty("--i", String(index));
+
+    // 화면 밖 장면은 키보드 탭 순서에서도 빼둡니다
+    scenes.forEach((s,i)=>{
+      const off = i !== index;
+      s.setAttribute("aria-hidden", off ? "true" : "false");
+      if("inert" in s) s.inert = off;
+    });
+
+    /* ---- 장면 안쪽 모션 (여기서 하는 일은 클래스와 방향 표시뿐입니다) ----
+       .is-active  지금 장면 → 안쪽 요소가 차례로 조립됩니다
+       .is-leaving 방금 떠난 장면 → 짧게 빠집니다. 다음 이동 때 떼어집니다.
+       그 외 장면은 아무 클래스도 없어 초기 상태로 되돌아가 있으므로,
+       다시 들어오면 모션이 처음부터 다시 실행됩니다. */
+    const changed = (placed !== index);
+    if(changed && placed >= 0) deck.dataset.dir = (index > placed) ? "next" : "prev";
+    else if(!deck.dataset.dir) deck.dataset.dir = "next";
+    scenes.forEach((s,i)=>{
+      s.classList.toggle("is-active", i === index);
+      s.classList.toggle("is-leaving", changed && placed >= 0 && i === placed);
+    });
+
+    btns.forEach((b,i)=> b.setAttribute("aria-current", i===index ? "true" : "false"));
+    if(nowEl){
+      nowEl.textContent = String(index+1).padStart(2,"0");
+      if(changed && placed >= 0 && !softQ.matches){
+        nowEl.classList.remove("is-flip");
+        void nowEl.offsetWidth;              // 애니메이션을 다시 걸기 위한 리플로우 한 번
+        nowEl.classList.add("is-flip");
+      }
     }
-    if(!left){ removeEventListener("scroll",sweep); removeEventListener("resize",sweep); }
-  };
-  addEventListener("scroll",sweep,{passive:true});
-  addEventListener("resize",sweep);
-  sweep();
+    if(sayEl) sayEl.textContent = (index+1) + " / " + N + " " + NAMES[index];
+    placed = index;
+  }
+
+  function lock(){
+    animating = true;
+    clearTimeout(safety);
+    // transitionend 를 못 받는 경우(전환 없음·중간에 잘림)를 대비한 안전망
+    safety = setTimeout(()=>{ animating = false; }, softQ.matches ? 30 : 900);
+  }
+  track.addEventListener("transitionend", e=>{
+    if(e.propertyName === "transform"){ clearTimeout(safety); animating = false; }
+  });
+
+  /* i 번째 장면으로. push 가 true 면 뒤로가기 기록을 남깁니다. */
+  function go(i, opts){
+    opts = opts || {};
+    const next = Math.max(0, Math.min(N-1, i));
+    if(next === index && !opts.force) return false;
+    index = next;
+    place(opts.animate !== false);
+    lock();
+    const hash = "#" + IDS[index];
+    if(opts.history === "push"){
+      if(location.hash !== hash) history.pushState({i:index}, "", hash);
+    }else if(opts.history !== "none"){
+      history.replaceState({i:index}, "", hash);
+    }
+    return true;
+  }
+  function move(dir){ return go(index + dir, {history:"push"}); }
+
+  /* ---- 휠 · 트랙패드 -------------------------------------------------- */
+  deck.addEventListener("wheel", e=>{
+    e.preventDefault();                       // 문서가 밀리거나 튀지 않게
+    if(animating || !armed){ nudgeQuiet(); return; }
+    // 가로 무대에서도 위아래 휠을 씁니다. 가로 제스처(트랙패드 두 손가락 좌우)도 받습니다.
+    const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    accum += d;
+    if(Math.abs(accum) >= STEP){
+      const dir = accum > 0 ? 1 : -1;
+      accum = 0;
+      armed = false;                          // 이 제스처는 여기서 끝
+      move(dir);
+    }
+    nudgeQuiet();
+  }, {passive:false});
+
+  function nudgeQuiet(){
+    clearTimeout(quietTimer);
+    quietTimer = setTimeout(()=>{ accum = 0; armed = true; }, QUIET);
+  }
+
+  /* ---- 손가락 스와이프 ------------------------------------------------ */
+  let tx=0, ty=0, tActive=false;
+  deck.addEventListener("touchstart", e=>{
+    if(e.touches.length !== 1) return;
+    tActive = true; tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, {passive:true});
+  deck.addEventListener("touchmove", e=>{
+    if(tActive) e.preventDefault();           // 고무줄처럼 늘어나는 것 방지
+  }, {passive:false});
+  deck.addEventListener("touchend", e=>{
+    if(!tActive) return;
+    tActive = false;
+    if(animating) return;
+    const t = e.changedTouches[0];
+    const dx = tx - t.clientX, dy = ty - t.clientY;
+    const d = vertQ.matches ? dy : (Math.abs(dx) >= Math.abs(dy) ? dx : dy);
+    if(Math.abs(d) > 45) move(d > 0 ? 1 : -1);
+  }, {passive:true});
+
+  /* ---- 키보드 --------------------------------------------------------- */
+  addEventListener("keydown", e=>{
+    // e.target 이 window·document 일 수도 있어서 closest 유무를 먼저 봅니다
+    const t = e.target;
+    const near = (sel)=> !!(t && typeof t.closest === "function" && t.closest(sel));
+    if(near("input,textarea,select,[contenteditable]")) return;   // 글 쓰는 중이면 손대지 않습니다
+    // 스페이스는 버튼·링크를 누르는 데 먼저 쓰이게 둡니다
+    if((e.key === " " || e.code === "Space") && near("button,a[href]")) return;
+
+    let handled = true;
+    switch(e.key){
+      case "ArrowRight": case "ArrowDown": case "PageDown": move(1); break;
+      case "ArrowLeft":  case "ArrowUp":   case "PageUp":   move(-1); break;
+      case " ": move(e.shiftKey ? -1 : 1); break;
+      case "Home": go(0, {history:"push"}); break;
+      case "End":  go(N-1, {history:"push"}); break;
+      default: handled = false;
+    }
+    if(handled) e.preventDefault();
+  });
+
+  /* ---- 진행 표시 클릭 ------------------------------------------------- */
+  btns.forEach(b=> b.addEventListener("click", ()=> go(+b.dataset.go, {history:"push"})));
+
+  /* ---- 주소(#해시) ---------------------------------------------------- */
+  function fromHash(animate){
+    const i = IDS.indexOf((location.hash||"").replace("#",""));
+    go(i < 0 ? 0 : i, {animate:animate, history:"none", force:true});
+  }
+  addEventListener("popstate", ()=> fromHash(true));      // 뒤로·앞으로
+  // 페이지 안의 #링크(다른 장면으로 가는 앵커)도 장면 이동으로 처리합니다
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener("click", e=>{
+      const i = IDS.indexOf(a.getAttribute("href").slice(1));
+      if(i < 0) return;
+      e.preventDefault();
+      go(i, {history:"push"});
+    });
+  });
+
+  /* ---- 화면 크기가 바뀌면 방향만 다시 잡고 같은 장면에 그대로 둡니다 --- */
+  function onResize(){ place(false); }
+  addEventListener("resize", onResize);
+  addEventListener("orientationchange", onResize);
+  if(vertQ.addEventListener) vertQ.addEventListener("change", onResize);
+  // 무대 크기가 어떤 이유로든 바뀌면(주소창이 접히는 모바일 등) 같은 장면에 다시 맞춥니다.
+  // resize 이벤트를 놓치는 상황까지 덮기 위한 이중 안전장치입니다.
+  if("ResizeObserver" in window) new ResizeObserver(()=>place(false)).observe(deck);
+
+  /* ---- 시작 ----------------------------------------------------------- */
+  fromHash(false);          // 해시로 들어왔으면 그 장면에서 바로 시작 (앞 장면 모션은 재생하지 않습니다)
+  animating = false;
+
+  /* 엔진이 뜨지 못했을 때를 대비한 안전망 — 1.2초 뒤에도 활성 장면이 없으면
+     모션을 포기하고 모든 글을 제자리에 못박습니다. */
+  setTimeout(()=>{
+    if(!document.querySelector(".sp-scene.is-active")) html.classList.add("sp-nomotion");
+  }, 1200);
+
+  // 손으로 확인할 때 쓰는 창구 (콘솔에서 spDeckState() )
+  window.spDeckState = ()=>({index, N, id:IDS[index], vertical:vertQ.matches, animating, armed});
+  window.spGo = (i)=>go(i,{history:"push"});
 })();
 
-/* 마지막 안전망 — 첫 화면 글자는 무슨 일이 있어도 1.5초 뒤엔 보이게 못박습니다.
-   (정상 동작했다면 이미 다 나타난 뒤라 눈에 보이는 변화가 없습니다) */
-setTimeout(()=>document.documentElement.classList.add("anim-off"), 1500);
-
-/* Study Log 숫자·분야는 아카이브 데이터에서 자동으로 채웁니다.
-   (배포 전이거나 노션 연결이 끊기면 조용히 기본값으로 남습니다) */
+/* ---- 02 의 기록 수를 기존 API 에서 가져옵니다 --------------------------
+   (배포 전이거나 노션 연결이 끊기면 이 한 줄만 조용히 숨어 있습니다) */
 (function(){
   fetch("/api/posts")
     .then(r=>r.ok?r.json():null)
     .then(posts=>{
       if(!Array.isArray(posts)||!posts.length) return;
-      document.getElementById("trackCount").textContent = posts.length;
-      document.getElementById("trackStat").hidden = false;
-      const cats=[...new Set(posts.flatMap(p=>(p.topics||[]).filter(Boolean)))].slice(0,4);
-      if(cats.length){
-        document.getElementById("trackCats").innerHTML =
-          cats.map(c=>`<span class="wtag">${esc(c)}</span>`).join("");
-      }
+      document.getElementById("spCount").textContent = posts.length;
+      document.getElementById("spStat").hidden = false;
     })
     .catch(()=>{});
-})();
-
-/* ---- 커서 (주황 점 → 링) ----
-   마우스가 있는 기기에서만 켜집니다. 잔상·자석 효과 같은 건 넣지 않았습니다. */
-(function(){
-  if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
-  var el=document.createElement("div");
-  el.id="cur"; el.setAttribute("aria-hidden","true"); el.innerHTML="<i></i>";
-  document.body.appendChild(el);
-  // 누를 수 있는 것들. 이 사이트의 카드·탭은 대부분 onclick 을 달고 있습니다.
-  var HIT='a,button,[onclick],[role="button"],label,summary';
-  var x=0,y=0,raf=0;
-  function draw(){ raf=0; el.style.transform="translate3d("+x+"px,"+y+"px,0)"; }
-  addEventListener("mousemove",function(e){
-    x=e.clientX; y=e.clientY;
-    if(!raf) raf=requestAnimationFrame(draw);
-    var t=e.target;
-    // 다른 문서가 들어간 자리(iframe) 위에서는 좌표가 전달되지 않으므로 기본 커서로 넘깁니다
-    if(t.closest && t.closest("iframe")){ el.classList.remove("on"); return; }
-    el.classList.add("on");
-    el.classList.toggle("ring", !!(t.closest && t.closest(HIT)));
-  },{passive:true});
-  addEventListener("mousedown",function(){ el.classList.add("press"); },{passive:true});
-  addEventListener("mouseup",function(){ el.classList.remove("press"); },{passive:true});
-  document.addEventListener("mouseleave",function(){ el.classList.remove("on"); });
-  addEventListener("blur",function(){ el.classList.remove("on","press"); });
 })();
 </script>
 </body>

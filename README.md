@@ -5,10 +5,16 @@
 
 ## 폴더 구성
 
-- `index.html` — 홈페이지(디자인/화면). 발행일로 주차를 자동 계산합니다.
+- `index.html` — **대표 홈**. 한 번 입력 = 한 장면으로 넘어가는 다섯 장면 구성
+  (`01 Welcome · 02 Morning · 03 Move · 04 Workroom · 05 Study`).
+  각 장면은 `#home` `#morning` `#move` `#workroom` `#study` 주소를 가집니다.
+- `archive.html` — Study Log. 노션 글이 실제로 표시되는 곳. 발행일로 주차를 자동 계산합니다.
+- `portfolio.html` — 예전 한 장짜리 포트폴리오 홈. 홈 왼쪽 위 로고로 들어갑니다.
+- `move.html` — 03 Move 에서 이어지는 운동 기록 페이지
+- `index-preview.html` — 홈을 만들며 거쳐간 시안 (지금은 쓰이지 않음, 지워도 됩니다)
 - `api/posts.js` — 노션에서 글 데이터를 가져오는 중계 함수
 - `api/authors.js` — 노션에서 작성자 소개를 가져오는 중계 함수 (선택)
-- `assets/` — 로고·파비콘·프로필 이미지 (**나중에 새 로고로 교체할 자리**)
+- `assets/` — 로고·파비콘·프로필 이미지
 - `package.json` — 배포 설정 (안 건드림)
 
 > `deploy/` 폴더는 배포용 사본입니다. `index.html`을 고쳤으면 `deploy/index.html`에도 같은 파일을 덮어써 주세요.
@@ -169,8 +175,9 @@ GitHub·Vercel은 **GitHub로 로그인** 한 번이면 되니 순서대로 만�
 | `assets/favicon-180.png` | 모바일 홈 화면 | 180×180 |
 | `assets/favicon-512.png` | 앱 아이콘 | 512×512 |
 | `assets/favicon.ico` · `favicon.ico` | 구형 브라우저용 (16·32·48 포함) | 32×32 |
-| `assets/wordmark.png` | Study Log 제호 왼쪽의 돌아가기 로고 (배경 투명) | 높이 96 |
-| `assets/og-image.png` | 카톡·SNS 미리보기 — 첫 화면(`index.html`)용 | 1200×630 |
+| `assets/wordmark.png` | Study Log · Move 의 돌아가기 로고 (배경 투명) | 높이 96 |
+| `assets/wordmark-mark.png` | 홈 첫 장면 오른쪽 위 로고 (배경 투명) | 높이 96 |
+| `assets/og-image.png` | 카톡·SNS 미리보기 — 홈(`index.html`)·포트폴리오(`portfolio.html`)용 | 1200×630 |
 | `assets/og-archive.png` | 카톡·SNS 미리보기 — Study Log(`archive.html`)용 | 1200×630 |
 | `assets/authors/배예림.png` | 프로필 사진 | 정사각형 400×400 |
 
@@ -183,12 +190,19 @@ GitHub·Vercel은 **GitHub로 로그인** 한 번이면 되니 순서대로 만�
 
 ## 배포 주소 반영
 
-Vercel 주소가 확정되면 `index.html` 상단의 `og:url` · `og:image` · `twitter:image` 3곳의 주소를
-실제 주소로 바꿔주세요 (현재는 `yerim-accounting.vercel.app` 으로 가정해 둠). 카톡 링크 미리보기에만 영향을 줍니다.
+Vercel 주소가 확정되면 `index.html` · `portfolio.html` · `archive.html` 상단의
+`og:url` · `og:image` · `twitter:image` 주소를 실제 주소로 바꿔주세요
+(현재는 `yerim-accounting.vercel.app` 으로 가정해 둠). 카톡 링크 미리보기에만 영향을 줍니다.
+
+## 홈 05 STUDY 의 빈 링크
+
+`index.html` 안 `const LINKS = { ... }` 에서 `rwaStudy` · `bayResearch` · `articles` · `onboarding`
+네 항목의 `href` 가 비어 있습니다. 비어 있으면 자리는 지키되 눌리지 않는 "준비 중" 상태로 표시되고,
+주소를 채우면 그때부터 눌리는 링크가 됩니다. 코드는 그 한 곳만 고치면 됩니다.
 
 ## 디자인 수정
 
-`index.html`의 HTML/CSS만 바꾸면 됩니다. 노션 연결과 무관하므로 언제든 가능합니다.
+각 페이지의 HTML/CSS만 바꾸면 됩니다. 노션 연결과 무관하므로 언제든 가능합니다.
 
 ---
 
