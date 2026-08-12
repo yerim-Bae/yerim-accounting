@@ -11,7 +11,6 @@
 - `archive.html` — Study Log. 노션 글이 실제로 표시되는 곳. 발행일로 주차를 자동 계산합니다.
 - `portfolio.html` — 예전 한 장짜리 포트폴리오 홈. 홈 왼쪽 위 로고로 들어갑니다.
 - `move.html` — 03 Move 에서 이어지는 운동 기록 페이지
-- `index-preview.html` — 홈을 만들며 거쳐간 시안 (지금은 쓰이지 않음, 지워도 됩니다)
 - `api/posts.js` — 노션에서 글 데이터를 가져오는 중계 함수
 - `api/authors.js` — 노션에서 작성자 소개를 가져오는 중계 함수 (선택)
 - `assets/` — 로고·파비콘·프로필 이미지
