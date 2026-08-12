@@ -1055,7 +1055,16 @@ function viewDash(){
   const sorted=[...POSTS].sort((a,b)=>String(b.date).localeCompare(String(a.date)));
   /* 자리마다 글을 하나씩 배정합니다. 한 번 쓴 글은 used 에 넣어
      다음 자리에서 제외하므로, 같은 글이 두 군데 나오지 않습니다.
-     순서: 머리기사 -> 직접 고른 글 -> 보조기사 -> 한눈에보기 -> 가운데 아래 -> 오른쪽 아래 -> 가로줄 */
+
+     1면 자리 배정 규칙
+       가운데 머리기사   회계 주제 중 가장 최신 글
+       오른쪽 위 보조기사 AI 주제 중 가장 최신 글
+       오른쪽 아래       주제와 무관하게 직접 고른 글(Pick) 최신 2개
+       왼쪽 한눈에 보기   위 자리에 안 쓰인 글 중 최신순
+       아래 가로줄       남은 글
+
+     ★ 순서가 중요합니다. 지정된 자리(머리기사·AI·Pick)를 먼저 채운 뒤에
+       한눈에 보기를 채워야 "최신순"으로 보입니다. 가로줄은 맨 마지막입니다. */
   const used=new Set();
   const take=(n,filter)=>{
     const out=[];
@@ -1067,18 +1076,19 @@ function viewDash(){
     }
     return out;
   };
-  // 머리기사 = 이미지가 있는 가장 최근 글(없으면 그냥 최신 글)
-  const lead=take(1,p=>p.cover)[0] || take(1)[0];
-  // 직접 고른 글 — 노션 Pick 체크박스. 머리기사로 이미 쓴 글은 빠집니다
+  const isSec=(p,name)=>sectionOf(p)===name;
+  // 가운데 머리기사 — 회계 주제 중 가장 최신. 회계 글이 없으면 그냥 최신 글로 둡니다.
+  const lead=take(1,p=>isSec(p,"Accounting"))[0] || take(1,p=>p.cover)[0] || take(1)[0];
+  // 오른쪽 위 — AI 주제 중 가장 최신. AI 글이 없으면 남은 글 중 사진 있는 글로 채웁니다.
+  const second=take(1,p=>isSec(p,"Artificial Intelligence"))[0]
+            || take(1,p=>p.cover)[0] || take(1)[0] || null;
+  // 오른쪽 아래 — 주제 상관없이 노션 Pick 체크된 글 최신 2개
   const picks=take(2,p=>p.pick);
-  // 오른쪽 보조기사 = 남은 글 중 이미지가 있는 첫 글
-  const second=take(1,p=>p.cover)[0] || take(1)[0] || null;
-  /* 1면 아래 가로줄 — 사진이 실리는 자리라 표지가 있는 글을 먼저 채웁니다.
-     한눈에보기는 제목만 쓰므로 표지 없는 글로 채워도 됩니다. */
+  // 왼쪽 한눈에 보기 — 위 자리에 안 쓰인 글 중 최신순
+  const glance=take(GLANCE_N);
+  /* 1면 아래 가로줄 — 사진이 실리는 자리라 표지가 있는 글을 먼저 채웁니다. */
   const row=take(ROW_N,p=>p.cover);
   if(row.length<ROW_N) row.push(...take(ROW_N-row.length));
-  // 왼쪽 한눈에보기
-  const glance=take(GLANCE_N);
 
   // 주제가 하나라도 붙어 있는지 확인만 합니다 (실제 묶음은 sectionsHtml 이 만듭니다)
   const map=topicMap();
