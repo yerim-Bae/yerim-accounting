@@ -112,6 +112,75 @@
   .sec-head{display:flex;align-items:baseline;gap:12px;margin:40px 0 18px}
   .sec-head h2{font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.025em}
   .sec-head span{color:var(--faint);font-size:13px;font-weight:600}
+
+  /* =====================================================================
+     주제별 구역 — 신문의 섹션 지면처럼 짭니다.
+
+       ┌ 굵은 선 ─────────────────────────────────────┐
+         Accounting                        (섹션 제호)
+       ├──────────┬──────────────────┬──────────┤
+         작은 기사 3   │   머리기사 + 사진   │  작은 기사 3
+       ├──────────┴──────────────────┴──────────┤
+         네 칸 가로줄 (기존 .frontrow 그대로 씁니다)
+       └────────────────────────────────────────┘
+
+     · 자리를 다 채우지 못하면 그 칸은 아예 그리지 않습니다.
+       글이 한 편뿐인 주제도 머리기사 하나로 정상적으로 보입니다.
+     · 머리기사·가로줄은 홈 1면에서 쓰는 .lead / .frontrow 를 그대로 재사용합니다.
+     ===================================================================== */
+  .tsec{margin-top:var(--s8);border-top:var(--rule-strong)}
+  .tsec > .tsec-head{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;
+    padding:var(--s4) 0 var(--s5)}
+  .tsec > .tsec-head h2{font-family:var(--serif);font-size:clamp(22px,3vw,30px);font-weight:600;
+    letter-spacing:-.03em;line-height:1.1}
+  .tsec > .tsec-head .tsec-n{font-size:11.5px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--faint)}
+  .tsec > .tsec-head .tsec-more{margin-left:auto;font-size:12.5px;font-weight:700;
+    color:var(--muted);transition:color .15s}
+  .tsec > .tsec-head .tsec-more:hover{color:var(--accent)}
+
+  /* 세 칼럼 — 홈 1면(.front)과 같은 비율 감각으로 두되 가운데를 더 넓게 씁니다 */
+  .tfront{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,2fr) minmax(0,.92fr);
+    margin:0 calc(-1 * var(--gut));border-top:var(--rule-item)}
+  /* 글이 적어 칼럼이 덜 만들어졌으면 남은 칸을 머리기사가 이어받아
+     오른쪽에 빈 공간이 생기지 않게 합니다. */
+  .tfront[data-cols="2"]{grid-template-columns:minmax(0,.92fr) minmax(0,2.4fr)}
+  .tfront[data-cols="1"]{grid-template-columns:minmax(0,1fr)}
+  .tfront[data-cols="1"] .tlead .lead{max-width:52em}
+  .tfront > *{padding:var(--s5) var(--gut) var(--s6);min-width:0;position:relative}
+  /* 칼럼 사이 세로 점선 — 첨부한 지면처럼 위아래를 띄웁니다 */
+  .tfront > * + *::before{content:"";position:absolute;left:0;top:var(--rule-inset);bottom:var(--rule-inset);
+    border-left:1px dashed var(--rule-col-c)}
+
+  /* 좌·우 작은 기사 — 제목 + 요약, 사이는 점선 */
+  .tcol{display:flex;flex-direction:column}
+  .tcol > a{display:block;padding:var(--s4) 0;border-top:1px dashed var(--rule-col-c)}
+  .tcol > a:first-child{padding-top:0;border-top:0}
+  .tcol > a:last-child{padding-bottom:0}
+  .tcol h3{font-family:var(--serif);font-size:16.5px;font-weight:700;letter-spacing:-.03em;
+    line-height:1.34;transition:color .15s}
+  .tcol > a:hover h3{color:var(--accent)}
+  .tcol .tdesc{margin-top:var(--s2);font-size:13px;line-height:1.62;color:var(--muted);
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .tcol .tmeta{margin-top:var(--s2);font-size:10.5px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--faint)}
+
+  /* 가운데 머리기사는 .lead 를 그대로 쓰되 이 구역에서만 살짝 작게 */
+  .tlead .lead h2{font-size:clamp(22px,3.4vw,34px)}
+
+  @media(max-width:900px){
+    /* 좁아지면 머리기사가 위로 오고 좌·우 칼럼이 아래에 두 단으로 붙습니다 */
+    .tfront{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+    .tfront > .tlead{grid-column:1 / -1;order:-1}
+    .tfront > * + *::before{top:var(--rule-inset-sm);bottom:var(--rule-inset-sm)}
+    .tfront > .tlead + *::before{display:none}
+  }
+  @media(max-width:640px){
+    .tfront{grid-template-columns:minmax(0,1fr)}
+    .tfront > *{padding:var(--s4) var(--gut) var(--s5)}
+    .tfront > * + *{border-top:1px dashed var(--rule-col-c)}
+    .tfront > * + *::before{display:none}
+  }
   .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
   @media(max-width:1040px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:640px){.grid{grid-template-columns:1fr}}
@@ -1011,12 +1080,9 @@ function viewDash(){
   // 왼쪽 한눈에보기
   const glance=take(GLANCE_N);
 
-  // 주제 탭 — 미분류 제외, 글 많은 순
+  // 주제가 하나라도 붙어 있는지 확인만 합니다 (실제 묶음은 sectionsHtml 이 만듭니다)
   const map=topicMap();
-  const tnames=Object.keys(map).filter(n=>n!==NO_TOPIC)
-    .sort((a,b)=>map[b].length-map[a].length || a.localeCompare(b,"ko"));
-  const first=tnames[0]||"";
-  const firstItems=first?map[first].slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,DASH_TOPIC_N):[];
+  const tnames=Object.keys(map).filter(n=>n!==NO_TOPIC);
 
   return `${mastheadHtml()}
   <div class="front">
@@ -1026,13 +1092,10 @@ function viewDash(){
   </div>
   ${frontRowHtml(row)}
 
-  <div class="sec-head"><h2>주제별</h2><span>관심 주제로 모아보기</span></div>
-  ${tnames.length?`<div class="ttabs">${tnames.map(n=>
-      `<button type="button" class="ttab${n===first?" on":""}" data-topic="${n.replace(/"/g,"&quot;")}"
-        onclick="dashTopic(this.dataset.topic)">${n}<span class="tn">${map[n].length}</span></button>`).join("")}
-    <a class="ttab" id="dashTopicMore" href="#/topic/${encodeURIComponent(first)}" style="margin-left:auto;background:none">더보기 →</a></div>
-  <div class="grid" id="dashTopicGrid">${firstItems.map((p,i)=>cardHtml(p,i)).join("")}</div>`
-  :`<div class="banner">노션 DB에 <b>Topic</b> 열을 만들고 글마다 주제를 골라주시면 여기에 주제별로 나뉘어 표시됩니다.</div>`}`;
+  ${tnames.length
+    ? sectionsHtml()
+    : `<div class="sec-head"><h2>주제별</h2><span>관심 주제로 모아보기</span></div>
+       <div class="banner">노션 DB에 <b>Topic</b> 열을 만들고 글마다 주제를 골라주시면 여기에 주제별로 나뉘어 표시됩니다.</div>`}`;
 }
 function viewWeeks(){
   const starts=[...new Set(POSTS.map(p=>deriveWeek(p.date).start))].sort((a,b)=>b.localeCompare(a));
@@ -1053,6 +1116,107 @@ function topicMap(){
   const map={};
   POSTS.forEach(p=>topicsOf(p).forEach(t=>{(map[t]=map[t]||[]).push(p);}));
   return map;
+}
+
+/* =========================================================================
+   ▼▼▼ 홈 아래 "주제별" 구역 — 여기만 고치면 됩니다 ▼▼▼
+
+   name  화면에 찍히는 섹션 제호
+   match 글의 주제(Topic)나 태그에 이 낱말이 들어 있으면 그 섹션으로 모읍니다.
+         대소문자는 가리지 않습니다.
+
+   이 순서대로 위에서 아래로 나옵니다. 세 섹션에 걸리지 않은 주제는
+   사라지지 않고 그 주제 이름 그대로 아래에 이어서 붙습니다.
+   ========================================================================= */
+const SECTIONS = [
+  { name:"Accounting",
+    match:["회계","감사","세무","원가","재무","공시","K-IFRS","IFRS","accounting","audit","tax"] },
+  { name:"Blockchain & Digital Assets",
+    match:["블록체인","디지털자산","가상자산","암호","토큰","스테이블","RWA","DeFi","온체인",
+           "blockchain","digital asset","crypto","token"] },
+  { name:"Artificial Intelligence",
+    match:["인공지능","머신러닝","딥러닝","AI","LLM","artificial intelligence"] }
+];
+/* ▲▲▲ 여기까지 ▲▲▲ */
+
+/* 글 하나가 어느 섹션에 속하는지 — 주제와 태그를 한 줄로 이어 붙여 낱말을 찾습니다 */
+function sectionOf(p){
+  const hay = [].concat(p.topics||[], p.tags||[]).filter(Boolean).join(" ").toLowerCase();
+  for(const s of SECTIONS){
+    if(s.match.some(w=>hay.includes(String(w).toLowerCase()))) return s.name;
+  }
+  return null;
+}
+
+/* 화면에 그릴 섹션 목록을 만듭니다.
+   1) SECTIONS 순서대로, 글이 하나라도 있는 섹션만
+   2) 어디에도 안 걸린 주제는 그 이름으로 뒤에 이어 붙입니다 (글이 사라지지 않게) */
+function sectionList(){
+  const buckets = new Map();
+  SECTIONS.forEach(s=>buckets.set(s.name,[]));
+  const leftover = {};
+  POSTS.forEach(p=>{
+    const name = sectionOf(p);
+    if(name) buckets.get(name).push(p);
+    else topicsOf(p).forEach(t=>{ (leftover[t]=leftover[t]||[]).push(p); });
+  });
+  const byDate=(a,b)=>String(b.date).localeCompare(String(a.date));
+  const out=[];
+  SECTIONS.forEach(s=>{
+    const items=buckets.get(s.name);
+    if(items.length) out.push({name:s.name, items:items.sort(byDate), topic:""});
+  });
+  Object.keys(leftover)
+    .sort((a,b)=>leftover[b].length-leftover[a].length || a.localeCompare(b,"ko"))
+    .forEach(t=>out.push({name:t, items:leftover[t].sort(byDate), topic:t}));
+  return out;
+}
+
+/* 좌·우 칼럼의 작은 기사 한 칸 */
+function tColItemHtml(p){
+  const sum=(p.summary||"").replace(/\n/g," ").trim();
+  const t=(p.topics||[]).filter(Boolean)[0]||"";
+  return `<a href="#/post/${p.id}">
+    <h3>${p.title}</h3>
+    ${sum?`<p class="tdesc">${sum}</p>`:""}
+    <div class="tmeta">${t?t+" · ":""}${fmtDate(p.date)}</div>
+  </a>`;
+}
+
+/* 섹션 하나 — 머리기사 1 + 좌 3 + 우 3 + 아래 가로줄 4.
+   글이 적으면 채워지는 자리까지만 그리고 나머지 칸은 아예 만들지 않습니다. */
+const TSEC_SIDE_N = 3;
+function tSectionHtml(sec){
+  const rest = sec.items.slice();
+  // 머리기사는 사진 있는 글을 먼저 (없으면 가장 최근 글)
+  let li = rest.findIndex(p=>p.cover);
+  if(li < 0) li = 0;
+  const lead = rest.splice(li,1)[0];
+  const left  = rest.splice(0,TSEC_SIDE_N);
+  const right = rest.splice(0,TSEC_SIDE_N);
+  const row   = rest.splice(0,ROW_N);
+
+  const more = sec.topic
+    ? `<a class="tsec-more" href="#/topic/${encodeURIComponent(sec.topic)}">더보기 →</a>` : "";
+
+  return `<section class="tsec">
+    <div class="tsec-head">
+      <h2>${sec.name}</h2>
+      <span class="tsec-n">${sec.items.length} ${sec.items.length===1?"note":"notes"}</span>
+      ${more}
+    </div>
+    <div class="tfront" data-cols="${1 + (left.length?1:0) + (right.length?1:0)}">
+      ${left.length?`<div class="tcol">${left.map(tColItemHtml).join("")}</div>`:""}
+      <div class="tlead">${leadHtml(lead)}</div>
+      ${right.length?`<div class="tcol">${right.map(tColItemHtml).join("")}</div>`:""}
+    </div>
+    ${frontRowHtml(row)}
+  </section>`;
+}
+function sectionsHtml(){
+  const list=sectionList();
+  if(!list.length) return "";
+  return list.map(tSectionHtml).join("");
 }
 /* 주제 이름 정렬 — 건수 많은 순 → 같으면 가나다순, 미분류는 주제가 아니므로 맨 뒤 */
 function topicNamesSorted(map){
