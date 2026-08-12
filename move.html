@@ -21,11 +21,12 @@
   /* =====================================================================
      Move — 운동 기록
 
-     빨랫줄에 폴라로이드를 집게로 널어둔 화면입니다.
-     · 줄은 폴라로이드 뒤로 지나가고, 집게가 줄 위에 걸립니다.
-     · 카드마다 각도가 조금씩 달라 널어둔 느낌이 납니다.
+     폴라로이드를 주황 테이프로 붙여둔 화면입니다.
+     · 테이프는 카드 윗변에 반쯤 걸치고, 카드와 다른 각도로 붙습니다.
+     · 카드마다 높이(--drop)와 기울기(--tilt)가 조금씩 달라 손으로 붙인
+       느낌이 나되, 줄이 흐트러져 보이지 않을 만큼만 어긋납니다.
      · 배경·글자색·글꼴은 사이트 기존 값 그대로입니다.
-       참고한 사진에서 가져온 것은 배치와 집게·그림자 같은 형태뿐입니다.
+       테이프 색도 사이트 주황(--orange)을 반투명으로 쓴 것입니다.
      ===================================================================== */
   :root{
     --ivory:#F5F1EB;
@@ -38,8 +39,6 @@
     --orange:#D8662F;
     --serif:"Noto Serif KR",serif;
     --sans:"Pretendard Variable",Pretendard,system-ui,-apple-system,sans-serif;
-    /* 집게 나무색 — 사이트의 따뜻한 계열 안에서 골랐습니다 */
-    --peg-1:#E4C79C; --peg-2:#D2AB79; --peg-3:#BE9260;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
@@ -70,7 +69,7 @@
     font-size:clamp(13.5px,1.35vw,15.5px);line-height:1.85;color:var(--ink-60)}
 
   /* =====================================================================
-     빨랫줄 한 줄
+     테이프로 붙인 폴라로이드
      ===================================================================== */
   .wr-set{padding-bottom:clamp(40px,6vw,76px)}
   .wr-label{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding-bottom:34px}
@@ -80,20 +79,15 @@
     color:var(--ink-40);font-variant-numeric:tabular-nums}
   .wr-label .wr-note{font-size:12.5px;color:var(--ink-40)}
 
-  /* 줄 — 화면 끝까지 뻗고, 폴라로이드 뒤로 지나갑니다 */
-  .wr-line{position:relative}
-  /* 줄은 화면 왼쪽 끝에서 오른쪽 끝까지 지나갑니다 (body 에 overflow-x:hidden 이 있어 안전) */
-  .wr-line::before{content:"";position:absolute;left:calc(50% - 50vw);right:calc(50% - 50vw);
-    top:0;height:1.5px;background:var(--ink);z-index:0}
-
-  /* 카드 윗부분이 줄 위로 18px 올라와, 줄이 카드 뒤를 지나가는 모양이 됩니다.
-     --g 는 카드 사이 간격. 한 줄에 몇 장을 널지에 따라 폭 계산에 함께 씁니다. */
+  /* --g 는 카드 사이 간격. 한 줄에 몇 장을 붙일지에 따라 폭 계산에 함께 씁니다. */
   .wr-pins{--g:clamp(10px,1.5vw,22px);
-    position:relative;z-index:1;display:flex;flex-wrap:wrap;
-    gap:var(--g);align-items:flex-start;margin-top:-18px}
+    position:relative;display:flex;flex-wrap:wrap;
+    gap:var(--g);align-items:flex-start;padding-top:14px}
 
-  /* 넓은 화면 — 여섯 장을 한 줄에 */
-  .wr-pin{position:relative;margin:0;flex:0 0 calc((100% - 5 * var(--g)) / 6)}
+  /* 넓은 화면 — 여섯 장을 한 줄에.
+     --drop 으로 카드마다 높이를 조금씩 어긋나게 둡니다(최대 26px). */
+  .wr-pin{position:relative;margin:0;flex:0 0 calc((100% - 5 * var(--g)) / 6);
+    margin-top:var(--drop,0px)}
   /* 폴라로이드 — 흰 인화지, 아래쪽 여백이 넓고, 아주 옅은 그림자 */
   .wr-card{display:block;background:#FFFDFA;padding:10px 10px 0;
     border:1px solid rgba(28,26,25,.08);
@@ -105,16 +99,21 @@
     font-family:var(--serif);font-size:13px;line-height:1.4;letter-spacing:-.01em;color:var(--ink-60)}
   .wr-cap b{display:block;font-weight:600;color:var(--ink);letter-spacing:0}
 
-  /* 집게 — 줄에 물린 나무 집게. 카드와 같은 각도로 함께 기울어집니다. */
-  .wr-peg{position:absolute;left:50%;top:0;z-index:2;
-    width:13px;height:32px;border-radius:3px;
-    background:linear-gradient(180deg,var(--peg-1) 0%,var(--peg-2) 58%,var(--peg-3) 100%);
-    box-shadow:0 2px 4px rgba(28,26,25,.28);
-    transform:translateX(-50%) rotate(var(--tilt,0deg));transform-origin:50% 0}
-  .wr-peg::before{content:"";position:absolute;left:-1px;right:-1px;top:15px;height:2px;
-    background:rgba(28,26,25,.30)}
-  .wr-peg::after{content:"";position:absolute;left:50%;top:5px;width:1px;height:22px;
-    margin-left:-.5px;background:rgba(28,26,25,.16)}
+  /* 테이프 — 카드 윗변에 반쯤 걸쳐 붙입니다.
+     카드와 다른 각도로 붙어야 손으로 붙인 느낌이 나므로 카드 회전을 따라가지
+     않게 .wr-card 바깥에 두었습니다.
+     mix-blend-mode:multiply 라 아래에 있는 인화지와 배경이 비쳐 보입니다. */
+  .wr-tape{position:absolute;left:50%;top:0;z-index:2;
+    width:clamp(40px,30%,74px);height:20px;
+    background:linear-gradient(180deg,rgba(216,102,47,.60) 0%,rgba(216,102,47,.44) 100%);
+    mix-blend-mode:multiply;
+    transform:translate(-50%,-45%) rotate(var(--tape,-6deg))}
+  /* 결이 살짝 보이게 — 화지 테이프 느낌 */
+  .wr-tape::before{content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(90deg,rgba(255,255,255,.16) 0 2px,transparent 2px 7px)}
+  /* 위아래 가장자리를 조금 진하게 */
+  .wr-tape::after{content:"";position:absolute;left:0;right:0;top:0;bottom:0;
+    border-top:1px solid rgba(216,102,47,.22);border-bottom:1px solid rgba(216,102,47,.22)}
 
   /* ---- 바닥 ---- */
   .wr-foot{padding:clamp(28px,4vw,44px) 0 clamp(40px,6vw,64px);border-top:1px solid var(--ink-14);
@@ -135,9 +134,7 @@
     .wr-pin{flex:0 0 calc((100% - var(--g)) / 2)}
     .wr-card{padding:7px 7px 0}
     .wr-cap{font-size:11.5px;padding:10px 4px 12px}
-    .wr-peg{width:11px;height:26px}
-    .wr-peg::before{top:12px}
-    .wr-peg::after{height:17px}
+    .wr-tape{height:16px}
     .wr-label .wr-date{margin-left:0;width:100%}
   }
   @media (prefers-reduced-motion:reduce){
@@ -164,65 +161,63 @@
     </p>
   </div>
 
-  <!-- 여섯 장을 줄 하나에 널어둡니다. 왼쪽부터 5KM → 10KM → 테니스 순서입니다. -->
+  <!-- 여섯 장을 나란히 붙입니다. 왼쪽부터 5KM → 10KM → 테니스 순서입니다. -->
   <section class="wr-set" aria-labelledby="wrRec">
     <div class="wr-label">
       <h2 id="wrRec">기록</h2>
       <span class="wr-note">5KM · 10KM · Tennis</span>
       <span class="wr-date">2024.03.03 — 2025.11.01</span>
     </div>
-    <div class="wr-line">
       <div class="wr-pins">
 
-        <figure class="wr-pin" style="--tilt:-3deg">
+        <figure class="wr-pin" style="--tilt:-3deg;--drop:0px;--tape:-7deg">
           <span class="wr-card">
             <img src="assets/move/5k-bib.jpg" alt="5KM 마라톤 참가 배번호" width="600" height="800" />
             <span class="wr-cap"><b>5KM 마라톤</b>번호 · 2024.03.03</span>
           </span>
-          <span class="wr-peg" aria-hidden="true"></span>
+          <span class="wr-tape" aria-hidden="true"></span>
         </figure>
 
-        <figure class="wr-pin" style="--tilt:2.2deg">
+        <figure class="wr-pin" style="--tilt:2.2deg;--drop:20px;--tape:5deg">
           <span class="wr-card">
             <img src="assets/move/5k-record.jpg" alt="5KM 달리기 기록 — 33분 47초, 6.31km" width="600" height="800" />
             <span class="wr-cap"><b>5KM 마라톤</b>기록 0:33:47</span>
           </span>
-          <span class="wr-peg" aria-hidden="true"></span>
+          <span class="wr-tape" aria-hidden="true"></span>
         </figure>
 
-        <figure class="wr-pin" style="--tilt:-1.6deg">
+        <figure class="wr-pin" style="--tilt:-1.6deg;--drop:7px;--tape:-4deg">
           <span class="wr-card">
             <img class="is-wide" src="assets/move/10k-record.jpg" alt="10KM 챌린지 기록 — 1시간 15분" width="800" height="600" />
             <span class="wr-cap"><b>10KM 마라톤</b>기록 01:15:00</span>
           </span>
-          <span class="wr-peg" aria-hidden="true"></span>
+          <span class="wr-tape" aria-hidden="true"></span>
         </figure>
 
-        <figure class="wr-pin" style="--tilt:2.6deg">
+        <figure class="wr-pin" style="--tilt:2.6deg;--drop:26px;--tape:8deg">
           <span class="wr-card">
             <img src="assets/move/10k-proof.jpg" alt="10KM 마라톤 완주 인증샷" width="600" height="800" />
             <span class="wr-cap"><b>10KM 마라톤</b>인증샷 · 2025.10.26</span>
           </span>
-          <span class="wr-peg" aria-hidden="true"></span>
+          <span class="wr-tape" aria-hidden="true"></span>
         </figure>
 
-        <figure class="wr-pin" style="--tilt:-2.2deg">
+        <figure class="wr-pin" style="--tilt:-2.2deg;--drop:11px;--tape:-6deg">
           <span class="wr-card">
             <img src="assets/move/tennis-racket.jpg" alt="테니스 라켓과 운동화" width="600" height="800" />
             <span class="wr-cap"><b>테니스</b>라켓 · 대회 준비</span>
           </span>
-          <span class="wr-peg" aria-hidden="true"></span>
+          <span class="wr-tape" aria-hidden="true"></span>
         </figure>
 
-        <figure class="wr-pin" style="--tilt:3deg">
+        <figure class="wr-pin" style="--tilt:3deg;--drop:22px;--tape:6deg">
           <span class="wr-card">
             <img src="assets/move/tennis-win.jpg" alt="테니스 동아리 여자복식 우승" width="600" height="800" />
             <span class="wr-cap"><b>테니스</b>우승 · 2025.11.01</span>
           </span>
-          <span class="wr-peg" aria-hidden="true"></span>
+          <span class="wr-tape" aria-hidden="true"></span>
         </figure>
 
-      </div>
     </div>
   </section>
 
