@@ -269,7 +269,10 @@
      주황 세로선은 위에서 아래로 그어질 수 있도록 테두리 대신 가상요소로 두었습니다.
      테두리 2px + 안여백 16px = 18px 이던 글자 위치를 그대로 유지하려고
      안여백을 18px 로 올렸습니다. */
-  .sp-quote{position:relative;margin-top:clamp(20px,2.6vw,32px);padding-left:18px;max-width:34em}
+  /* 폭은 "가장 긴 문장이 한 줄에 들어가는 너비"로 잡았습니다.
+     지금 가장 긴 문장이 718px 이고 48em = 768px 이라 접히지 않습니다.
+     (여기의 em 은 본문 16px 기준입니다. 인용문 글자 크기와 다릅니다) */
+  .sp-quote{position:relative;margin-top:clamp(20px,2.6vw,32px);padding-left:18px;max-width:48em}
   .sp-quote::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
     background:var(--orange)}
   .sp-js .sp-quote::before{transform:scaleY(0);transform-origin:top;
@@ -288,8 +291,9 @@
   .sp-nomotion .mq{opacity:1!important;transition:none!important}
   .sp-quote p{font-family:var(--serif);font-size:clamp(14px,1.5vw,17px);line-height:1.72;
     letter-spacing:-.01em}
-  /* 인용문은 한 문장에 한 줄입니다. 문장이 길어 넘칠 때만 그 안에서 접힙니다. */
-  .sp-quote .mq{display:block}
+  /* 인용문은 한 문장에 한 줄입니다. 화면이 좁아 어쩔 수 없이 접힐 때는
+     balance 가 줄 길이를 고르게 나눠, 끝에 한 낱말만 떨어지지 않게 합니다. */
+  .sp-quote .mq{display:block;text-wrap:balance}
   /* ---- 사이트 꼬리말 ----
      구분선 없이 글자만 둡니다. 자바스크립트가 살아 있으면 마지막 장면의
      화면 맨 아래 오른쪽에 붙고(아래 .sp-js 규칙), 없으면 문서 끝에 놓입니다. */
