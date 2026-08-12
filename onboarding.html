@@ -46,10 +46,13 @@
   img{display:block;max-width:100%;height:auto}
   .tc-wrap{max-width:1080px;margin:0 auto;padding:0 clamp(20px,3vw,36px)}
 
-  .tc-top{padding:26px 0 0}
-  .tc-back{display:inline-block;transition:transform .2s var(--ease),opacity .2s ease}
-  .tc-back img{height:26px;width:auto}
-  .tc-back:hover,.tc-back:focus-visible{transform:translateX(-3px);opacity:.8}
+  /* 워드마크는 가운데 지면이 아니라 화면 왼쪽 끝에 붙입니다 (move.html 과 같은 자리) */
+  .tc-top{max-width:none;margin:0;padding:clamp(18px,2.4vw,28px) clamp(18px,3vw,36px)}
+  .tc-back{display:inline-flex;align-items:center;
+    transition:transform .18s cubic-bezier(.22,1,.36,1),opacity .18s ease}
+  .tc-back img{display:block;height:26px;width:auto}
+  .tc-back:hover,.tc-back:focus-visible{transform:translateX(-4px);opacity:.85}
+  @media(max-width:640px){ .tc-back img{height:22px} }
 
   .tc-head{padding:clamp(40px,6vw,72px) 0 clamp(20px,2.4vw,30px)}
   .tc-kicker{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
