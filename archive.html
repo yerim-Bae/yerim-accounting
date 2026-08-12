@@ -768,7 +768,7 @@
      맨 위에서는 숨어 있고, 제호가 그 자리를 대신합니다. -->
 <header id="topbar" aria-hidden="true">
   <div class="nav">
-    <a href="index.html" class="brand"><b>Yerim Bae</b></a>
+    <a href="index.html#news" class="brand"><b>Yerim Bae</b></a>
     <nav class="tb-nav">
       <a href="#/" data-route="dash">홈</a>
       <a href="#/latest" data-route="home">최신</a>
@@ -935,7 +935,7 @@ function mastheadHtml(){
   const weeks = new Set(POSTS.map(p=>deriveWeek(p.date).start)).size;
   const banner = USING_SAMPLE ? `<div class="banner" style="margin-top:16px">⚙️ 지금은 샘플 데이터로 보이는 중이에요. 노션 연결·배포가 끝나면 실제 데이터가 표시됩니다.</div>`:"";
   return `<section class="masthead">
-    <a class="mh-brand" href="index.html" aria-label="홈으로 돌아가기"><img src="assets/wordmark.png?v=1" alt="Yerim" width="220" height="96" /></a>
+    <a class="mh-brand" href="index.html#news" aria-label="01 News Tracking 장면으로 돌아가기"><img src="assets/wordmark.png?v=1" alt="Yerim" width="220" height="96" /></a>
     <div class="mh-l">${todayLabel()}</div>
     <div class="mh-c">
       <div class="mh-tag">블록체인·디지털자산을 회계의 눈으로</div>
