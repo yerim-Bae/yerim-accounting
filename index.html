@@ -347,8 +347,13 @@
       상세 내용은 Audit Prep 링크로 넘깁니다)
      ===================================================================== */
   @media(max-width:900px){
-    .sp-js .sp-scene{align-items:flex-start}
-    .sp-js .sp-scene > .sp-inner{padding-top:clamp(16px,4vw,28px)}
+    /* 내용이 짧으면 화면 세로 가운데에 놓아 위아래 여백을 맞춥니다.
+       safe 를 붙였기 때문에 내용이 화면보다 길어지면 가운데 정렬을 스스로 포기하고
+       위쪽에 붙습니다 — 글 첫머리가 화면 밖으로 밀려 잘리는 일이 없습니다. */
+    .sp-js .sp-scene{align-items:safe center}
+    /* 가운데 정렬이 어긋나지 않도록 위아래 여백을 같은 값으로 둡니다 */
+    .sp-js .sp-scene > .sp-inner{padding-top:clamp(16px,4vw,28px);
+      padding-bottom:clamp(16px,4vw,28px)}
     .sp-p{margin-top:16px;font-size:13.5px;line-height:1.75}
     .sp-acts{margin-top:18px}
     .sp-quote{margin-top:16px;padding-left:14px}
@@ -392,7 +397,7 @@
         <div class="sp-head">
           <h1 class="sp-title" id="spH1">
             <span class="mline"><span class="mr" style="--o:1"><span class="mi">Welcome to</span></span></span>
-            <span class="mline"><span class="mr" style="--o:2"><span class="mi"><em>Yerim's</em> Daily</span></span> <span class="mr" style="--o:3.5"><span class="mi">Life</span></span></span>
+            <span class="mline"><span class="mr" style="--o:2"><span class="mi"><em>Yerim</em>'s Daily</span></span> <span class="mr" style="--o:3.5"><span class="mi">Life</span></span></span>
           </h1>
         </div>
 
@@ -442,7 +447,6 @@
         </p>
         <div class="sp-acts">
           <a class="sp-go sp-primary m" style="--o:4" data-link="newsTracking">뉴스 트래킹 보기 <i aria-hidden="true">→</i></a>
-          <a class="sp-go m" style="--o:5.2" data-link="newsSecond">두 번째 버튼 <i aria-hidden="true">→</i></a>
         </div>
       </div>
     </section>
@@ -465,7 +469,6 @@
         </p>
         <div class="sp-acts">
           <a class="sp-go sp-primary m" style="--o:4" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
-          <a class="sp-go m" style="--o:5.2" data-link="moveSecond">두 번째 버튼 <i aria-hidden="true">→</i></a>
         </div>
       </div>
     </section>
@@ -559,8 +562,6 @@ const LINKS = {
   github:       { href:"https://github.com/yerim-Bae",                  ext:true,  label:"GitHub 저장소" },
   // 아직 빈 자리 — 주소가 생기면 href 만 채우면 눌리는 링크가 됩니다.
   // ext:true 로 두면 새 창으로 열리고 화살표가 ↗ 로 바뀝니다.
-  newsSecond:   { href:"", ext:false, label:"01 News Tracking 두 번째 버튼" },
-  moveSecond:   { href:"", ext:false, label:"02 Move 두 번째 버튼" },
   studyFirst:   { href:"", ext:false, label:"04 Study 첫 번째 버튼" },
   studySecond:  { href:"", ext:false, label:"04 Study 두 번째 버튼" }
 };

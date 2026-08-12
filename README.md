@@ -206,8 +206,10 @@ Vercel 주소가 확정되면 `index.html` · `archive.html` 상단의
 `style` 안의 `--o`(등장 순서)와 `--d`(문장 시차)는 **그대로 두세요.** 문장을 더 넣으려면
 `<span class="mq">` 한 줄을 복사하고 `--d` 를 앞 값보다 60~100ms 크게 적으면 됩니다.
 
+버튼 개수는 장면마다 다를 수 있습니다. 지금은 01·02 가 한 개, 03·04 가 두 개입니다.
+
 **버튼 주소**는 `index.html` 아래쪽 `const LINKS = { ... }` 한 곳에서만 관리합니다.
-`newsSecond` · `moveSecond` · `studyFirst` · `studySecond` 네 개가 아직 비어 있고,
+`studyFirst` · `studySecond` 두 개가 아직 비어 있고,
 비어 있으면 자리는 지키되 눌리지 않는 "준비 중"으로 보입니다. `href` 를 채우면 바로 살아납니다.
 바깥 사이트로 보낼 때는 `ext:true` 로 두면 새 창으로 열리고 화살표가 `↗` 로 바뀝니다.
 
