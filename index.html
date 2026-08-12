@@ -92,13 +92,9 @@
   .sp-inner{width:100%;max-width:none;margin:0;padding:0 clamp(16px,2.2vw,30px)}
 
   /* =====================================================================
-     상단 줄은 없앴습니다. 브랜드와 나가는 길은 01 장면 오른쪽 위 작은 워드마크와
-     05 장면 바닥글이 대신합니다.
+     상단 줄은 없앴습니다. 이 사이트 자체가 포트폴리오라 밖으로 나가는 길이
+     필요 없고, 남은 안내는 05 장면 바닥글이 대신합니다.
      ===================================================================== */
-  .sp-logo{display:inline-flex;align-items:center;
-    transition:transform .18s var(--ease),opacity .18s ease}
-  .sp-logo img{display:block;height:20px;width:auto}
-  .sp-logo:hover,.sp-logo:focus-visible{transform:translateY(-1px);opacity:.78}
 
   /* =====================================================================
      장면 — 기본(자바스크립트 없을 때)은 위아래로 쌓인 평범한 문서
@@ -253,7 +249,6 @@
   /* 넓은 화면에서는 YERIM'S DAILY LIFE 를 한 줄로 붙여 둡니다 */
   @media(min-width:641px){ .sp-title > span{white-space:nowrap} }
   .sp-title em{font-style:normal;color:var(--orange)}
-  .sp-head .sp-logo{flex:none;margin-top:6px}
 
   .sp-foot-row{display:flex;align-items:flex-end;justify-content:space-between;gap:28px}
   .sp-list{list-style:none;font-family:var(--serif);font-weight:400;
@@ -416,9 +411,6 @@
             <span class="mline"><span class="mr" style="--o:1"><span class="mi">Welcome to</span></span></span>
             <span class="mline"><span class="mr" style="--o:2"><span class="mi">Yerim's Daily</span></span> <span class="mr" style="--o:3.5"><span class="mi"><em>Life</em></span></span></span>
           </h1>
-          <a class="sp-logo m" style="--o:0;--m-dy:-8px;--m-dx:0" href="portfolio.html" aria-label="배예림 포트폴리오로">
-            <img src="assets/wordmark-mark.png?v=1" alt="Yerim" width="167" height="96" />
-          </a>
         </div>
 
         <div class="sp-foot-row">
@@ -491,7 +483,6 @@
         <div class="sp-shelf m" style="--o:2;--m-dx:0;--m-dy:8px" id="spShelf"></div>
         <footer class="sp-tail m" style="--o:7.1;--m-dx:0;--m-dy:10px">
           <span>© 2026 배예림 · Yerim Bae</span>
-          <a href="portfolio.html">Portfolio</a>
           <a href="archive.html">Study Log</a>
           <a data-link="github">GitHub</a>
         </footer>
