@@ -204,10 +204,6 @@
   .sp-p{margin-top:clamp(20px,2.6vw,34px);font-size:clamp(13.5px,1.35vw,15.5px);
     line-height:1.85;color:var(--ink-60);max-width:38em}
   .sp-acts{margin-top:clamp(20px,2.4vw,30px);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center}
-  .sp-meta{margin-top:18px;font-size:11px;font-weight:700;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--ink-40);font-variant-numeric:tabular-nums}
-  .sp-meta b{color:var(--ink-60)}
-
   /* ---- 링크 ---- */
   .sp-go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;
     color:var(--ink);transition:color 200ms ease}
@@ -295,19 +291,7 @@
     text-transform:uppercase;color:var(--ink-40)}
   .sp-chain b{font-weight:700;color:var(--rust)}
 
-  /* ---- 05 의 목록 ---- */
-  .sp-shelf{margin-top:clamp(22px,2.6vw,32px);display:flex;flex-direction:column;
-    max-width:44em;border-top:1px solid var(--ink)}
-  .sp-row{display:grid;grid-template-columns:30px 1fr auto;gap:14px;align-items:baseline;
-    padding:14px 0;border-bottom:1px solid var(--ink-08);
-    font-size:14.5px;transition:color .18s ease,padding-left .18s var(--ease)}
-  .sp-row .sp-rn{font-size:11px;font-weight:700;color:var(--ink-40);letter-spacing:.06em}
-  .sp-row .sp-rt{font-weight:600;letter-spacing:-.01em}
-  .sp-row .sp-rs{display:block;margin-top:3px;font-weight:400;font-size:12.5px;color:var(--ink-40)}
-  .sp-row .sp-ra{font-size:12px;color:var(--ink-40);transition:transform .18s var(--ease),color .18s ease}
-  a.sp-row:hover,a.sp-row:focus-visible{color:var(--orange);padding-left:6px}
-  a.sp-row:hover .sp-ra,a.sp-row:focus-visible .sp-ra{color:var(--orange);transform:translateX(3px)}
-  span.sp-row{color:var(--ink-40)}
+  /* ---- 마지막 장면 꼬리말 ---- */
   .sp-tail{margin-top:26px;padding-top:16px;border-top:1px solid var(--ink-14);
     display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;
     font-size:12.5px;color:var(--ink-40)}
@@ -350,11 +334,12 @@
     .sp-js .sp-nav ul{flex-direction:row;width:100%;gap:0}
     .sp-js .sp-nav li{flex:1}
     .sp-js .sp-nav button{width:100%;flex-direction:column;gap:5px;padding:9px 0 11px;
-      font-size:9.5px;letter-spacing:.1em}
+      font-size:9.5px;letter-spacing:.1em;line-height:1.25;text-align:center}
     .sp-js .sp-nav button .sp-tick{width:100%;height:2px;transform:scaleX(.3)}
     .sp-js .sp-nav button[aria-current="true"] .sp-tick{transform:none}
-    /* 아래쪽 막대만큼 무대를 줄여 글자가 가려지지 않게 합니다 */
-    .sp-js .sp-deck{bottom:56px}
+    /* 아래쪽 막대만큼 무대를 줄여 글자가 가려지지 않게 합니다.
+       News Tracking 처럼 두 줄이 되는 이름이 있어 막대가 58px 이 되었습니다. */
+    .sp-js .sp-deck{bottom:60px}
   }
   /* =====================================================================
      작은 화면 — 한 장면이 화면 안에 들어가도록 활자와 간격을 조입니다.
@@ -369,8 +354,6 @@
     .sp-quote{margin-top:16px;padding-left:14px}
     .sp-quote p{font-size:13.5px;line-height:1.65}
     .sp-chain{margin-top:14px;letter-spacing:.1em}
-    .sp-shelf{margin-top:18px}
-    .sp-shelf .sp-row{padding:11px 0;font-size:13.5px}
     .sp-tail{margin-top:18px;padding-top:12px}
   }
 
@@ -382,7 +365,7 @@
   @media (prefers-reduced-motion:reduce){
     .sp-js .sp-track{transition:none}
     .sp *,.sp *::before,.sp *::after{animation:none!important}
-    .sp-go i,.sp-row,.sp-nav button .sp-tick{transition:none!important}
+    .sp-go i,.sp-nav button .sp-tick{transition:none!important}
     /* 장면 안쪽 모션을 전부 걷어내고 글은 즉시 제자리에 둡니다.
        (opacity 때문에 안 보이는 일이 생기지 않게 1 로 못박습니다) */
     .sp-js .m,.sp-js .mr,.sp-js .mr > .mi,.sp-js .mq{
@@ -426,34 +409,71 @@
       </div>
     </section>
 
-    <!-- 02 MORNING ---------------------------------------------------- -->
-    <section class="sp-scene" id="morning" aria-labelledby="spH2">
+    <!-- =================================================================
+         내용 장면 네 개는 구조가 똑같습니다. 아래 순서만 지키면 됩니다.
+
+           ① 제목    — <em>번호</em> + 이름
+           ② 인용문  — 주황 세로선 옆에 문장 두 개 (sp-quote)
+           ③ 흐름    — A → B → C → 결과, 마지막만 <b> (sp-chain)
+           ④ 버튼    — 첫째는 sp-primary, 둘째는 보조 (sp-acts)
+
+         ▶ 글자만 바꾸면 됩니다. style 의 --o 와 --d 는 등장 순서·시차라서
+           그대로 두세요. 문장을 더 넣고 싶으면 <span class="mq"> 한 줄을
+           복사하고 --d 를 앞 값보다 60~100ms 크게 적으면 됩니다.
+         ▶ 버튼 주소는 이 파일 아래쪽 LINKS 에서 data-link 이름으로 채웁니다.
+           비어 있으면 자리는 지키되 눌리지 않는 "준비 중"으로 보입니다.
+         ================================================================= -->
+
+    <!-- 01 NEWS TRACKING ----------------------------------------------- -->
+    <section class="sp-scene" id="news" aria-labelledby="spH2">
       <div class="sp-inner">
-        <h2 class="sp-title2" id="spH2"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>02</em></span></span> <span class="mr" style="--o:1"><span class="mi">Morning</span></span></span></h2>
-        <p class="sp-meta m" style="--o:2;--m-dx:0;--m-dy:10px" id="spStat" hidden>Study Log <b id="spCount"></b> Notes</p>
+        <h2 class="sp-title2" id="spH2"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>01</em></span></span> <span class="mr" style="--o:1"><span class="mi">News Tracking</span></span></span></h2>
+        <blockquote class="sp-quote m" style="--o:2;--m-dx:0;--m-dy:10px">
+          <p>
+            <span class="mq" style="--d:130ms">첫 문장을 여기에 적습니다.</span>
+            <span class="mq" style="--d:225ms">두 번째 문장을 여기에 적습니다.</span>
+          </p>
+        </blockquote>
+        <p class="sp-chain m" style="--o:3;--m-dx:0;--m-dy:8px">
+          <span class="mq" style="--d:200ms">단계 1</span> →
+          <span class="mq" style="--d:262ms">단계 2</span> →
+          <span class="mq" style="--d:324ms">단계 3</span> →
+          <b class="mq" style="--d:396ms">결과</b>
+        </p>
         <div class="sp-acts">
-          <a class="sp-go sp-primary m" style="--o:3" data-link="newsTracking">뉴스 트래킹 보기 <i aria-hidden="true">→</i></a>
+          <a class="sp-go sp-primary m" style="--o:4" data-link="newsTracking">뉴스 트래킹 보기 <i aria-hidden="true">→</i></a>
+          <a class="sp-go m" style="--o:5.2" data-link="newsSecond">두 번째 버튼 <i aria-hidden="true">→</i></a>
         </div>
       </div>
     </section>
 
-    <!-- 03 MOVE ------------------------------------------------------- -->
+    <!-- 02 MOVE -------------------------------------------------------- -->
     <section class="sp-scene" id="move" aria-labelledby="spH3">
       <div class="sp-inner">
-        <!-- 03 은 숫자와 이름이 양쪽에서 들어와 가운데에서 맞춰집니다 -->
-        <h2 class="sp-title2" id="spH3"><span class="mline"><span class="mr" style="--o:0;--r-dx:-26px"><span class="mi"><em>03</em></span></span> <span class="mr" style="--o:1;--r-dx:26px"><span class="mi">Move</span></span></span></h2>
-        <p class="sp-meta m" style="--o:2;--m-dx:0;--m-dy:10px">5K · 10K · Tennis</p>
-
+        <h2 class="sp-title2" id="spH3"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>02</em></span></span> <span class="mr" style="--o:1"><span class="mi">Move</span></span></span></h2>
+        <blockquote class="sp-quote m" style="--o:2;--m-dx:0;--m-dy:10px">
+          <p>
+            <span class="mq" style="--d:130ms">첫 문장을 여기에 적습니다.</span>
+            <span class="mq" style="--d:225ms">두 번째 문장을 여기에 적습니다.</span>
+          </p>
+        </blockquote>
+        <p class="sp-chain m" style="--o:3;--m-dx:0;--m-dy:8px">
+          <span class="mq" style="--d:200ms">5KM</span> →
+          <span class="mq" style="--d:262ms">10KM</span> →
+          <span class="mq" style="--d:324ms">Tennis</span> →
+          <b class="mq" style="--d:396ms">결과</b>
+        </p>
         <div class="sp-acts">
-          <a class="sp-go sp-primary m" style="--o:3" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
+          <a class="sp-go sp-primary m" style="--o:4" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
+          <a class="sp-go m" style="--o:5.2" data-link="moveSecond">두 번째 버튼 <i aria-hidden="true">→</i></a>
         </div>
       </div>
     </section>
 
-    <!-- 04 WORKROOM --------------------------------------------------- -->
+    <!-- 03 WORKROOM ---------------------------------------------------- -->
     <section class="sp-scene" id="workroom" aria-labelledby="spH4">
       <div class="sp-inner">
-        <h2 class="sp-title2" id="spH4"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>04</em></span></span> <span class="mr" style="--o:1"><span class="mi">Workroom</span></span></span></h2>
+        <h2 class="sp-title2" id="spH4"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>03</em></span></span> <span class="mr" style="--o:1"><span class="mi">Workroom</span></span></span></h2>
         <!-- 주황 세로선이 위에서 아래로 그어진 뒤 문장이 차례로 들어옵니다.
              문장은 inline 이라 opacity 만 바꿉니다 — 줄바꿈이 달라지지 않습니다. -->
         <blockquote class="sp-quote m" style="--o:2;--m-dx:0;--m-dy:10px">
@@ -475,13 +495,28 @@
       </div>
     </section>
 
-    <!-- 05 STUDY ------------------------------------------------------ -->
+    <!-- 04 STUDY ------------------------------------------------------- -->
     <section class="sp-scene" id="study" aria-labelledby="spH5">
       <div class="sp-inner">
-        <h2 class="sp-title2" id="spH5"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>05</em></span></span> <span class="mr" style="--o:1"><span class="mi">Study</span></span></span></h2>
-        <!-- 위 구분선이 먼저 뜨고 그 아래 항목이 차례로 쌓입니다 (행은 스크립트가 만듭니다) -->
-        <div class="sp-shelf m" style="--o:2;--m-dx:0;--m-dy:8px" id="spShelf"></div>
-        <footer class="sp-tail m" style="--o:7.1;--m-dx:0;--m-dy:10px">
+        <h2 class="sp-title2" id="spH5"><span class="mline"><span class="mr" style="--o:0"><span class="mi"><em>04</em></span></span> <span class="mr" style="--o:1"><span class="mi">Study</span></span></span></h2>
+        <blockquote class="sp-quote m" style="--o:2;--m-dx:0;--m-dy:10px">
+          <p>
+            <span class="mq" style="--d:130ms">첫 문장을 여기에 적습니다.</span>
+            <span class="mq" style="--d:225ms">두 번째 문장을 여기에 적습니다.</span>
+          </p>
+        </blockquote>
+        <p class="sp-chain m" style="--o:3;--m-dx:0;--m-dy:8px">
+          <span class="mq" style="--d:200ms">단계 1</span> →
+          <span class="mq" style="--d:262ms">단계 2</span> →
+          <span class="mq" style="--d:324ms">단계 3</span> →
+          <b class="mq" style="--d:396ms">결과</b>
+        </p>
+        <div class="sp-acts">
+          <a class="sp-go sp-primary m" style="--o:4" data-link="studyFirst">첫 번째 버튼 <i aria-hidden="true">→</i></a>
+          <a class="sp-go m" style="--o:5.2" data-link="studySecond">두 번째 버튼 <i aria-hidden="true">→</i></a>
+        </div>
+        <!-- 사이트 꼬리말 — 마지막 장면에만 둡니다 -->
+        <footer class="sp-tail m" style="--o:6.4;--m-dx:0;--m-dy:10px">
           <span>© 2026 배예림 · Yerim Bae</span>
           <a href="archive.html">Study Log</a>
           <a data-link="github">GitHub</a>
@@ -499,7 +534,7 @@
   <p class="sp-tally"><b id="spNow">01</b> / 05</p>
   <ul>
     <li><button type="button" data-go="0" aria-current="true"><span>Home</span><span class="sp-tick" aria-hidden="true"></span></button></li>
-    <li><button type="button" data-go="1" aria-current="false"><span>Morning</span><span class="sp-tick" aria-hidden="true"></span></button></li>
+    <li><button type="button" data-go="1" aria-current="false"><span>News Tracking</span><span class="sp-tick" aria-hidden="true"></span></button></li>
     <li><button type="button" data-go="2" aria-current="false"><span>Move</span><span class="sp-tick" aria-hidden="true"></span></button></li>
     <li><button type="button" data-go="3" aria-current="false"><span>Workroom</span><span class="sp-tick" aria-hidden="true"></span></button></li>
     <li><button type="button" data-go="4" aria-current="false"><span>Study</span><span class="sp-tick" aria-hidden="true"></span></button></li>
@@ -514,30 +549,22 @@
 
    LINKS — 화면에 걸리는 모든 주소. href 를 채우면 눌리는 링크가 되고,
            "" 로 비워두면 자리는 지키되 조용히 눌리지 않는 상태가 됩니다.
-   SHELF — 05 STUDY 의 목록. LINKS 의 어느 항목을 쓸지 key 로 가리킵니다.
+           이름(key)은 장면 마크업의 data-link 와 짝을 이룹니다.
    ========================================================================= */
 const LINKS = {
-  // 기존 사이트에 이미 있는 주소를 그대로 가져왔습니다
+  // 주소가 이미 있는 곳
   newsTracking: { href:"archive.html",                                  ext:false, label:"Study Log 뉴스 트래킹" },
+  workoutLog:   { href:"move.html",                                     ext:false, label:"운동 기록 — 5KM·10KM 마라톤과 테니스" },
   auditPrep:    { href:"https://yerim-bae.github.io/audit-context-ai/", ext:true,  label:"Audit Prep 감사 사전준비 도구" },
   github:       { href:"https://github.com/yerim-Bae",                  ext:true,  label:"GitHub 저장소" },
-  // 아직 주소가 없는 곳 — 생기면 href 만 채워주세요
-  workoutLog:   { href:"move.html",                                     ext:false, label:"운동 기록 — 5KM·10KM 마라톤과 테니스" },
-  rwaStudy:     { href:"", ext:false, label:"RWA 스터디" },
-  bayResearch:  { href:"", ext:false, label:"BAY 리서치" },
-  articles:     { href:"", ext:false, label:"아티클" },
-  onboarding:   { href:"", ext:false, label:"블록체인 온보딩 자료" }
+  // 아직 빈 자리 — 주소가 생기면 href 만 채우면 눌리는 링크가 됩니다.
+  // ext:true 로 두면 새 창으로 열리고 화살표가 ↗ 로 바뀝니다.
+  newsSecond:   { href:"", ext:false, label:"01 News Tracking 두 번째 버튼" },
+  moveSecond:   { href:"", ext:false, label:"02 Move 두 번째 버튼" },
+  studyFirst:   { href:"", ext:false, label:"04 Study 첫 번째 버튼" },
+  studySecond:  { href:"", ext:false, label:"04 Study 두 번째 버튼" }
 };
-
-const SHELF = [
-  { key:"rwaStudy",    title:"RWA Study",    note:"실물자산 토큰화 스터디" },
-  { key:"bayResearch", title:"BAY Research", note:"리서치팀 운영" },
-  { key:"articles",    title:"Articles",     note:"산업 분석 아티클" },
-  { key:"onboarding",  title:"Onboarding",   note:"블록체인 교육자료" }
-];
 /* ▲▲▲ 여기까지 ▲▲▲ */
-
-const esc = (s)=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ---- 주소를 [data-link] 자리에 연결 ------------------------------------ */
 document.querySelectorAll("[data-link]").forEach(el=>{
@@ -556,21 +583,6 @@ document.querySelectorAll("[data-link]").forEach(el=>{
     if(arrow) arrow.textContent="↗";
   }else if(arrow){ arrow.textContent="→"; }
 });
-
-/* ---- 05 STUDY 서재 인덱스 ---------------------------------------------- */
-document.getElementById("spShelf").innerHTML = SHELF.map((it,i)=>{
-  const cfg = LINKS[it.key] || {};
-  const n = String(i+1).padStart(2,"0");
-  // 행은 항상 같은 방향(오른쪽에서)에서 들어옵니다. 이동 거리 24px.
-  const mo = ` style="--o:${(2.6 + i * 1.15).toFixed(2)};--m-dx:24px;--m-dy:0"`;
-  const body =
-    `<span class="sp-rn">${n}</span>` +
-    `<span class="sp-rt">${esc(it.title)}<span class="sp-rs">${esc(it.note)}</span></span>` +
-    `<span class="sp-ra" aria-hidden="true">${cfg.href ? (cfg.ext?"↗":"→") : "·"}</span>`;
-  return cfg.href
-    ? `<a class="sp-row m"${mo} href="${esc(cfg.href)}"${cfg.ext?' target="_blank" rel="noopener"':""} aria-label="${esc(it.title)} — ${esc(it.note)}">${body}</a>`
-    : `<span class="sp-row m"${mo} aria-disabled="true" title="${esc(it.title)} — 준비 중">${body}</span>`;
-}).join("");
 
 /* =========================================================================
    풀페이지 전환 엔진
@@ -786,18 +798,6 @@ document.getElementById("spShelf").innerHTML = SHELF.map((it,i)=>{
   window.spGo = (i)=>go(i,{history:"push"});
 })();
 
-/* ---- 02 의 기록 수를 기존 API 에서 가져옵니다 --------------------------
-   (배포 전이거나 노션 연결이 끊기면 이 한 줄만 조용히 숨어 있습니다) */
-(function(){
-  fetch("/api/posts")
-    .then(r=>r.ok?r.json():null)
-    .then(posts=>{
-      if(!Array.isArray(posts)||!posts.length) return;
-      document.getElementById("spCount").textContent = posts.length;
-      document.getElementById("spStat").hidden = false;
-    })
-    .catch(()=>{});
-})();
 </script>
 </body>
 </html>

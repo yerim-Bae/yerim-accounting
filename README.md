@@ -6,10 +6,10 @@
 ## 폴더 구성
 
 - `index.html` — **대표 홈**. 한 번 입력 = 한 장면으로 넘어가는 다섯 장면 구성
-  (`01 Welcome · 02 Morning · 03 Move · 04 Workroom · 05 Study`).
-  각 장면은 `#home` `#morning` `#move` `#workroom` `#study` 주소를 가집니다.
+  (표지 `Welcome` + `01 News Tracking · 02 Move · 03 Workroom · 04 Study`).
+  각 장면은 `#home` `#news` `#move` `#workroom` `#study` 주소를 가집니다.
 - `archive.html` — Study Log. 노션 글이 실제로 표시되는 곳. 발행일로 주차를 자동 계산합니다.
-- `move.html` — 03 Move 에서 이어지는 운동 기록 페이지
+- `move.html` — 02 Move 에서 이어지는 운동 기록 페이지
 - `api/posts.js` — 노션에서 글 데이터를 가져오는 중계 함수
 - `api/authors.js` — 노션에서 작성자 소개를 가져오는 중계 함수 (선택)
 - `assets/` — 로고·파비콘·프로필 이미지
@@ -192,11 +192,24 @@ Vercel 주소가 확정되면 `index.html` · `archive.html` 상단의
 `og:url` · `og:image` · `twitter:image` 주소를 실제 주소로 바꿔주세요
 (현재는 `yerim-accounting.vercel.app` 으로 가정해 둠). 카톡 링크 미리보기에만 영향을 줍니다.
 
-## 홈 05 STUDY 의 빈 링크
+## 홈 장면 채우기 — 여기만 고치면 됩니다
 
-`index.html` 안 `const LINKS = { ... }` 에서 `rwaStudy` · `bayResearch` · `articles` · `onboarding`
-네 항목의 `href` 가 비어 있습니다. 비어 있으면 자리는 지키되 눌리지 않는 "준비 중" 상태로 표시되고,
-주소를 채우면 그때부터 눌리는 링크가 됩니다. 코드는 그 한 곳만 고치면 됩니다.
+내용 장면 네 개(`01 News Tracking` ~ `04 Study`)는 **구조가 똑같습니다.**
+
+```
+① 제목    <em>01</em> + 이름
+② 인용문  주황 세로선 옆 문장 두 개      ← <span class="mq"> 안의 글자만 교체
+③ 흐름    A → B → C → 결과              ← 마지막 칸만 <b>
+④ 버튼    첫째는 강조, 둘째는 보조
+```
+
+`style` 안의 `--o`(등장 순서)와 `--d`(문장 시차)는 **그대로 두세요.** 문장을 더 넣으려면
+`<span class="mq">` 한 줄을 복사하고 `--d` 를 앞 값보다 60~100ms 크게 적으면 됩니다.
+
+**버튼 주소**는 `index.html` 아래쪽 `const LINKS = { ... }` 한 곳에서만 관리합니다.
+`newsSecond` · `moveSecond` · `studyFirst` · `studySecond` 네 개가 아직 비어 있고,
+비어 있으면 자리는 지키되 눌리지 않는 "준비 중"으로 보입니다. `href` 를 채우면 바로 살아납니다.
+바깥 사이트로 보낼 때는 `ext:true` 로 두면 새 창으로 열리고 화살표가 `↗` 로 바뀝니다.
 
 ## 디자인 수정
 
