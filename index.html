@@ -213,20 +213,24 @@
   .sp-go:hover,.sp-go:focus-visible{color:var(--orange)}
   .sp-go:hover i,.sp-go:focus-visible i{transform:translateX(4px)}
   .sp-go.sp-ext:hover i,.sp-go.sp-ext:focus-visible i{transform:translate(4px,-3px)}
-  /* 밑줄 — 테두리 대신 가상요소를 써서 왼쪽에서 오른쪽으로 그어지게 합니다.
-     자리(안여백 5px + 두께 2px)는 예전과 같아 글자가 움직이지 않습니다. */
+  /* 밑줄 — 평소에는 보이지 않다가 커서를 올리면 왼쪽에서 오른쪽으로 그어집니다.
+     테두리 대신 가상요소를 써서 그어지는 모습을 만들고, 자리(안여백 5px +
+     두께 2px)는 늘 잡아두어 밑줄이 생겨도 글자가 움직이지 않습니다.
+     키보드로 옮겨왔을 때(focus-visible)도 똑같이 그어집니다. */
   .sp-go.sp-primary{position:relative;padding-bottom:7px}
   .sp-go.sp-primary::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
-    background:var(--orange);transform-origin:left}
-  .sp-js .sp-go.sp-primary::after{transform:scaleX(0);
-    transition:transform 260ms var(--m-ease);
-    transition-delay:calc(var(--m-in) + var(--o,0) * var(--m-stagger) + 120ms)}
-  .sp-js .sp-scene.is-active .sp-go.sp-primary::after{transform:none}
-  .sp-js .sp-scene.is-leaving .sp-go.sp-primary::after{transform:scaleX(0);
-    transition-duration:var(--m-fast);transition-delay:0s}
-  /* 이미 그어진 뒤 hover 하면 살짝 두꺼워지며 반응합니다 (위치는 그대로) */
-  .sp-go.sp-primary::after{transition-property:transform,height}
-  .sp-go.sp-primary:hover::after,.sp-go.sp-primary:focus-visible::after{height:3px}
+    background:var(--orange);transform-origin:left;transform:scaleX(0);
+    transition:transform 260ms var(--m-ease)}
+  .sp-go.sp-primary:hover::after,.sp-go.sp-primary:focus-visible::after{transform:none}
+  /* 마우스가 없는 기기에는 hover 가 없습니다. 그쪽에서는 예전처럼 장면이 열릴 때
+     밑줄이 그어져, 어디를 눌러야 하는지 알 수 있게 둡니다. */
+  @media (hover:none),(pointer:coarse){
+    .sp-js .sp-go.sp-primary::after{
+      transition-delay:calc(var(--m-in) + var(--o,0) * var(--m-stagger) + 120ms)}
+    .sp-js .sp-scene.is-active .sp-go.sp-primary::after{transform:none}
+    .sp-js .sp-scene.is-leaving .sp-go.sp-primary::after{transform:scaleX(0);
+      transition-duration:var(--m-fast);transition-delay:0s}
+  }
   .sp-go.sp-pending{color:var(--ink-40);cursor:default}
   .sp-go.sp-pending i{opacity:.45}
 
@@ -411,8 +415,10 @@
       opacity:1!important;transform:none!important;transition:none!important}
     .sp-js .mline{line-height:.9!important;margin-block:0!important}   /* 마스크용 보정도 되돌립니다 */
     .sp-js .mr{overflow:visible!important}
-    .sp-js .sp-quote::before,.sp-js .sp-go.sp-primary::after{
-      transform:none!important;transition:none!important}
+    .sp-js .sp-quote::before{transform:none!important;transition:none!important}
+    /* 밑줄은 "커서를 올렸을 때만 보이는 것"이 원래 동작이라 그대로 두고,
+       그어지는 움직임만 없앱니다. 올리면 즉시 나타납니다. */
+    .sp-js .sp-go.sp-primary::after{transition:none!important}
   }
 </style>
 </head>
