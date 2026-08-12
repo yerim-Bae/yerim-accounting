@@ -128,7 +128,8 @@
        글이 한 편뿐인 주제도 머리기사 하나로 정상적으로 보입니다.
      · 머리기사·가로줄은 홈 1면에서 쓰는 .lead / .frontrow 를 그대로 재사용합니다.
      ===================================================================== */
-  .tsec{margin-top:var(--s8);border-top:var(--rule-strong)}
+  /* 섹션 제호 위에는 선을 두지 않고, 제호 아래 선 하나만 진한 선으로 둡니다 */
+  .tsec{margin-top:var(--s8)}
   .tsec > .tsec-head{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap;
     padding:var(--s4) 0 var(--s5)}
   .tsec > .tsec-head h2{font-family:var(--serif);font-size:clamp(22px,3vw,30px);font-weight:600;
@@ -141,7 +142,7 @@
 
   /* 세 칼럼 — 홈 1면(.front)과 같은 비율 감각으로 두되 가운데를 더 넓게 씁니다 */
   .tfront{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,2fr) minmax(0,.92fr);
-    margin:0 calc(-1 * var(--gut));border-top:var(--rule-item)}
+    margin:0 calc(-1 * var(--gut));border-top:var(--rule-strong)}
   /* 글이 적어 칼럼이 덜 만들어졌으면 남은 칸을 머리기사가 이어받아
      오른쪽에 빈 공간이 생기지 않게 합니다. */
   .tfront[data-cols="2"]{grid-template-columns:minmax(0,.92fr) minmax(0,2.4fr)}
@@ -621,8 +622,12 @@
   .frontrow > *:hover h3{color:var(--accent)}
   .frontrow .rdesc{margin-top:var(--s3);font-size:13.5px;line-height:1.68;color:var(--muted);
     display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .frontrow .rcover{position:relative;align-self:start;margin-top:var(--s4);width:100%;overflow:hidden;background:var(--bg-soft)}
-  .frontrow .rcover img{position:relative;z-index:1;width:100%;height:auto;max-height:32vh;
+  /* 가로줄 사진 넷은 서로 크기가 같아야 눈에 걸리지 않습니다.
+     16:9 틀로 높이를 통일하되 안에서는 contain 이라 잘리지 않습니다.
+     비율이 다른 사진은 얇은 여백이 생기고, 그 여백은 지면 색으로 채웁니다. */
+  .frontrow .rcover{position:relative;align-self:start;margin-top:var(--s4);width:100%;
+    aspect-ratio:16/9;overflow:hidden;background:var(--bg-soft)}
+  .frontrow .rcover img{position:relative;z-index:1;width:100%;height:100%;
     object-fit:contain;display:block}
   .frontrow .rmeta{align-self:end;margin-top:var(--s3);font-size:11px;font-weight:700;letter-spacing:.05em;
     line-height:1.5;text-transform:uppercase;color:var(--faint)}
