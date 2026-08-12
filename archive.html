@@ -612,7 +612,9 @@
      같은 줄끼리 같은 높이에 놓입니다. 높이를 강제로 고정하지 않습니다. */
   .frontrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
     grid-template-rows:auto auto 1fr auto;
-    margin:0 calc(-1 * var(--gut));border-bottom:var(--rule-strong)}
+    margin:0 calc(-1 * var(--gut));border-top:var(--rule-strong)}
+  /* 1면에서는 바로 위 .front 의 아래선이 이미 그 자리에 있으므로 선이 겹치지 않게 뺍니다 */
+  .front + .frontrow{border-top:0}
   .frontrow > *{grid-row:span 4;display:grid;grid-template-rows:subgrid;
     padding:var(--s6) var(--gut);min-width:0;cursor:pointer;position:relative}
   .frontrow > * + *::before{content:"";position:absolute;left:0;top:var(--rule-inset);bottom:var(--rule-inset);
