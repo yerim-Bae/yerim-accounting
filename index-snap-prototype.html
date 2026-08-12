@@ -315,7 +315,11 @@
     background:var(--orange);transform:translateX(-50%)}
   .sp-pin .sp-card{display:block;background:#FDFBF8;border:1px solid rgba(28,26,25,.14);
     padding:7px 7px 0;transform:rotate(var(--tilt,0deg));transform-origin:top center}
-  .sp-pin img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+  .sp-pin img{display:block;width:100%;height:auto}
+  /* 한 장만 가로 사진이라 그 카드만 짧아집니다. 그 장은 세로 창에 넣되
+     contain 이라 잘리지 않고, 남는 위아래는 인화지 여백처럼 둡니다.
+     그래서 여섯 장의 카드 길이가 같아집니다. */
+  .sp-pin.is-wide img{aspect-ratio:3/4;object-fit:contain;background:#FDFBF8}
   .sp-pin .sp-cap{display:block;padding:8px 2px 10px;text-align:center;
     font-family:var(--serif);font-size:11.5px;line-height:1.35;letter-spacing:-.01em;color:var(--ink-60)}
   .sp-pin .sp-cap b{display:block;font-weight:600;color:var(--ink);letter-spacing:0}
@@ -325,10 +329,12 @@
     .sp-pin{flex:0 0 calc((100% - 24px) / 3)}      /* 한 줄에 셋 */
   }
   @media(max-width:640px){
-    /* 한 줄에 둘 — 사이 간격(12px)을 정확히 빼야 두 장이 한 줄에 들어갑니다 */
-    .sp-pin{flex:0 0 calc((100% - 12px) / 2)}
-    .sp-pin .sp-card{transform:none}               /* 좁은 화면에서는 기울이지 않습니다 */
-    .sp-pin .sp-cap{font-size:10.5px;padding:6px 2px 8px}
+    /* 세로 사진이라 둘씩 놓으면 장면을 넘칩니다. 좁은 화면에서도 셋씩 둡니다. */
+    .sp-pins{gap:10px}
+    .sp-pin{flex:0 0 calc((100% - 20px) / 3);padding-top:13px}
+    .sp-pin .sp-peg{height:13px}
+    .sp-pin .sp-card{transform:none;padding:5px 5px 0}   /* 좁은 화면에서는 기울이지 않습니다 */
+    .sp-pin .sp-cap{font-size:10px;padding:5px 1px 7px}
   }
 
   /* ---- 05 의 목록 ---- */
@@ -489,18 +495,18 @@
             <figure class="sp-pin m" style="--o:2.4;--tilt:-2.4deg;--m-dx:0;--m-dy:12px">
               <span class="sp-peg" aria-hidden="true"></span>
               <span class="sp-card">
-                <img src="assets/move/5k-bib.jpg" alt="5KM 마라톤 참가 배번호" width="800" height="600" />
+                <img src="assets/move/5k-bib.jpg" alt="5KM 마라톤 참가 배번호" width="600" height="800" />
                 <span class="sp-cap"><b>5KM</b>번호</span>
               </span>
             </figure>
             <figure class="sp-pin m" style="--o:2.9;--tilt:1.8deg;--m-dx:0;--m-dy:12px">
               <span class="sp-peg" aria-hidden="true"></span>
               <span class="sp-card">
-                <img src="assets/move/5k-record.jpg" alt="5KM 달리기 기록 — 33분 47초, 6.31km" width="800" height="600" />
+                <img src="assets/move/5k-record.jpg" alt="5KM 달리기 기록 — 33분 47초, 6.31km" width="600" height="800" />
                 <span class="sp-cap"><b>5KM</b>기록</span>
               </span>
             </figure>
-            <figure class="sp-pin m" style="--o:3.4;--tilt:-1.4deg;--m-dx:0;--m-dy:12px">
+            <figure class="sp-pin is-wide m" style="--o:3.4;--tilt:-1.4deg;--m-dx:0;--m-dy:12px">
               <span class="sp-peg" aria-hidden="true"></span>
               <span class="sp-card">
                 <img src="assets/move/10k-record.jpg" alt="10KM 챌린지 기록 — 1시간 15분" width="800" height="600" />
@@ -510,21 +516,21 @@
             <figure class="sp-pin m" style="--o:3.9;--tilt:2.2deg;--m-dx:0;--m-dy:12px">
               <span class="sp-peg" aria-hidden="true"></span>
               <span class="sp-card">
-                <img src="assets/move/10k-proof.jpg" alt="10KM 마라톤 완주 인증샷" width="800" height="600" />
+                <img src="assets/move/10k-proof.jpg" alt="10KM 마라톤 완주 인증샷" width="600" height="800" />
                 <span class="sp-cap"><b>10KM</b>인증샷</span>
               </span>
             </figure>
             <figure class="sp-pin m" style="--o:4.4;--tilt:-2deg;--m-dx:0;--m-dy:12px">
               <span class="sp-peg" aria-hidden="true"></span>
               <span class="sp-card">
-                <img src="assets/move/tennis-racket.jpg" alt="테니스 라켓과 운동화" width="800" height="600" />
+                <img src="assets/move/tennis-racket.jpg" alt="테니스 라켓과 운동화" width="600" height="800" />
                 <span class="sp-cap"><b>Tennis</b>라켓</span>
               </span>
             </figure>
             <figure class="sp-pin m" style="--o:4.9;--tilt:1.6deg;--m-dx:0;--m-dy:12px">
               <span class="sp-peg" aria-hidden="true"></span>
               <span class="sp-card">
-                <img src="assets/move/tennis-win.jpg" alt="테니스 동아리 여자복식 우승" width="800" height="600" />
+                <img src="assets/move/tennis-win.jpg" alt="테니스 동아리 여자복식 우승" width="600" height="800" />
                 <span class="sp-cap"><b>Tennis</b>우승</span>
               </span>
             </figure>
