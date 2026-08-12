@@ -134,6 +134,27 @@
     .wr-tape{height:16px}
     .wr-label .wr-date{margin-left:0;width:100%}
   }
+  /* =====================================================================
+     커서 — 주황 점, 누를 수 있는 것 위에서는 링으로 벌어집니다.
+     index.html · archive.html 과 같은 커서입니다.
+     ===================================================================== */
+  @media (hover:hover) and (pointer:fine){
+    body,body *{cursor:none!important}
+    body input,body textarea,body [contenteditable],body select,body iframe{cursor:auto!important}
+    #cur{position:fixed;top:0;left:0;z-index:2147483000;pointer-events:none;
+      transform:translate3d(-100px,-100px,0);will-change:transform}
+    #cur i{display:block;box-sizing:border-box;width:10px;height:10px;margin:-5px 0 0 -5px;
+      border-radius:50%;background:var(--orange);border:1.5px solid transparent;opacity:0;
+      transition:width .24s cubic-bezier(.22,.7,.3,1),height .24s cubic-bezier(.22,.7,.3,1),
+                 margin .24s cubic-bezier(.22,.7,.3,1),background-color .24s ease,
+                 border-color .24s ease,transform .16s ease,opacity .18s ease}
+    #cur.on i{opacity:1}
+    #cur.ring i{width:32px;height:32px;margin:-16px 0 0 -16px;background:transparent;
+      border-color:var(--orange)}
+    #cur.press i{transform:scale(.78)}
+    @media (prefers-reduced-motion:reduce){ #cur i{transition:opacity .18s ease} }
+  }
+
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     *,*::before,*::after{transition:none!important;animation:none!important}
@@ -226,5 +247,30 @@
   <a href="archive.html">Study Log</a>
 </footer>
 
+<script>
+/* ---- 커서 (주황 점 → 링) ----
+   index.html · archive.html 과 같은 커서입니다.
+   마우스가 있는 기기에서만 켜집니다. */
+(function(){
+  if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  var el=document.createElement("div");
+  el.id="cur"; el.setAttribute("aria-hidden","true"); el.innerHTML="<i></i>";
+  document.body.appendChild(el);
+  var HIT='a[href],button:not([disabled]),[role="button"],label,summary';
+  var x=0,y=0,raf=0;
+  function draw(){ raf=0; el.style.transform="translate3d("+x+"px,"+y+"px,0)"; }
+  addEventListener("mousemove",function(e){
+    x=e.clientX; y=e.clientY;
+    if(!raf) raf=requestAnimationFrame(draw);
+    var t=e.target;
+    el.classList.add("on");
+    el.classList.toggle("ring", !!(t.closest && t.closest(HIT)));
+  },{passive:true});
+  addEventListener("mousedown",function(){ el.classList.add("press"); },{passive:true});
+  addEventListener("mouseup",function(){ el.classList.remove("press"); },{passive:true});
+  document.addEventListener("mouseleave",function(){ el.classList.remove("on"); });
+  addEventListener("blur",function(){ el.classList.remove("on","press"); });
+})();
+</script>
 </body>
 </html>

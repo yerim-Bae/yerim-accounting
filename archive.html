@@ -716,9 +716,11 @@
      · 본문에 끼워 넣은 HTML(iframe) 위에서는 기본 커서로 돌아갑니다
      ========================================================================= */
   @media (hover:hover) and (pointer:fine){
-    body{cursor:none}
+    /* 기본 커서를 전부 감춥니다. 카드·탭처럼 cursor:pointer 를 따로 준 곳이
+       많고 그 규칙이 더 강해서, !important 로 한 번에 덮습니다. */
+    body,body *{cursor:none!important}
     /* 글자를 고르거나 입력하는 곳은 기본 커서를 그대로 둡니다 */
-    input,textarea,[contenteditable],iframe{cursor:auto}
+    body input,body textarea,body [contenteditable],body select,body iframe{cursor:auto!important}
     #cur{position:fixed;top:0;left:0;z-index:2147483000;pointer-events:none;
       transform:translate3d(-100px,-100px,0);will-change:transform}
     #cur i{display:block;box-sizing:border-box;width:10px;height:10px;margin:-5px 0 0 -5px;
