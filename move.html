@@ -51,16 +51,16 @@
   img{max-width:100%}
   .wr-wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 clamp(18px,3vw,36px)}
 
-  /* ---- 머리 ---- */
-  .wr-top{padding:clamp(22px,3vw,34px) 0;display:flex;align-items:center;gap:18px}
-  .wr-back{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:700;
-    letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40);transition:color .18s ease}
-  .wr-back i{font-style:normal;color:var(--orange);transition:transform .18s cubic-bezier(.22,1,.36,1)}
-  .wr-back:hover,.wr-back:focus-visible{color:var(--orange)}
-  .wr-back:hover i,.wr-back:focus-visible i{transform:translateX(-4px)}
-  .wr-mark{margin-left:auto}
-  .wr-mark img{display:block;height:20px;width:auto;transition:opacity .18s ease}
-  .wr-mark:hover img{opacity:.78}
+  /* ---- 머리 ----
+     화면 왼쪽 위 워드마크가 Move 장면으로 돌아가는 길입니다.
+     (Study Log 제호 왼쪽에 쓰는 것과 같은, 화살표가 붙은 워드마크입니다) */
+  /* 워드마크는 가운데 지면이 아니라 화면 왼쪽 끝에 붙입니다 */
+  .wr-top{max-width:none;margin:0;padding:clamp(18px,2.4vw,28px) clamp(18px,3vw,36px)}
+  .wr-back{display:inline-flex;align-items:center;
+    transition:transform .18s cubic-bezier(.22,1,.36,1),opacity .18s ease}
+  .wr-back img{display:block;height:26px;width:auto}
+  .wr-back:hover,.wr-back:focus-visible{transform:translateX(-4px);opacity:.85}
+  @media(max-width:640px){ .wr-back img{height:22px} }
 
   .wr-head{padding:clamp(10px,2vw,22px) 0 clamp(26px,4vw,44px)}
   .wr-title{font-family:var(--sans);font-weight:900;text-transform:uppercase;
@@ -82,15 +82,18 @@
 
   /* 줄 — 화면 끝까지 뻗고, 폴라로이드 뒤로 지나갑니다 */
   .wr-line{position:relative}
-  .wr-line::before{content:"";position:absolute;left:calc(-1 * clamp(18px,3vw,36px));
-    right:calc(-1 * clamp(18px,3vw,36px));top:0;height:1.5px;background:var(--ink);z-index:0}
+  /* 줄은 화면 왼쪽 끝에서 오른쪽 끝까지 지나갑니다 (body 에 overflow-x:hidden 이 있어 안전) */
+  .wr-line::before{content:"";position:absolute;left:calc(50% - 50vw);right:calc(50% - 50vw);
+    top:0;height:1.5px;background:var(--ink);z-index:0}
 
-  /* 카드 윗부분이 줄 위로 18px 올라와, 줄이 카드 뒤를 지나가는 모양이 됩니다 */
-  .wr-pins{position:relative;z-index:1;display:flex;flex-wrap:wrap;
-    gap:clamp(16px,7vw,110px);align-items:flex-start;margin-top:-18px}
+  /* 카드 윗부분이 줄 위로 18px 올라와, 줄이 카드 뒤를 지나가는 모양이 됩니다.
+     --g 는 카드 사이 간격. 한 줄에 몇 장을 널지에 따라 폭 계산에 함께 씁니다. */
+  .wr-pins{--g:clamp(10px,1.5vw,22px);
+    position:relative;z-index:1;display:flex;flex-wrap:wrap;
+    gap:var(--g);align-items:flex-start;margin-top:-18px}
 
-  .wr-pin{position:relative;margin:0;flex:0 0 auto;
-    width:clamp(146px,22vw,300px)}
+  /* 넓은 화면 — 여섯 장을 한 줄에 */
+  .wr-pin{position:relative;margin:0;flex:0 0 calc((100% - 5 * var(--g)) / 6)}
   /* 폴라로이드 — 흰 인화지, 아래쪽 여백이 넓고, 아주 옅은 그림자 */
   .wr-card{display:block;background:#FFFDFA;padding:10px 10px 0;
     border:1px solid rgba(28,26,25,.08);
@@ -122,9 +125,14 @@
 
   :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 
+  @media(max-width:900px){
+    /* 한 줄에 셋씩 두 줄 */
+    .wr-pin{flex:0 0 calc((100% - 2 * var(--g)) / 3)}
+    .wr-card{padding:8px 8px 0}
+  }
   @media(max-width:640px){
-    .wr-pins{gap:14px}
-    .wr-pin{width:calc((100% - 14px) / 2)}
+    /* 한 줄에 둘씩 세 줄 */
+    .wr-pin{flex:0 0 calc((100% - var(--g)) / 2)}
     .wr-card{padding:7px 7px 0}
     .wr-cap{font-size:11.5px;padding:10px 4px 12px}
     .wr-peg{width:11px;height:26px}
@@ -141,9 +149,8 @@
 <body>
 
 <header class="wr-wrap wr-top">
-  <a class="wr-back" href="index-snap-prototype.html#move"><i aria-hidden="true">←</i>Yerim's House</a>
-  <a class="wr-mark" href="index-snap-prototype.html" aria-label="Yerim's House 첫 화면으로">
-    <img src="assets/wordmark-mark.png?v=1" alt="Yerim" width="167" height="96" />
+  <a class="wr-back" href="index-snap-prototype.html#move" aria-label="Move 장면으로 돌아가기">
+    <img src="assets/wordmark.png?v=1" alt="Yerim" width="220" height="96" />
   </a>
 </header>
 
@@ -157,83 +164,64 @@
     </p>
   </div>
 
-  <!-- 5KM 마라톤 --------------------------------------------------------- -->
-  <section class="wr-set" aria-labelledby="wr5k">
+  <!-- 여섯 장을 줄 하나에 널어둡니다. 왼쪽부터 5KM → 10KM → 테니스 순서입니다. -->
+  <section class="wr-set" aria-labelledby="wrRec">
     <div class="wr-label">
-      <h2 id="wr5k">5KM 마라톤</h2>
-      <span class="wr-note">첫 완주</span>
-      <span class="wr-date">2024.03.03</span>
+      <h2 id="wrRec">기록</h2>
+      <span class="wr-note">5KM · 10KM · Tennis</span>
+      <span class="wr-date">2024.03.03 — 2025.11.01</span>
     </div>
     <div class="wr-line">
       <div class="wr-pins">
+
         <figure class="wr-pin" style="--tilt:-3deg">
           <span class="wr-card">
             <img src="assets/move/5k-bib.jpg" alt="5KM 마라톤 참가 배번호" width="600" height="800" />
-            <span class="wr-cap"><b>번호</b>배번호</span>
+            <span class="wr-cap"><b>5KM 마라톤</b>번호 · 2024.03.03</span>
           </span>
           <span class="wr-peg" aria-hidden="true"></span>
         </figure>
+
         <figure class="wr-pin" style="--tilt:2.2deg">
           <span class="wr-card">
             <img src="assets/move/5k-record.jpg" alt="5KM 달리기 기록 — 33분 47초, 6.31km" width="600" height="800" />
-            <span class="wr-cap"><b>기록</b>0:33:47 · 6.31km</span>
+            <span class="wr-cap"><b>5KM 마라톤</b>기록 0:33:47</span>
           </span>
           <span class="wr-peg" aria-hidden="true"></span>
         </figure>
-      </div>
-    </div>
-  </section>
 
-  <!-- 10KM 마라톤 -------------------------------------------------------- -->
-  <section class="wr-set" aria-labelledby="wr10k">
-    <div class="wr-label">
-      <h2 id="wr10k">10KM 마라톤</h2>
-      <span class="wr-note">여의도공원</span>
-      <span class="wr-date">2025.10.26</span>
-    </div>
-    <div class="wr-line">
-      <div class="wr-pins">
-        <figure class="wr-pin" style="--tilt:2.6deg">
+        <figure class="wr-pin" style="--tilt:-1.6deg">
           <span class="wr-card">
             <img class="is-wide" src="assets/move/10k-record.jpg" alt="10KM 챌린지 기록 — 1시간 15분" width="800" height="600" />
-            <span class="wr-cap"><b>기록</b>01:15:00</span>
+            <span class="wr-cap"><b>10KM 마라톤</b>기록 01:15:00</span>
           </span>
           <span class="wr-peg" aria-hidden="true"></span>
         </figure>
-        <figure class="wr-pin" style="--tilt:-2.4deg">
+
+        <figure class="wr-pin" style="--tilt:2.6deg">
           <span class="wr-card">
             <img src="assets/move/10k-proof.jpg" alt="10KM 마라톤 완주 인증샷" width="600" height="800" />
-            <span class="wr-cap"><b>인증샷</b>완주</span>
+            <span class="wr-cap"><b>10KM 마라톤</b>인증샷 · 2025.10.26</span>
           </span>
           <span class="wr-peg" aria-hidden="true"></span>
         </figure>
-      </div>
-    </div>
-  </section>
 
-  <!-- 테니스 ------------------------------------------------------------- -->
-  <section class="wr-set" aria-labelledby="wrten">
-    <div class="wr-label">
-      <h2 id="wrten">테니스</h2>
-      <span class="wr-note">동아리 여자복식</span>
-      <span class="wr-date">2025.11.01</span>
-    </div>
-    <div class="wr-line">
-      <div class="wr-pins">
-        <figure class="wr-pin" style="--tilt:-1.8deg">
+        <figure class="wr-pin" style="--tilt:-2.2deg">
           <span class="wr-card">
             <img src="assets/move/tennis-racket.jpg" alt="테니스 라켓과 운동화" width="600" height="800" />
-            <span class="wr-cap"><b>라켓</b>대회 준비</span>
+            <span class="wr-cap"><b>테니스</b>라켓 · 대회 준비</span>
           </span>
           <span class="wr-peg" aria-hidden="true"></span>
         </figure>
+
         <figure class="wr-pin" style="--tilt:3deg">
           <span class="wr-card">
             <img src="assets/move/tennis-win.jpg" alt="테니스 동아리 여자복식 우승" width="600" height="800" />
-            <span class="wr-cap"><b>우승</b>여자복식</span>
+            <span class="wr-cap"><b>테니스</b>우승 · 2025.11.01</span>
           </span>
           <span class="wr-peg" aria-hidden="true"></span>
         </figure>
+
       </div>
     </div>
   </section>
