@@ -9,7 +9,6 @@
   (`01 Welcome · 02 Morning · 03 Move · 04 Workroom · 05 Study`).
   각 장면은 `#home` `#morning` `#move` `#workroom` `#study` 주소를 가집니다.
 - `archive.html` — Study Log. 노션 글이 실제로 표시되는 곳. 발행일로 주차를 자동 계산합니다.
-- `portfolio.html` — 예전 한 장짜리 포트폴리오 홈. 홈 왼쪽 위 로고로 들어갑니다.
 - `move.html` — 03 Move 에서 이어지는 운동 기록 페이지
 - `api/posts.js` — 노션에서 글 데이터를 가져오는 중계 함수
 - `api/authors.js` — 노션에서 작성자 소개를 가져오는 중계 함수 (선택)
@@ -176,7 +175,7 @@ GitHub·Vercel은 **GitHub로 로그인** 한 번이면 되니 순서대로 만�
 | `assets/favicon.ico` · `favicon.ico` | 구형 브라우저용 (16·32·48 포함) | 32×32 |
 | `assets/wordmark.png` | Study Log · Move 의 돌아가기 로고 (배경 투명) | 높이 96 |
 | `assets/wordmark-mark.png` | 홈 첫 장면 오른쪽 위 로고 (배경 투명) | 높이 96 |
-| `assets/og-image.png` | 카톡·SNS 미리보기 — 홈(`index.html`)·포트폴리오(`portfolio.html`)용 | 1200×630 |
+| `assets/og-image.png` | 카톡·SNS 미리보기 — 홈(`index.html`)용 | 1200×630 |
 | `assets/og-archive.png` | 카톡·SNS 미리보기 — Study Log(`archive.html`)용 | 1200×630 |
 | `assets/authors/배예림.png` | 프로필 사진 | 정사각형 400×400 |
 
@@ -189,7 +188,7 @@ GitHub·Vercel은 **GitHub로 로그인** 한 번이면 되니 순서대로 만�
 
 ## 배포 주소 반영
 
-Vercel 주소가 확정되면 `index.html` · `portfolio.html` · `archive.html` 상단의
+Vercel 주소가 확정되면 `index.html` · `archive.html` 상단의
 `og:url` · `og:image` · `twitter:image` 주소를 실제 주소로 바꿔주세요
 (현재는 `yerim-accounting.vercel.app` 으로 가정해 둠). 카톡 링크 미리보기에만 영향을 줍니다.
 

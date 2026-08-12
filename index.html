@@ -42,7 +42,7 @@
 
      ■ 다른 페이지와의 격리
        이 파일 하나로 끝납니다. 새 클래스는 전부 sp- 로 시작하고 <body> 에
-       .sp 를 걸어 두었습니다. portfolio.html · archive.html 의 CSS 와 섞이지 않습니다.
+       .sp 를 걸어 두었습니다. archive.html · move.html 의 CSS 와 섞이지 않습니다.
      ===================================================================== */
 
   /* ---- 기존 사이트와 같은 값 (이 파일에 다시 적어둔 것입니다) ---- */
@@ -319,20 +319,20 @@
      자바스크립트가 없으면 그냥 앵커 목록으로 남습니다.
      ===================================================================== */
   .sp-nav{position:fixed;right:clamp(14px,2.4vw,30px);top:50%;transform:translateY(-50%);
-    z-index:55;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
-  .sp-nav .sp-tally{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink-40);
+    z-index:55;display:flex;flex-direction:column;gap:13px;align-items:flex-end}
+  .sp-nav .sp-tally{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--ink-40);
     font-variant-numeric:tabular-nums}
   .sp-nav .sp-tally b{color:var(--orange);display:inline-block}
   /* 숫자가 바뀔 때만 짧게 갈아탑니다 */
   .sp-nav .sp-tally b.is-flip{animation:sp-flip 240ms var(--m-ease)}
   @keyframes sp-flip{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-  .sp-nav ul{list-style:none;display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+  .sp-nav ul{list-style:none;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
   .sp-nav button{appearance:none;background:none;border:0;font:inherit;cursor:pointer;
-    display:flex;align-items:center;gap:9px;padding:5px 0 5px 10px;
-    font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    display:flex;align-items:center;gap:11px;padding:6px 0 6px 10px;
+    font-size:12.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
     color:var(--ink-40);transition:color .2s ease}
-  /* tick — 폭을 30px 로 고정해 두고 scaleX 로 늘립니다. 자리가 밀리지 않습니다. */
-  .sp-nav button .sp-tick{display:block;width:30px;height:2px;background:var(--ink-14);
+  /* tick — 폭을 36px 로 고정해 두고 scaleX 로 늘립니다. 자리가 밀리지 않습니다. */
+  .sp-nav button .sp-tick{display:block;width:36px;height:2px;background:var(--ink-14);
     transform:scaleX(.53);transform-origin:left;
     transition:transform 260ms var(--m-ease),background-color 200ms ease}
   .sp-nav button:hover{color:var(--ink-60)}
@@ -409,7 +409,7 @@
         <div class="sp-head">
           <h1 class="sp-title" id="spH1">
             <span class="mline"><span class="mr" style="--o:1"><span class="mi">Welcome to</span></span></span>
-            <span class="mline"><span class="mr" style="--o:2"><span class="mi">Yerim's Daily</span></span> <span class="mr" style="--o:3.5"><span class="mi"><em>Life</em></span></span></span>
+            <span class="mline"><span class="mr" style="--o:2"><span class="mi"><em>Yerim's</em> Daily</span></span> <span class="mr" style="--o:3.5"><span class="mi">Life</span></span></span>
           </h1>
         </div>
 
