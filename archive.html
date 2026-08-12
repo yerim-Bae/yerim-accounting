@@ -166,7 +166,8 @@
     text-transform:uppercase;color:var(--faint)}
 
   /* 가운데 머리기사는 .lead 를 그대로 쓰되 이 구역에서만 살짝 작게 */
-  .tlead .lead h2{font-size:clamp(22px,3.4vw,34px)}
+  /* 주제 섹션 머리기사는 1면 머리기사보다 한 단계 작게 둡니다 */
+  .tlead .lead h2{font-size:clamp(20px,2.9vw,29px)}
 
   @media(max-width:900px){
     /* 좁아지면 머리기사가 위로 오고 좌·우 칼럼이 아래에 두 단으로 붙습니다 */
@@ -546,16 +547,20 @@
 
   /* ---- 가운데: 머리기사 ---- */
   .lead{cursor:pointer}
-  .lead h2{font-family:var(--serif);font-size:clamp(25px,3.4vw,38px);font-weight:700;
+  .lead h2{font-family:var(--serif);font-size:clamp(23px,3vw,33px);font-weight:700;
     letter-spacing:-.038em;line-height:1.26;text-align:center;transition:color .15s}
   .lead:hover h2{color:var(--accent)}
   /* 부제도 제목·이미지와 같은 좌우 기준선을 씁니다 (max-width 로 좁히지 않음) */
   .lead .deck{margin-top:var(--s3);text-align:center;font-size:15px;line-height:1.72;color:var(--muted);
     display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .lead figure{margin-top:var(--s4)}
-  .lead .lcover{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:var(--bg-soft)}
-  .lead .lcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
-  .lead:hover .lcover img{transform:scale(1.02)}
+  /* 대표 사진 — 비율을 그대로 살립니다.
+     틀 높이를 미리 정하지 않고(aspect-ratio 없음) 사진 비율대로 높이가 정해지므로
+     좌우나 위아래가 잘리지 않습니다. 아주 세로로 긴 사진만 max-height 로 눌러 두는데,
+     그때도 object-fit:contain 이라 찌그러지지 않습니다. */
+  .lead .lcover{position:relative;width:100%;overflow:hidden;background:var(--bg-soft)}
+  .lead .lcover img{position:relative;z-index:1;width:100%;height:auto;max-height:62vh;
+    object-fit:contain;display:block}
   /* 출처는 이미지의 오른쪽 끝선에 맞춥니다 */
   .lead figcaption{margin-top:var(--s2);font-size:11px;font-weight:600;line-height:1.5;color:var(--faint);text-align:right}
   /* 작성자 정보는 제목·부제와 같은 중심축에 맞춥니다 */
@@ -581,8 +586,9 @@
     .aside .astory .adesc{max-height:calc(1.68em * 6)}
   }
   /* 이미지 폭은 칼럼 글상자 폭과 정확히 같습니다 */
-  .aside .acover{position:relative;flex:none;margin-top:var(--s4);width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
-  .aside .acover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
+  .aside .acover{position:relative;flex:none;margin-top:var(--s4);width:100%;overflow:hidden;background:var(--bg-soft)}
+  .aside .acover img{position:relative;z-index:1;width:100%;height:auto;max-height:42vh;
+    object-fit:contain;display:block}
 
   /* 고른 글 2칸 — 보조기사 바로 아래에 붙습니다.
      두 칸을 바깥으로 -12px 밀어 좌우 안여백을 12px 로 똑같이 맞추고,
@@ -615,8 +621,9 @@
   .frontrow > *:hover h3{color:var(--accent)}
   .frontrow .rdesc{margin-top:var(--s3);font-size:13.5px;line-height:1.68;color:var(--muted);
     display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .frontrow .rcover{position:relative;align-self:start;margin-top:var(--s4);width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-soft)}
-  .frontrow .rcover img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block}
+  .frontrow .rcover{position:relative;align-self:start;margin-top:var(--s4);width:100%;overflow:hidden;background:var(--bg-soft)}
+  .frontrow .rcover img{position:relative;z-index:1;width:100%;height:auto;max-height:32vh;
+    object-fit:contain;display:block}
   .frontrow .rmeta{align-self:end;margin-top:var(--s3);font-size:11px;font-weight:700;letter-spacing:.05em;
     line-height:1.5;text-transform:uppercase;color:var(--faint)}
   /* subgrid 를 모르는 옛 브라우저에서는 줄 수만큼 자리를 잡아둡니다 */
@@ -1004,7 +1011,7 @@ function glanceHtml(items, updated){
 function leadHtml(p){
   const cap=(p.coverCaption||"").trim();
   const cover = p.cover
-    ? `<figure><div class="lcover" data-fr="1.6" data-fit-at="0.8"><img src="${p.cover}" alt="" onload="fitCover(this)" onerror="this.closest('figure').remove()"></div>
+    ? `<figure><div class="lcover"><img src="${p.cover}" alt="" onerror="this.closest('figure').remove()"></div>
        ${cap?`<figcaption>${cap}</figcaption>`:""}</figure>` : "";
   const ex=(p.summary||"").replace(/\n/g," ");
   return `<article class="lead" onclick="location.hash='#/post/${p.id}'">
@@ -1029,7 +1036,7 @@ function asideHtml(second, picks){
   const s = second ? `<a class="astory" href="#/post/${second.id}">
       <h3>${second.title}</h3>
       ${(()=>{const t=asideLead(second);return t?`<p class="adesc">${t}</p>`:"";})()}
-      ${second.cover?`<div class="acover" data-fr="1.333" data-fit-at="0.8"><img src="${second.cover}" alt="" loading="lazy" onload="fitCover(this)" onerror="this.closest('.acover').remove()"></div>`:""}
+      ${second.cover?`<div class="acover"><img src="${second.cover}" alt="" onerror="this.closest('.acover').remove()"></div>`:""}
     </a>` : `<p class="empty" style="padding:0">아직 다른 글이 없습니다.</p>`;
   const box = picks.length ? `<div class="viewbox">${picks.map(p=>
       `<div class="vcell" onclick="location.hash='#/post/${p.id}'">
@@ -1045,7 +1052,7 @@ function frontRowHtml(items){
     `<article onclick="location.hash='#/post/${p.id}'">
       <h3>${p.title}</h3>
       ${p.summary?`<p class="rdesc">${(p.summary||"").replace(/\n/g," ")}</p>`:""}
-      ${p.cover?`<div class="rcover" data-fr="1.333" data-fit-at="0.8"><img src="${p.cover}" alt="" loading="lazy" onload="fitCover(this)" onerror="this.closest('.rcover').remove()"></div>`:""}
+      ${p.cover?`<div class="rcover"><img src="${p.cover}" alt="" loading="lazy" onerror="this.closest('.rcover').remove()"></div>`:""}
       <div class="rmeta">${p.author||""} · ${fmtDate(p.date)}</div>
     </article>`).join("")}</div>`;
 }
