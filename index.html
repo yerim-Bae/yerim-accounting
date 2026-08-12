@@ -207,8 +207,10 @@
     line-height:1.85;color:var(--ink-60);max-width:38em}
   .sp-acts{margin-top:clamp(20px,2.4vw,30px);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center}
   /* ---- 링크 ---- */
+  /* 아래 여백은 밑줄이 들어갈 자리입니다. 주 버튼에만 주면 그만큼 키가 커져
+     옆에 선 보조 버튼과 글자 높이가 어긋나므로, 모든 버튼이 같은 값을 갖습니다. */
   .sp-go{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;
-    color:var(--ink);transition:color 200ms ease}
+    color:var(--ink);transition:color 200ms ease;padding-bottom:7px}
   .sp-go i{font-style:normal;display:inline-block;transition:transform 200ms var(--m-ease)}
   .sp-go:hover,.sp-go:focus-visible{color:var(--orange)}
   .sp-go:hover i,.sp-go:focus-visible i{transform:translateX(4px)}
@@ -217,7 +219,7 @@
      테두리 대신 가상요소를 써서 그어지는 모습을 만들고, 자리(안여백 5px +
      두께 2px)는 늘 잡아두어 밑줄이 생겨도 글자가 움직이지 않습니다.
      키보드로 옮겨왔을 때(focus-visible)도 똑같이 그어집니다. */
-  .sp-go.sp-primary{position:relative;padding-bottom:7px}
+  .sp-go.sp-primary{position:relative}
   .sp-go.sp-primary::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
     background:var(--orange);transform-origin:left;transform:scaleX(0);
     transition:transform 260ms var(--m-ease)}
