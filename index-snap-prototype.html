@@ -294,49 +294,6 @@
     text-transform:uppercase;color:var(--ink-40)}
   .sp-chain b{font-weight:700;color:var(--rust)}
 
-  /* =====================================================================
-     03 MOVE — 주황 줄에 폴라로이드를 걸어둡니다.
-     줄이 왼쪽에서 오른쪽으로 그어진 뒤 사진이 하나씩 내려옵니다.
-     사진은 4:3 창에 맞추고, 카드는 집게(peg) 자리를 축으로 살짝 기울어집니다.
-     ===================================================================== */
-  .sp-wire{position:relative;margin-top:clamp(18px,2.4vw,30px);padding-top:17px}
-  .sp-wire::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;
-    background:var(--orange);transform-origin:left}
-  .sp-js .sp-wire::before{transform:scaleX(0);
-    transition:transform 460ms var(--m-ease);
-    transition-delay:calc(var(--m-in) + 1.6 * var(--m-stagger))}
-  .sp-js .sp-scene.is-active .sp-wire::before{transform:none}
-  .sp-js .sp-scene.is-leaving .sp-wire::before{transform:scaleX(0);
-    transition-duration:var(--m-fast);transition-delay:0s}
-
-  .sp-pins{display:flex;gap:clamp(10px,1.3vw,18px);align-items:flex-start}
-  .sp-pin{position:relative;flex:1 1 0;min-width:0;margin:0;padding-top:17px}
-  .sp-pin .sp-peg{position:absolute;left:50%;top:0;width:2px;height:17px;
-    background:var(--orange);transform:translateX(-50%)}
-  .sp-pin .sp-card{display:block;background:#FDFBF8;border:1px solid rgba(28,26,25,.14);
-    padding:7px 7px 0;transform:rotate(var(--tilt,0deg));transform-origin:top center}
-  .sp-pin img{display:block;width:100%;height:auto}
-  /* 한 장만 가로 사진이라 그 카드만 짧아집니다. 그 장은 세로 창에 넣되
-     contain 이라 잘리지 않고, 남는 위아래는 인화지 여백처럼 둡니다.
-     그래서 여섯 장의 카드 길이가 같아집니다. */
-  .sp-pin.is-wide img{aspect-ratio:3/4;object-fit:contain;background:#FDFBF8}
-  .sp-pin .sp-cap{display:block;padding:8px 2px 10px;text-align:center;
-    font-family:var(--serif);font-size:11.5px;line-height:1.35;letter-spacing:-.01em;color:var(--ink-60)}
-  .sp-pin .sp-cap b{display:block;font-weight:600;color:var(--ink);letter-spacing:0}
-
-  @media(max-width:900px){
-    .sp-pins{flex-wrap:wrap;gap:12px}
-    .sp-pin{flex:0 0 calc((100% - 24px) / 3)}      /* 한 줄에 셋 */
-  }
-  @media(max-width:640px){
-    /* 세로 사진이라 둘씩 놓으면 장면을 넘칩니다. 좁은 화면에서도 셋씩 둡니다. */
-    .sp-pins{gap:10px}
-    .sp-pin{flex:0 0 calc((100% - 20px) / 3);padding-top:13px}
-    .sp-pin .sp-peg{height:13px}
-    .sp-pin .sp-card{transform:none;padding:5px 5px 0}   /* 좁은 화면에서는 기울이지 않습니다 */
-    .sp-pin .sp-cap{font-size:10px;padding:5px 1px 7px}
-  }
-
   /* ---- 05 의 목록 ---- */
   .sp-shelf{margin-top:clamp(22px,2.6vw,32px);display:flex;flex-direction:column;
     max-width:44em;border-top:1px solid var(--ink)}
@@ -489,56 +446,8 @@
         <h2 class="sp-title2" id="spH3"><span class="mline"><span class="mr" style="--o:0;--r-dx:-26px"><span class="mi"><em>03</em></span></span> <span class="mr" style="--o:1;--r-dx:26px"><span class="mi">Move</span></span></span></h2>
         <p class="sp-meta m" style="--o:2;--m-dx:0;--m-dy:10px">5K · 10K · Tennis</p>
 
-        <!-- 주황 줄에 걸어둔 기록 사진. 5KM → 10KM → 테니스 순서입니다. -->
-        <div class="sp-wire">
-          <div class="sp-pins">
-            <figure class="sp-pin m" style="--o:2.4;--tilt:-2.4deg;--m-dx:0;--m-dy:12px">
-              <span class="sp-peg" aria-hidden="true"></span>
-              <span class="sp-card">
-                <img src="assets/move/5k-bib.jpg" alt="5KM 마라톤 참가 배번호" width="600" height="800" />
-                <span class="sp-cap"><b>5KM</b>번호</span>
-              </span>
-            </figure>
-            <figure class="sp-pin m" style="--o:2.9;--tilt:1.8deg;--m-dx:0;--m-dy:12px">
-              <span class="sp-peg" aria-hidden="true"></span>
-              <span class="sp-card">
-                <img src="assets/move/5k-record.jpg" alt="5KM 달리기 기록 — 33분 47초, 6.31km" width="600" height="800" />
-                <span class="sp-cap"><b>5KM</b>기록</span>
-              </span>
-            </figure>
-            <figure class="sp-pin is-wide m" style="--o:3.4;--tilt:-1.4deg;--m-dx:0;--m-dy:12px">
-              <span class="sp-peg" aria-hidden="true"></span>
-              <span class="sp-card">
-                <img src="assets/move/10k-record.jpg" alt="10KM 챌린지 기록 — 1시간 15분" width="800" height="600" />
-                <span class="sp-cap"><b>10KM</b>기록</span>
-              </span>
-            </figure>
-            <figure class="sp-pin m" style="--o:3.9;--tilt:2.2deg;--m-dx:0;--m-dy:12px">
-              <span class="sp-peg" aria-hidden="true"></span>
-              <span class="sp-card">
-                <img src="assets/move/10k-proof.jpg" alt="10KM 마라톤 완주 인증샷" width="600" height="800" />
-                <span class="sp-cap"><b>10KM</b>인증샷</span>
-              </span>
-            </figure>
-            <figure class="sp-pin m" style="--o:4.4;--tilt:-2deg;--m-dx:0;--m-dy:12px">
-              <span class="sp-peg" aria-hidden="true"></span>
-              <span class="sp-card">
-                <img src="assets/move/tennis-racket.jpg" alt="테니스 라켓과 운동화" width="600" height="800" />
-                <span class="sp-cap"><b>Tennis</b>라켓</span>
-              </span>
-            </figure>
-            <figure class="sp-pin m" style="--o:4.9;--tilt:1.6deg;--m-dx:0;--m-dy:12px">
-              <span class="sp-peg" aria-hidden="true"></span>
-              <span class="sp-card">
-                <img src="assets/move/tennis-win.jpg" alt="테니스 동아리 여자복식 우승" width="600" height="800" />
-                <span class="sp-cap"><b>Tennis</b>우승</span>
-              </span>
-            </figure>
-          </div>
-        </div>
-
         <div class="sp-acts">
-          <a class="sp-go m" style="--o:5.6" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
+          <a class="sp-go sp-primary m" style="--o:3" data-link="workoutLog">운동 기록 보기 <i aria-hidden="true">→</i></a>
         </div>
       </div>
     </section>
@@ -616,7 +525,7 @@ const LINKS = {
   auditPrep:    { href:"https://yerim-bae.github.io/audit-context-ai/", ext:true,  label:"Audit Prep 감사 사전준비 도구" },
   github:       { href:"https://github.com/yerim-Bae",                  ext:true,  label:"GitHub 저장소" },
   // 아직 주소가 없는 곳 — 생기면 href 만 채워주세요
-  workoutLog:   { href:"", ext:false, label:"운동 기록" },
+  workoutLog:   { href:"move.html",                                     ext:false, label:"운동 기록 — 5KM·10KM 마라톤과 테니스" },
   rwaStudy:     { href:"", ext:false, label:"RWA 스터디" },
   bayResearch:  { href:"", ext:false, label:"BAY 리서치" },
   articles:     { href:"", ext:false, label:"아티클" },
