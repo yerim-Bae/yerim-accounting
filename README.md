@@ -6,10 +6,11 @@
 ## 폴더 구성
 
 - `index.html` — **대표 홈**. 한 번 입력 = 한 장면으로 넘어가는 다섯 장면 구성
-  (표지 `Welcome` + `01 News Tracking · 02 Move · 03 Workroom · 04 Study`).
-  각 장면은 `#home` `#news` `#move` `#workroom` `#study` 주소를 가집니다.
+  (표지 `Welcome` + `01 News Tracking · 02 Workout · 03 Assurance · 04 Study`).
+  각 장면은 `#home` `#news` `#workout` `#assurance` `#study` 주소를 가집니다.
+  이름을 바꿀 때는 장면 제목과 오른쪽 진행 표시 두 곳만 고치면 됩니다.
 - `archive.html` — Study Log. 노션 글이 실제로 표시되는 곳. 발행일로 주차를 자동 계산합니다.
-- `move.html` — 02 Move 에서 이어지는 운동 기록 페이지
+- `move.html` — 02 Workout 에서 이어지는 운동 기록 페이지 (파일 이름은 예전 그대로입니다)
 - `api/posts.js` — 노션에서 글 데이터를 가져오는 중계 함수
 - `api/authors.js` — 노션에서 작성자 소개를 가져오는 중계 함수 (선택)
 - `assets/` — 로고·파비콘·프로필 이미지
