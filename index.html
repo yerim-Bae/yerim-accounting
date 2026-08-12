@@ -262,6 +262,10 @@
     font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-40)}
   /* 화살표 반복 모션 — 4px, 2.8초 주기. 등장 모션이 끝난 뒤에 시작합니다. */
   .sp-cue i{font-style:normal;color:var(--orange);font-size:1.3em}
+  /* 안내 문구만 지면 아래로 더 내려 화면 끝에 붙입니다.
+     목록은 그대로 두어야 하므로 음수 여백으로 이 줄만 움직입니다.
+     좁은 화면은 아래 막대가 가까워 건드리지 않습니다. */
+  @media(min-width:641px){ .sp-cue{margin-bottom:-30px} }
   .sp-js .sp-scene.is-active .sp-cue i{animation:sp-slide 2.8s ease-in-out 1.1s infinite}
   @keyframes sp-slide{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
   .sp-js.sp-vert .sp-scene.is-active .sp-cue i{animation-name:sp-drop}
