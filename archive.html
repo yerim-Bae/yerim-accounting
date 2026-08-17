@@ -772,8 +772,10 @@
   .nt.on{opacity:1;transform:translateY(-50%) translateX(0)}
   .nt-kicker{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
     color:var(--accent);margin:0 0 12px}
-  .nt h2{font-family:var(--sans);font-size:23px;font-weight:800;letter-spacing:-.025em;
-    line-height:1.38;margin:0 0 18px;word-break:keep-all}
+  /* 첫 문장이 제목 역할을 합니다. 잉크색과 굵기로 무게를 주되, 세 문단이
+     한 덩어리로 읽히도록 크기는 본문과 크게 벌리지 않습니다. */
+  .nt .nt-lead{font-family:var(--sans);font-size:17.5px;font-weight:700;letter-spacing:-.02em;
+    line-height:1.55;color:var(--text);margin:0 0 16px}
   .nt p{font-family:var(--serif);font-size:15px;line-height:1.9;color:var(--muted);
     margin:0 0 13px;word-break:keep-all}
   .nt p:last-of-type{margin-bottom:24px}
@@ -790,8 +792,8 @@
     .nt{right:16px;left:16px;top:auto;bottom:16px;width:auto;
       transform:translateY(18px);padding:24px 22px 20px}
     .nt.on{transform:translateY(0)}
-    .nt h2{font-size:19px;margin-bottom:14px}
-    .nt p{font-size:14px;line-height:1.85}
+    .nt .nt-lead{font-size:16px;margin-bottom:13px}
+    .nt p{font-size:13.5px;line-height:1.85}
     .nt-acts button{flex:1}
   }
 
@@ -814,15 +816,20 @@
      줄바꿈은 <br> 로 직접 잡아 어절이 어색하게 끊기지 않게 했습니다. -->
 <div class="nt-veil" id="ntVeil" hidden></div>
 <aside class="nt" id="nt" role="dialog" aria-modal="false" aria-labelledby="ntTitle" hidden>
-  <p class="nt-kicker">공지</p>
-  <h2 id="ntTitle">글을 불러오는 데 시간이 걸릴 수 있습니다</h2>
-  <p>
-    이곳의 글은 노션에서 직접 받아옵니다.<br />
-    처음 열 때는 <b>20초 정도</b> 기다리셔야 할 수 있습니다.
+  <p class="nt-kicker">안내</p>
+  <p class="nt-lead" id="ntTitle">
+    본 게시글은 노션(Notion)과 연동되어<br />
+    실시간으로 불러오는 방식입니다.
   </p>
   <p>
-    화면이 잠시 비어 보여도 오류가 아니니,<br />
-    조금만 기다려주시면 글이 채워집니다.
+    이용 환경에 따라 최초 로딩 시<br />
+    <b>약 20초 정도 소요될 수 있는 점</b><br />
+    양해 부탁드립니다.
+  </p>
+  <p>
+    화면이 일시적으로 비어 보이더라도<br />
+    오류가 아니오니, 잠시만 기다려 주시면<br />
+    정상적으로 표시됩니다.
   </p>
   <div class="nt-acts">
     <button type="button" class="nt-later" id="ntLater">오늘 하루 보지 않기</button>
