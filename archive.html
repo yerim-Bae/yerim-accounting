@@ -757,15 +757,79 @@
     .ttab:hover{transform:translateY(-1px)}
   }
 
+  /* =========================================================================
+     공지 창 — 감사맥락AI 와 같은 모양입니다.
+     화면 왼쪽에 붙고, 좁은 화면에서는 아래쪽 전체 폭으로 바뀝니다.
+     ========================================================================= */
+  .nt-veil{position:fixed;inset:0;z-index:2147482000;background:rgba(28,26,25,.26);
+    opacity:0;transition:opacity .24s ease}
+  .nt-veil.on{opacity:1}
+  .nt{position:fixed;z-index:2147482100;left:clamp(16px,3vw,44px);top:50%;
+    transform:translateY(-50%) translateX(-20px);width:min(460px,calc(100vw - 32px));
+    background:var(--card);border:1px solid var(--text);border-top:3px solid var(--accent);
+    padding:32px 34px 26px;opacity:0;
+    transition:opacity .26s ease,transform .26s cubic-bezier(.22,1,.36,1)}
+  .nt.on{opacity:1;transform:translateY(-50%) translateX(0)}
+  .nt-kicker{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 12px}
+  .nt h2{font-family:var(--sans);font-size:23px;font-weight:800;letter-spacing:-.025em;
+    line-height:1.38;margin:0 0 18px;word-break:keep-all}
+  .nt p{font-family:var(--serif);font-size:15px;line-height:1.9;color:var(--muted);
+    margin:0 0 13px;word-break:keep-all}
+  .nt p:last-of-type{margin-bottom:24px}
+  .nt p b{color:var(--text);font-weight:600}
+  .nt-acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+  .nt-acts button{font:inherit;font-family:var(--sans);font-size:13.5px;font-weight:600;
+    padding:11px 17px;border-radius:2px;cursor:pointer;
+    transition:border-color .2s ease,background-color .2s ease,color .2s ease}
+  .nt-later{border:1px solid var(--border-strong);background:none;color:var(--muted)}
+  .nt-later:hover{border-color:var(--text);color:var(--text)}
+  .nt-close{border:1px solid var(--accent);background:var(--accent);color:#fff}
+  .nt-close:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
+  @media(max-width:640px){
+    .nt{right:16px;left:16px;top:auto;bottom:16px;width:auto;
+      transform:translateY(18px);padding:24px 22px 20px}
+    .nt.on{transform:translateY(0)}
+    .nt h2{font-size:19px;margin-bottom:14px}
+    .nt p{font-size:14px;line-height:1.85}
+    .nt-acts button{flex:1}
+  }
+
   /* 애니메이션 최소화 설정을 켠 사용자는 움직임 없이 */
   @media (prefers-reduced-motion:reduce){
     .card:hover,.author-card:hover{transform:none!important}
     .mh-nav a::after,.ft-nav a::after,.card .foot::after{transition:none!important}
+    .nt,.nt-veil{transition:none}
+    .nt{transform:translateY(-50%)}
+  }
+  @media (prefers-reduced-motion:reduce) and (max-width:640px){
+    .nt{transform:none}
   }
 
 </style>
 </head>
 <body>
+
+<!-- 공지 창. 글을 노션에서 받아오느라 처음 열 때 오래 걸리는 것을 미리 알립니다.
+     줄바꿈은 <br> 로 직접 잡아 어절이 어색하게 끊기지 않게 했습니다. -->
+<div class="nt-veil" id="ntVeil" hidden></div>
+<aside class="nt" id="nt" role="dialog" aria-modal="false" aria-labelledby="ntTitle" hidden>
+  <p class="nt-kicker">공지</p>
+  <h2 id="ntTitle">글을 불러오는 데 시간이 걸릴 수 있습니다</h2>
+  <p>
+    이곳의 글은 노션에서 직접 받아옵니다.<br />
+    처음 열 때는 <b>20초 정도</b> 기다리셔야 할 수 있습니다.
+  </p>
+  <p>
+    화면이 잠시 비어 보여도 오류가 아니니,<br />
+    조금만 기다려주시면 글이 채워집니다.
+  </p>
+  <div class="nt-acts">
+    <button type="button" class="nt-later" id="ntLater">오늘 하루 보지 않기</button>
+    <button type="button" class="nt-close" id="ntClose">닫기</button>
+  </div>
+</aside>
+
 <!-- 스크롤해서 제호가 화면 위로 올라가면 내려와 고정되는 얇은 줄입니다.
      맨 위에서는 숨어 있고, 제호가 그 자리를 대신합니다. -->
 <header id="topbar" aria-hidden="true">
@@ -1467,6 +1531,37 @@ loadData();
   addEventListener("mouseup",function(){ el.classList.remove("press"); },{passive:true});
   document.addEventListener("mouseleave",function(){ el.classList.remove("on"); });
   addEventListener("blur",function(){ el.classList.remove("on","press"); });
+})();
+
+
+/* ---- 공지 창 ----
+   닫기 — 이번 방문에만 닫습니다. 새로 들어오면 다시 보입니다.
+   오늘 하루 보지 않기 — 그날 자정까지 저장해 두고 띄우지 않습니다.
+   등장은 프레임이 아니라 타이머로 켭니다. 화면을 그리지 않는 탭에서는
+   requestAnimationFrame 이 돌지 않아 창이 투명한 채로 남을 수 있습니다. */
+(function(){
+  var K="studylog-notice-until", box=document.getElementById("nt"), veil=document.getElementById("ntVeil");
+  if(!box) return;
+  function until(){ try{ return Number(localStorage.getItem(K)||0); }catch(e){ return 0; } }
+  if(Date.now() < until()) return;
+  function open(){
+    box.hidden=false; veil.hidden=false;
+    setTimeout(function(){ box.classList.add("on"); veil.classList.add("on"); }, 20);
+    document.getElementById("ntClose").focus({preventScroll:true});
+  }
+  function shut(){
+    box.classList.remove("on"); veil.classList.remove("on");
+    setTimeout(function(){ box.hidden=true; veil.hidden=true; }, 260);
+  }
+  document.getElementById("ntClose").addEventListener("click", shut);
+  document.getElementById("ntLater").addEventListener("click", function(){
+    var d=new Date(); d.setHours(24,0,0,0);
+    try{ localStorage.setItem(K, String(d.getTime())); }catch(e){}
+    shut();
+  });
+  veil.addEventListener("click", shut);
+  addEventListener("keydown", function(e){ if(e.key==="Escape" && !box.hidden) shut(); });
+  open();
 })();
 </script>
 </body>
