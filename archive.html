@@ -339,12 +339,11 @@
   .post-layout .article .abyline{padding-bottom:20px;margin-bottom:6px;border-bottom:1px solid var(--border)}
   .post-layout .article .insight{background:none;border:none;padding:0;margin-top:2px}
   .post-layout .article .insight pre,.post-layout .article .insight table{background:var(--bg-soft)}
-  /* "요약" · "인사이트" 는 글 안에서 가장 큰 단위입니다. 기사 제목(28px) 바로
-     아래 무게로 세우고 밑줄을 그어, 어디서 단락이 갈리는지 한눈에 보이게 합니다.
+  /* "Summary" · "Insights" 는 글 안에서 가장 큰 단위입니다. 기사 제목(28px) 바로
+     아래 무게로 세웁니다. 줄은 긋지 않고 크기와 위쪽 여백만으로 단락을 가릅니다.
      본문 마크다운의 제목들은 이보다 작아 위계가 뒤집히지 않습니다. */
   .post-layout .article > h4{font-size:23px;font-weight:900;color:var(--text);
-    letter-spacing:-.02em;text-transform:none;margin:44px 0 14px;
-    padding-bottom:10px;border-bottom:2px solid var(--text)}
+    letter-spacing:-.02em;text-transform:none;margin:44px 0 14px}
   .post-layout .article > h4:first-of-type{margin-top:30px}
 
   /* 기사 상단 대표 이미지 (제목 박스 위) — 2:1 프레임 */
@@ -1462,8 +1461,8 @@ function viewPost(id){
         <h1 class="ptitle">${p.title}</h1>
         <div class="abyline"><span class="byline">${avatarHtml(p.author)}<span class="who">${p.author}</span> · <span>${deriveWeek(p.date).label}</span> · <span>${p.date}</span></span>
 ${(p.topics||[]).filter(Boolean).map(t=>`<a class="tag ${tagClass(t)} tlink" href="#/topic/${encodeURIComponent(t)}">${t}</a>`).join("")}</div>
-        <h4>요약</h4><p class="psum">${fmtSummary(p.summary)}</p>
-        <h4>인사이트</h4><div class="insight">${insightHtml(p)}</div>
+        <h4>Summary</h4><p class="psum">${fmtSummary(p.summary)}</p>
+        <h4>Insights</h4><div class="insight">${insightHtml(p)}</div>
         ${src}</article>
     </div>
     ${postSideHtml(p)}
