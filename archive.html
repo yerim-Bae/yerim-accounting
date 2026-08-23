@@ -273,6 +273,14 @@
   .article .insight ul,.article .insight ol{margin:14px 0 14px 22px;color:var(--text)}
   .article .insight li{margin:7px 0;line-height:1.85;font-size:15.5px;word-break:keep-all}
   .article .insight li::marker{color:var(--accent);font-weight:700}
+  /* 노션에서 들여쓴 하위 항목. 노션과 같이 속이 빈 동그라미로 두고,
+     위아래 여백을 줄여 부모 항목에 딸린 것으로 보이게 합니다. */
+  .article .insight li > ul,.article .insight li > ol{margin:6px 0 6px 18px}
+  .article .insight li > ul{list-style-type:circle}
+  .article .insight li > ul > li,.article .insight li > ol > li{margin:4px 0;font-size:15px}
+  .article .insight li > ul > li::marker,.article .insight li > ol > li::marker{color:var(--faint)}
+  /* 항목 아래 딸린 설명 문단 */
+  .article .insight li > p{margin:6px 0;font-size:15px}
   .article .insight blockquote{border-left:3px solid var(--border-strong);padding:2px 0 2px 14px;margin:12px 0;color:var(--muted)}
   .article .insight pre{background:var(--bg-soft);border:1px solid var(--border);padding:12px 14px;border-radius:2px;overflow-x:auto;font-size:13px;line-height:1.6;white-space:pre-wrap;margin:12px 0}
   .article .insight pre code{background:none;border:none;padding:0}

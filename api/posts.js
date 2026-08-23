@@ -171,6 +171,42 @@ async function fetchChildren(blockId, token) {
   } while (cursor);
   return out;
 }
+/* 목록 안에 들여쓴 하위 항목을 읽어옵니다.
+   노션은 들여쓴 줄을 그 항목의 "자식 블록"으로 따로 보관합니다. 부모만 읽으면
+   화면에서 하위 항목이 통째로 사라지므로, 자식이 있는 항목만 한 번 더 물어봅니다.
+   depth 로 깊이를 막습니다 — 노션에서 더 깊이 들여써도 3단까지만 그립니다.
+   중간에 실패하면 하위 항목만 빠지고 글 전체는 그대로 나옵니다. */
+async function renderChildList(blockId, token, depth) {
+  if (depth > 3) return "";
+  let kids;
+  try {
+    kids = await fetchChildren(blockId, token);
+  } catch {
+    return "";
+  }
+  let out = "", buf = "", tag = "";
+  const flush = () => {
+    if (buf) out += `<${tag}>${buf}</${tag}>`;
+    buf = ""; tag = "";
+  };
+  for (const k of kids) {
+    const kt = k.type, kn = k[kt] || {};
+    if (kt === "bulleted_list_item" || kt === "numbered_list_item") {
+      const want = kt === "bulleted_list_item" ? "ul" : "ol";
+      if (tag && tag !== want) flush();
+      tag = want;
+      const sub = k.has_children ? await renderChildList(k.id, token, depth + 1) : "";
+      buf += `<li>${rtHtml(kn.rich_text)}${sub}</li>`;
+    } else if (kt === "paragraph") {
+      // 목록 항목 아래 딸린 설명 문단
+      const x = rtHtml(kn.rich_text);
+      if (x.trim()) { flush(); out += `<p>${x}</p>`; }
+    }
+  }
+  flush();
+  return out;
+}
+
 // 노션 이미지 블록에서 실제 주소 꺼내기 (외부 링크 / 노션 업로드 모두 지원)
 // 주의: 노션 업로드 파일 주소는 약 1시간 후 만료됩니다. 이 함수는 요청할 때마다
 //       노션에서 새로 받아오므로(캐시 60초) 평소 사용에는 문제가 없습니다.
@@ -255,7 +291,10 @@ async function readInsightBody(pageId, token) {
         const tag = t === "bulleted_list_item" ? "ul" : "ol";
         if (listTag && listTag !== tag) flush();
         if (tag === "ol") { if (!listTag) olStart = olNext; olNext++; }
-        listTag = tag; listBuf += `<li>${rtHtml(node.rich_text)}</li>`;
+        listTag = tag;
+        // 들여쓴 하위 항목이 있으면 이 항목 안에 함께 넣습니다
+        const sub = b.has_children ? await renderChildList(b.id, token, 2) : "";
+        listBuf += `<li>${rtHtml(node.rich_text)}${sub}</li>`;
         continue;
       }
       flush();
